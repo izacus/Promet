@@ -33,6 +33,7 @@ public class PrometMaps {
                               .position(new LatLng(event.lat, event.lng))
                               .title(event.cause)
                               .snippet(event.roadName));
+
         }
     }
 }
