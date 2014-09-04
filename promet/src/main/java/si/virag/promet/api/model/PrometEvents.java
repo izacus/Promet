@@ -12,8 +12,8 @@ public class PrometEvents {
 
     public static class PrometEventsInternal
     {
-        @SerializedName("lastUpdate")
-        public Date lastUpdate;
+        //@SerializedName("lastUpdate")
+        //public Date lastUpdate;
 
         @SerializedName("dogodek")
         public List<PrometEvent> events;

@@ -23,8 +23,8 @@ public class PrometEvent {
     public String descriptionEn;
 
     @SerializedName("x_wgs")
-    public double lat;
+    public double lng;
 
     @SerializedName("y_wgs")
-    public double lng;
+    public double lat;
 }

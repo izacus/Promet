@@ -1,6 +1,7 @@
 package si.virag.promet.api.opendata;
 
 
+import com.google.common.collect.ImmutableList;
 import retrofit.RestAdapter;
 import rx.Observable;
 import rx.functions.Func1;
@@ -17,7 +18,7 @@ public class OpenDataPrometApi extends PrometApi {
     public OpenDataPrometApi() {
 
         RestAdapter adapter = new RestAdapter.Builder()
-                                             .setEndpoint("https://www.opendata.si")
+                                             .setEndpoint("http://www.opendata.si")
                                              .build();
 
 
@@ -25,13 +26,12 @@ public class OpenDataPrometApi extends PrometApi {
     }
 
     @Override
-    public Observable<List<PrometEvent>> getPrometEvents() {
+    public Observable<ImmutableList<PrometEvent>> getPrometEvents() {
         return openDataApi.getEvents()
-                          .cache()
-                          .map(new Func1<PrometEvents, List<PrometEvent>>() {
+                          .map(new Func1<PrometEvents, ImmutableList<PrometEvent>>() {
             @Override
-            public List<PrometEvent> call(PrometEvents prometEvents) {
-                return prometEvents.events.events;
+            public ImmutableList<PrometEvent> call(PrometEvents prometEvents) {
+                return ImmutableList.copyOf(prometEvents.events.events);
             }
         });
     }

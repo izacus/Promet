@@ -3,6 +3,7 @@ package si.virag.promet;
 import android.app.Application;
 import dagger.ObjectGraph;
 import si.virag.promet.api.opendata.OpenDataApiModule;
+import si.virag.promet.map.MapModule;
 
 public class PrometApplication extends Application {
 
@@ -13,7 +14,8 @@ public class PrometApplication extends Application {
         super.onCreate();
 
         graph = ObjectGraph.create(
-                OpenDataApiModule.class
+                OpenDataApiModule.class,
+                MapModule.class
         );
     }
 
