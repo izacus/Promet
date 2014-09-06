@@ -25,6 +25,7 @@ import si.virag.promet.fragments.ui.EventListAdaper;
 import si.virag.promet.utils.SubscriberAdapter;
 
 import javax.inject.Inject;
+import java.util.List;
 
 public class EventListFragment extends Fragment {
 
@@ -61,9 +62,9 @@ public class EventListFragment extends Fragment {
         prometApi.getPrometEvents()
                  .subscribeOn(Schedulers.io())
                  .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe(new SubscriberAdapter<ImmutableList<PrometEvent>>() {
+                 .subscribe(new SubscriberAdapter<List<PrometEvent>>() {
                      @Override
-                     public void onNext(ImmutableList<PrometEvent> prometEvents) {
+                     public void onNext(List<PrometEvent> prometEvents) {
                          super.onNext(prometEvents);
                          adapter.setData(prometEvents);
                      }

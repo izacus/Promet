@@ -42,6 +42,7 @@ public class PrometMaps {
 
     public void showEvents(List<PrometEvent> prometEvents) {
         assert map != null;
+        map.clear();
 
         for (PrometEvent event : prometEvents) {
 

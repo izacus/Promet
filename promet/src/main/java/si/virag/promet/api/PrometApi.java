@@ -9,6 +9,7 @@ import java.util.List;
 
 public abstract class PrometApi {
 
-    public abstract Observable<ImmutableList<PrometEvent>> getPrometEvents();
+    public abstract Observable<List<PrometEvent>> getReloadPrometEvents();
+    public abstract Observable<List<PrometEvent>> getPrometEvents();
 
 }

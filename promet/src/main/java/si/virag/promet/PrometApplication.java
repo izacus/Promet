@@ -22,7 +22,8 @@ public class PrometApplication extends Application {
 
         graph = ObjectGraph.create(
                 OpenDataApiModule.class,
-                MapModule.class
+                MapModule.class,
+                new PrometApplicationModule(this)
         );
     }
 

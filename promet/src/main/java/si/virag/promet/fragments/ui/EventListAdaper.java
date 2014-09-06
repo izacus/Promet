@@ -16,11 +16,13 @@ import si.virag.promet.R;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.RoadType;
 
+import java.util.List;
+
 public class EventListAdaper extends BaseAdapter implements StickyListHeadersAdapter {
 
     private final Context ctx;
     private final LayoutInflater inflater;
-    private ImmutableList<PrometEvent> data;
+    private List<PrometEvent> data;
 
     public EventListAdaper(Context ctx) {
         inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -62,7 +64,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         return v;
     }
 
-    public void setData(ImmutableList<PrometEvent> prometEvents) {
+    public void setData(List<PrometEvent> prometEvents) {
         this.data = prometEvents;
         notifyDataSetChanged();
     }
@@ -83,6 +85,9 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
     @Override
     public long getHeaderId(int position) {
         RoadType type = data.get(position).roadType;
+        if (type == RoadType.HITRA_CESTA)   // Join this with highways
+            return RoadType.AVTOCESTA.ordinal();
+
         return type == null ? 100 : type.ordinal();
     }
 

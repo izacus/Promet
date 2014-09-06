@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_map_avtoceste"
+        android:title="Avtoceste"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/menu_map_regionalne_ceste"
+        android:title="Regionalne ceste"
+        android:titleCondensed="Reg. ceste"
+        android:checkable="true" />
+
+    <item
+        android:id="@+id/menu_map_lokalne_ceste"
+        android:title="Lokalne ceste"
+        android:titleCondensed="Lok. ceste"
+        android:checkable="true" />
+</menu>
