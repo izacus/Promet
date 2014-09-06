@@ -20,6 +20,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
     private Map<Marker, Long> markerIdMap;
 
     public void setMapInstance(GoogleMap gMap) {
+        if (gMap == null)
+            return;
 
         this.map = gMap;
 

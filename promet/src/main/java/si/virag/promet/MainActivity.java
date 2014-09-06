@@ -1,5 +1,6 @@
 package si.virag.promet;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -7,8 +8,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import com.astuetz.PagerSlidingTabStrip;
+import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import de.greenrobot.event.EventBus;
 import si.virag.promet.fragments.EventListFragment;
@@ -23,7 +26,15 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ((PrometApplication)getApplication()).checkUpdateLocale(getApplication());
+        // Transluscent navigation
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow(); // in Activity's onCreate() for instance
+            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
         super.onCreate(savedInstanceState);
+        Crashlytics.start(this);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_main);
         tintManager = new SystemBarTintManager(this);
@@ -32,9 +43,13 @@ public class MainActivity extends FragmentActivity
 
         pager = (ViewPager)findViewById(R.id.main_pager);
         tabs = (PagerSlidingTabStrip) findViewById(R.id.main_tabs);
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tabs.getLayoutParams();
-        params.setMargins(0, tintManager.getConfig().getPixelInsetTop(true), 0, 0);
-        tabs.setLayoutParams(params);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tabs.getLayoutParams();
+            params.setMargins(0, tintManager.getConfig().getPixelInsetTop(true), 0, 0);
+            tabs.setLayoutParams(params);
+        }
+
         setupPages();
     }
 

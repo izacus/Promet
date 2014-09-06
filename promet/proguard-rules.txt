@@ -15,3 +15,69 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-keepattributes Signature,*Annotation*,EnclosingMethod,SourceFile,LineNumberTable
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
+-dontobfuscate
+
+-dontwarn butterknife.internal.**
+-keep class **$$ViewInjector { *; }
+-keepnames class * { @butterknife.InjectView *;}
+-dontwarn com.squareup.okhttp.**
+-dontwarn java.nio.file.**
+-dontwarn org.codehaus.mojo.animal_sniffer.**
+-dontwarn sun.misc.Unsafe
+-dontwarn javax.annotation.**
+-dontwarn javax.inject.**
+
+# RxJava
+-keep class rx.operators.OperationReplay* {
+    *;
+}
+
+# Retrofit
+-dontwarn retrofit.appengine.**
+-keep class retrofit.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit.http.* <methods>;
+}
+
+# Dagger
+-dontwarn dagger.internal.codegen.**
+-keepclassmembers,allowobfuscation class * {
+    @javax.inject.* *;
+    @dagger.* *;
+    <init>();
+}
+-keep class dagger.* { *; }
+-keep class javax.inject.* { *; }
+-keep class * extends dagger.internal.Binding
+-keep class * extends dagger.internal.ModuleAdapter
+-keep class * extends dagger.internal.StaticInjection
+
+# EventBus
+-keepclassmembers class ** {
+    public void onEvent*(**);
+}
+
+# Play Services
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
+}
+
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
+
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+    @com.google.android.gms.common.annotation.KeepName *;
+}
+
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+
+# Gson
+-keepclasseswithmembers class com.google.gson.** { *; }
+-keep class com.google.gson.internal.** { *; }
