@@ -15,4 +15,12 @@ public class Events {
             this.point = point;
         }
     }
+
+    public static class ShowEventInList {
+        public final long id;
+
+        public ShowEventInList(long id) {
+            this.id = id;
+        }
+    }
 }

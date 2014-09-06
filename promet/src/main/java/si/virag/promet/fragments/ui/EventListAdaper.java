@@ -95,6 +95,16 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         return type == null ? 100 : type.ordinal();
     }
 
+    public int getItemPosition(long id) {
+
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).id == id)
+                return i;
+        }
+
+        return 0;
+    }
+
     private static class EventItemHolder {
         public TextView titleView;
         public TextView descriptionView;

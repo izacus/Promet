@@ -4,15 +4,20 @@ import android.location.Location;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.*;
+import de.greenrobot.event.EventBus;
+import si.virag.promet.Events;
 import si.virag.promet.api.model.PrometEvent;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class PrometMaps {
+public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     private static final LatLng MAP_CENTER = new LatLng(46.055556, 14.508333);
 
     private GoogleMap map;
+    private Map<Marker, Long> markerIdMap;
 
     public void setMapInstance(GoogleMap gMap) {
 
@@ -37,12 +42,16 @@ public class PrometMaps {
             }
         });
 
+        map.setOnInfoWindowClickListener(this);
+
         map.setMyLocationEnabled(true);
+
     }
 
     public void showEvents(List<PrometEvent> prometEvents) {
         assert map != null;
         map.clear();
+        markerIdMap = new HashMap<>();
 
         for (PrometEvent event : prometEvents) {
 
@@ -74,6 +83,7 @@ public class PrometMaps {
                     .alpha(1.0f - ((float) event.priority / 15.0f))
                     .snippet(event.roadName));
 
+            markerIdMap.put(m, event.id);
         }
     }
 
@@ -82,5 +92,13 @@ public class PrometMaps {
             return;
 
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 12.0f));
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Long id = markerIdMap.get(marker);
+        if (id == null) return;
+
+        EventBus.getDefault().post(new Events.ShowEventInList(id));
     }
 }

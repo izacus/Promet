@@ -115,4 +115,21 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         PrometEvent event = (PrometEvent) adapter.getItem(position);
         EventBus.getDefault().post(new Events.ShowPointOnMap(new LatLng(event.lat, event.lng)));
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEventMainThread(Events.ShowEventInList e) {
+        int position = adapter.getItemPosition(e.id);
+        list.smoothScrollToPosition(position);
+    }
 }

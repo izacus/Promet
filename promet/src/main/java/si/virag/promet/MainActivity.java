@@ -112,4 +112,8 @@ public class MainActivity extends FragmentActivity
     public void onEventMainThread(Events.ShowPointOnMap e) {
         pager.setCurrentItem(0, true);
     }
+
+    public void onEventMainThread(Events.ShowEventInList e) {
+        pager.setCurrentItem(1, true);
+    }
 }
