@@ -1,14 +1,14 @@
 package si.virag.promet;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.widget.LinearLayout;
 import com.astuetz.PagerSlidingTabStrip;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 
@@ -16,13 +16,21 @@ public class MainActivity extends FragmentActivity
 {
     private ViewPager pager;
     private PagerSlidingTabStrip tabs;
+    private SystemBarTintManager tintManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        tintManager = new SystemBarTintManager(this);
+        tintManager.setStatusBarTintEnabled(true);
+        tintManager.setStatusBarTintColor(getResources().getColor(R.color.theme_color));
+
         pager = (ViewPager)findViewById(R.id.main_pager);
         tabs = (PagerSlidingTabStrip) findViewById(R.id.main_tabs);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tabs.getLayoutParams();
+        params.setMargins(0, tintManager.getConfig().getPixelInsetTop(true), 0, 0);
+        tabs.setLayoutParams(params);
         setupPages();
     }
 
@@ -72,5 +80,9 @@ public class MainActivity extends FragmentActivity
 
             return super.getPageTitle(position);
         }
+    }
+
+    public SystemBarTintManager getTintManager() {
+        return tintManager;
     }
 }

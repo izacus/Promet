@@ -16,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.PrometApi;
@@ -25,6 +26,7 @@ import si.virag.promet.utils.SubscriberAdapter;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 
 public class MapFragment extends Fragment {
 
@@ -64,7 +66,7 @@ public class MapFragment extends Fragment {
                      public void onError(Throwable throwable) {
                          super.onError(throwable);
 
-                         // TODO
+                         Log.e(LOG_TAG, "Error!", throwable);
                      }
 
                      @Override
@@ -81,7 +83,13 @@ public class MapFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mapView.onResume();
-        prometMaps.setMapInstance(mapView.getMap());
+
+        GoogleMap map = mapView.getMap();
+        // Fix padding for devices with transparent navigation bar
+        if (map != null)
+            map.setPadding(0, 0, 0, ((MainActivity)getActivity()).getTintManager().getConfig().getPixelInsetBottom());
+
+        prometMaps.setMapInstance(map);
         displayTrafficData();
     }
 

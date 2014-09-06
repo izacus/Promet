@@ -2,6 +2,8 @@ package si.virag.promet.api.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 public class PrometEvent {
 
     @SerializedName("id")
@@ -27,4 +29,13 @@ public class PrometEvent {
 
     @SerializedName("y_wgs")
     public double lat;
+
+    @SerializedName("kategorija")
+    public RoadType roadType;
+
+    @SerializedName("vneseno")
+    public Date entered;
+
+    @SerializedName("prioriteta")
+    public int priority;
 }

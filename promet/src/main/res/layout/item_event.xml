@@ -2,18 +2,64 @@
 
 <android.support.v7.widget.CardView
           xmlns:android="http://schemas.android.com/apk/res/android"
+
           android:layout_width="match_parent"
           android:layout_height="match_parent"
-          android:layout_margin="16dp"
+          android:layout_margin="8dp"
     >
 
-        <TextView
-            android:id="@+id/item_event_title"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="16dp"
-            style="?android:textAppearanceListItem"
-            />
+            >
+
+            <TextView
+                android:id="@+id/item_event_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:textColor="@color/theme_color"
+                />
+
+            <TextView
+                android:id="@+id/item_event_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@id/item_event_title"
+
+                android:singleLine="true"
+                android:ellipsize="end"
+
+                android:textStyle="normal"
+                android:textSize="14sp"
+                android:gravity="top|right"
+                android:textColor="@android:color/tertiary_text_light"
+                android:fontFamily="sans-serif-light"
+
+                android:text="Pred 3 urami"
+                />
+
+            <TextView
+                android:id="@+id/item_event_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/item_event_title"
+                android:layout_marginTop="8dp"
+                android:textColor="@android:color/secondary_text_light"
+                android:fontFamily="sans-serif-light"
+                android:textSize="14sp"
+                style="?android:textAppearanceListItemSmall"
+                />
+
+        </RelativeLayout>
 
 
 
