@@ -40,12 +40,11 @@
                 android:ellipsize="end"
 
                 android:textStyle="normal"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:gravity="top|right"
                 android:textColor="@android:color/tertiary_text_light"
                 android:fontFamily="sans-serif-light"
 
-                android:text="Pred 3 urami"
                 />
 
             <TextView

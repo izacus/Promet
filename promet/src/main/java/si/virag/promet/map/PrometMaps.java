@@ -28,17 +28,12 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         map.setTrafficEnabled(true);
         map.setIndoorEnabled(false);
 
-        map.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-                map.setOnMyLocationChangeListener(null);
-            }
-        });
 
         map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10.0f));
+                map.setOnMyLocationChangeListener(null);
             }
         });
 
@@ -91,7 +86,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         if (map == null)
             return;
 
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 12.0f));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 11.0f));
     }
 
     @Override

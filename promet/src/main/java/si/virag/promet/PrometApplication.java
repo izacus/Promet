@@ -17,7 +17,7 @@ public class PrometApplication extends Application {
 
     @Override
     public void onCreate() {
-        setupLocale(this);
+        checkUpdateLocale(this);
         super.onCreate();
 
         graph = ObjectGraph.create(
@@ -31,7 +31,7 @@ public class PrometApplication extends Application {
         graph.inject(object);
     }
 
-    private void setupLocale(Context ctx) {
+    public void checkUpdateLocale(Context ctx) {
         Configuration c = ctx.getResources().getConfiguration();
         if (!c.locale.equals(locale)) {
             c.locale = locale;

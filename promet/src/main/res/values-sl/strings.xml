@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Promet</string>
+
+    <string-array name="road_type_strings">
+        <item>Avtoceste</item>
+        <item>Hitre ceste</item>
+        <item>Regionalne ceste</item>
+        <item>Lokalne ceste</item>
+        <item>Ostalo</item>
+    </string-array>
+
+</resources>
