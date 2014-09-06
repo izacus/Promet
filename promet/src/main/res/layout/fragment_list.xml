@@ -5,15 +5,23 @@
              android:layout_height="match_parent"
     >
 
-    <se.emilsjolander.stickylistheaders.StickyListHeadersListView
-        android:id="@+id/events_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/events_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbarStyle="outsideOverlay"
-        android:cacheColorHint="@color/theme_background"
-        android:fitsSystemWindows="true"
-        android:clipToPadding="false"
-        android:padding="8dp"
-        />
+        android:layout_height="match_parent">
+
+        <se.emilsjolander.stickylistheaders.StickyListHeadersListView
+            android:id="@+id/events_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbarStyle="outsideOverlay"
+            android:cacheColorHint="@color/theme_background"
+            android:fitsSystemWindows="true"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 </FrameLayout>

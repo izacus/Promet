@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.google.common.collect.ImmutableList;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -27,13 +30,14 @@ import si.virag.promet.utils.SubscriberAdapter;
 import javax.inject.Inject;
 import java.util.List;
 
-public class EventListFragment extends Fragment {
+public class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private EventListAdaper adapter;
 
     @Inject protected PrometApi prometApi;
 
     @InjectView(R.id.events_list) protected StickyListHeadersListView list;
+    @InjectView(R.id.events_refresh) protected SwipeRefreshLayout refreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,27 +56,51 @@ public class EventListFragment extends Fragment {
         SystemBarTintManager manager = ((MainActivity)getActivity()).getTintManager();
         list.setPadding(list.getPaddingTop(), list.getPaddingLeft(), list.getPaddingRight(), list.getPaddingBottom() + manager.getConfig().getPixelInsetBottom());
         list.setAdapter(adapter);
+
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        loadEvents(false);
+    }
 
-        prometApi.getPrometEvents()
-                 .subscribeOn(Schedulers.io())
-                 .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe(new SubscriberAdapter<List<PrometEvent>>() {
-                     @Override
-                     public void onNext(List<PrometEvent> prometEvents) {
-                         super.onNext(prometEvents);
-                         adapter.setData(prometEvents);
-                     }
+    private void loadEvents(boolean force)
+    {
+        Observable<List<PrometEvent>> events;
+        if (force)
+            events = prometApi.getReloadPrometEvents();
+        else
+            events = prometApi.getPrometEvents();
 
-                     @Override
-                     public void onError(Throwable throwable) {
-                         super.onError(throwable);
-                     }
-                 });
+        events.subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+              .subscribe(new Subscriber<List<PrometEvent>>() {
+                  @Override
+                  public void onNext(List<PrometEvent> prometEvents) {
+                      adapter.setData(prometEvents);
+                  }
+
+                  @Override
+                  public void onCompleted() {
+                      refreshLayout.setRefreshing(false);
+                  }
+
+                  @Override
+                  public void onError(Throwable throwable) {
+                      refreshLayout.setRefreshing(false);
+                      // TODO
+                  }
+
+
+              });
+    }
+
+    @Override
+    public void onRefresh() {
+        loadEvents(true);
     }
 }
