@@ -68,12 +68,19 @@ public class PrometMaps {
 
 
             Marker m = map.addMarker(new MarkerOptions()
-                              .position(new LatLng(event.lat, event.lng))
-                              .title(event.cause)
-                              .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
-                              .alpha(1.0f - ((float)event.priority / 15.0f))
-                              .snippet(event.roadName));
+                    .position(new LatLng(event.lat, event.lng))
+                    .title(event.cause)
+                    .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
+                    .alpha(1.0f - ((float) event.priority / 15.0f))
+                    .snippet(event.roadName));
 
         }
+    }
+
+    public void showPoint(LatLng point) {
+        if (map == null)
+            return;
+
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 12.0f));
     }
 }

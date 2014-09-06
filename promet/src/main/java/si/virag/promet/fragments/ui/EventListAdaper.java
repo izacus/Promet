@@ -77,6 +77,10 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
 
         TextView textView = (TextView) v.findViewById(R.id.item_event_header);
         RoadType type = data.get(position).roadType;
+
+        // Avtoceste and hitre ceste are merged
+        if (type == RoadType.HITRA_CESTA) type = RoadType.AVTOCESTA;
+
         String[] strings = ctx.getResources().getStringArray(R.array.road_type_strings);
         textView.setText(type == null ? strings[strings.length - 1] : strings[type.ordinal()]);
         return v;

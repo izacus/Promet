@@ -12,11 +12,13 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.ImmutableList;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
@@ -61,6 +63,9 @@ public class MapFragment extends Fragment {
     }
 
     private void displayTrafficData() {
+
+        EventBus.getDefault().post(new Events.RefreshStarted());
+
         prometApi.getPrometEvents()
                  .subscribeOn(Schedulers.io())
                  .observeOn(AndroidSchedulers.mainThread())
@@ -92,21 +97,24 @@ public class MapFragment extends Fragment {
                      }
                  })
                  .toList()
-                 .subscribe(new SubscriberAdapter<List<PrometEvent>>() {
+                 .subscribe(new Subscriber<List<PrometEvent>>() {
+
+                     @Override
+                     public void onCompleted() {
+                         EventBus.getDefault().post(new Events.RefreshCompleted());
+                     }
 
                      @Override
                      public void onError(Throwable throwable) {
-                         super.onError(throwable);
+                         EventBus.getDefault().post(new Events.RefreshCompleted());
 
                          Log.e(LOG_TAG, "Error!", throwable);
                      }
 
                      @Override
                      public void onNext(List<PrometEvent> prometEvents) {
-                         super.onNext(prometEvents);
                          prometMaps.showEvents(prometEvents);
                      }
-
                  });
     }
 
@@ -167,6 +175,18 @@ public class MapFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         mapView.onPause();
@@ -188,5 +208,9 @@ public class MapFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
+    }
+
+    public void onEventMainThread(Events.ShowPointOnMap e) {
+        prometMaps.showPoint(e.point);
     }
 }

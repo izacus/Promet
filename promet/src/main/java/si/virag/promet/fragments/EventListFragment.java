@@ -8,17 +8,21 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.ImmutableList;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
@@ -30,7 +34,7 @@ import si.virag.promet.utils.SubscriberAdapter;
 import javax.inject.Inject;
 import java.util.List;
 
-public class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
 
     private EventListAdaper adapter;
 
@@ -56,6 +60,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         SystemBarTintManager manager = ((MainActivity)getActivity()).getTintManager();
         list.setPadding(list.getPaddingTop(), list.getPaddingLeft(), list.getPaddingRight(), list.getPaddingBottom() + manager.getConfig().getPixelInsetBottom());
         list.setAdapter(adapter);
+        list.setOnItemClickListener(this);
 
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
@@ -102,5 +107,12 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onRefresh() {
         loadEvents(true);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // On item click we must focus the map on the event in previous fragment
+        PrometEvent event = (PrometEvent) adapter.getItem(position);
+        EventBus.getDefault().post(new Events.ShowPointOnMap(new LatLng(event.lat, event.lng)));
     }
 }
