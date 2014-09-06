@@ -59,6 +59,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         PrometEvent event = data.get(position);
         holder.titleView.setText(event.cause);
         holder.descriptionView.setText(event.description);
+        holder.locationView.setText(event.roadName);
         holder.timeView.setVisibility(event.entered == null ? View.INVISIBLE : View.VISIBLE);
         holder.timeView.setText(event.entered == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.entered));
         return v;
@@ -109,11 +110,13 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         public TextView titleView;
         public TextView descriptionView;
         public TextView timeView;
+        public TextView locationView;
 
         public EventItemHolder(View view) {
             this.titleView = (TextView) view.findViewById(R.id.item_event_title);
             this.descriptionView = (TextView) view.findViewById(R.id.item_event_description);
             this.timeView = (TextView)view.findViewById(R.id.item_event_time);
+            this.locationView = (TextView)view.findViewById(R.id.item_event_location);
         }
     }
 
