@@ -108,6 +108,7 @@ public class MapFragment extends Fragment {
 
                      @Override
                      public void onError(Throwable throwable) {
+                         Log.d(LOG_TAG, "Error when loading!", throwable);
                          EventBus.getDefault().post(new Events.RefreshCompleted());
                          Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
                      }

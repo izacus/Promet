@@ -46,7 +46,9 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
     }
 
     public void showEvents(List<PrometEvent> prometEvents) {
-        assert map != null;
+        if (map == null)
+            return;
+
         map.clear();
         markerIdMap = new HashMap<>();
 

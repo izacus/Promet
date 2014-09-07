@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import java.util.List;
 
 public class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
 
+    private static final String LOG_TAG = "Promet.EventList";
     private EventListAdaper adapter;
 
     @Inject protected PrometApi prometApi;
@@ -105,6 +107,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
 
                   @Override
                   public void onError(Throwable throwable) {
+                      Log.e(LOG_TAG, "Error!", throwable);
                       refreshLayout.setRefreshing(false);
                       emptyView.setText("Podatkov ni bilo mogoče naložiti.");
                       Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
