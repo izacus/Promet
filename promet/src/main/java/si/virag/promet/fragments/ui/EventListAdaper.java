@@ -2,20 +2,18 @@ package si.virag.promet.fragments.ui;
 
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import com.google.common.collect.ImmutableList;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import si.virag.fuzzydatetime.FuzzyDateTimeFormatter;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.RoadType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventListAdaper extends BaseAdapter implements StickyListHeadersAdapter {
@@ -27,7 +25,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
     public EventListAdaper(Context ctx) {
         inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.ctx = ctx;
-        data = ImmutableList.<PrometEvent>builder().build();
+        data = new ArrayList<>();
     }
 
 

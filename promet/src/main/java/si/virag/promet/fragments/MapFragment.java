@@ -13,6 +13,8 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.ImmutableList;
 import de.greenrobot.event.EventBus;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -63,7 +65,7 @@ public class MapFragment extends Fragment {
     }
 
     private void displayTrafficData() {
-
+        Crouton.clearCroutonsForActivity(getActivity());
         EventBus.getDefault().post(new Events.RefreshStarted());
 
         prometApi.getPrometEvents()
@@ -107,8 +109,7 @@ public class MapFragment extends Fragment {
                      @Override
                      public void onError(Throwable throwable) {
                          EventBus.getDefault().post(new Events.RefreshCompleted());
-
-                         Log.e(LOG_TAG, "Error!", throwable);
+                         Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
                      }
 
                      @Override
@@ -213,4 +214,8 @@ public class MapFragment extends Fragment {
     public void onEventMainThread(Events.ShowPointOnMap e) {
         prometMaps.showPoint(e.point);
     }
+    public void onEventMainThread(Events.UpdateMap e) {
+        displayTrafficData();
+    }
+
 }

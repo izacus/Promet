@@ -23,4 +23,6 @@ public class Events {
             this.id = id;
         }
     }
+
+    public static class UpdateMap {}
 }

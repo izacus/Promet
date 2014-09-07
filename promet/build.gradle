@@ -25,7 +25,6 @@ android {
         targetSdkVersion 19
         versionCode 1
         versionName "1.0"
-        signingConfig signingConfigs.config
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -35,18 +34,16 @@ android {
         release {
             runProguard true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.config
         }
     }
     dexOptions {
-        incremental true
+        incremental false
     }
     productFlavors {
     }
 }
 
 dependencies {
-    compile 'com.google.guava:guava:17.0'
     compile 'com.netflix.rxjava:rxjava-android:0.20.3'
     compile 'com.squareup.retrofit:retrofit:1.6.1'
     compile 'com.squareup.dagger:dagger:1.2.2'
@@ -62,5 +59,11 @@ dependencies {
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
     compile 'de.greenrobot:eventbus:2.2.1'
     compile project(':fuzzydatetimeformatter')
+    compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'com.crashlytics.android:crashlytics:1.+'
+
+    compile('de.keyboardsurfer.android.widget:crouton:1.8.4@aar') {
+        // exclusion is not neccessary, but generally a good idea.
+        exclude group: 'com.google.android', module: 'support-v4'
+    }
 }

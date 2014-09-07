@@ -11,12 +11,15 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.ImmutableList;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import de.greenrobot.event.EventBus;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -42,6 +45,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
 
     @InjectView(R.id.events_list) protected StickyListHeadersListView list;
     @InjectView(R.id.events_refresh) protected SwipeRefreshLayout refreshLayout;
+    @InjectView(R.id.events_empty) protected TextView emptyView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
 
         SystemBarTintManager manager = ((MainActivity)getActivity()).getTintManager();
         list.setPadding(list.getPaddingTop(), list.getPaddingLeft(), list.getPaddingRight(), list.getPaddingBottom() + manager.getConfig().getPixelInsetBottom());
+        list.setEmptyView(emptyView);
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
 
@@ -73,20 +78,24 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         loadEvents(false);
     }
 
-    private void loadEvents(boolean force)
+    private void loadEvents(final boolean force)
     {
+        refreshLayout.setRefreshing(true);
         Observable<List<PrometEvent>> events;
         if (force)
             events = prometApi.getReloadPrometEvents();
         else
             events = prometApi.getPrometEvents();
 
+        Crouton.clearCroutonsForActivity(getActivity());
         events.subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(new Subscriber<List<PrometEvent>>() {
                   @Override
                   public void onNext(List<PrometEvent> prometEvents) {
                       adapter.setData(prometEvents);
+                      if (force)
+                          EventBus.getDefault().post(new Events.UpdateMap());
                   }
 
                   @Override
@@ -97,7 +106,8 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
                   @Override
                   public void onError(Throwable throwable) {
                       refreshLayout.setRefreshing(false);
-                      // TODO
+                      emptyView.setText("Podatkov ni bilo mogoče naložiti.");
+                      Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
                   }
 
 

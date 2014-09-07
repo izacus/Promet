@@ -14,6 +14,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import de.greenrobot.event.EventBus;
+import de.keyboardsurfer.android.widget.crouton.Crouton;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 
@@ -115,6 +116,12 @@ public class MainActivity extends FragmentActivity
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Crouton.clearCroutonsForActivity(this);
     }
 
     public void onEventMainThread(Events.RefreshStarted e) {

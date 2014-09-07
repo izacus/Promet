@@ -5,6 +5,18 @@
              android:layout_height="match_parent"
     >
 
+    <TextView
+        android:id="@+id/events_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginRight="36dp"
+        android:layout_marginLeft="36dp"
+        android:text="Nalagam..."
+        android:textColor="@android:color/tertiary_text_light"
+        style="?android:attr/textAppearanceMedium"
+        />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/events_refresh"
         android:layout_width="match_parent"
