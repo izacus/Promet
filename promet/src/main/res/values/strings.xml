@@ -4,14 +4,37 @@
     <string name="app_name">SiTraffic</string>
     <string name="tab_map">Map</string>
     <string name="tab_list">List</string>
+    <string name="settings">Nastavitve</string>
+
+    <string name="freeways">Freeways</string>
+    <string name="fast_roads">Freeways</string>
+    <string name="border_crossings">Border Crossings</string>
+    <string name="regional_roads">Regional Roads</string>
+    <string name="local_roads">Local Roads</string>
+    <string name="misc">Misc</string>
+    <string name="preferences_language">Language</string>
+    <string name="preferences_language_dialog">Choose language</string>
+    <string name="preferences_title">Settings</string>
 
     <string-array name="road_type_strings">
-        <item>Freeways</item>
-        <item>Freeways</item>
-        <item>Border Crossings</item>
-        <item>Regional Roads</item>
-        <item>Local Roads</item>
-        <item>Misc</item>
+        <item>@string/freeways</item>
+        <item>@string/fast_roads</item>
+        <item>@string/border_crossings</item>
+        <item>@string/regional_roads</item>
+        <item>@string/local_roads</item>
+        <item>@string/misc</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>Device language</item>
+        <item>Slovenian</item>
+        <item>English</item>
+    </string-array>
+
+    <string-array name="languages_values">
+        <item>default</item>
+        <item>sl-SI</item>
+        <item>en-US</item>
     </string-array>
 
 </resources>

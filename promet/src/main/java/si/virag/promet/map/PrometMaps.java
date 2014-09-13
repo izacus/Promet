@@ -1,5 +1,6 @@
 package si.virag.promet.map;
 
+import android.content.Context;
 import android.location.Location;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -7,6 +8,7 @@ import com.google.android.gms.maps.model.*;
 import de.greenrobot.event.EventBus;
 import si.virag.promet.Events;
 import si.virag.promet.api.model.PrometEvent;
+import si.virag.promet.utils.LocaleUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,18 +20,19 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     private GoogleMap map;
     private Map<Marker, Long> markerIdMap;
+    private boolean isSlovenianLocale;
 
-    public void setMapInstance(GoogleMap gMap) {
+    public void setMapInstance(Context ctx, GoogleMap gMap) {
         if (gMap == null)
             return;
 
         this.map = gMap;
+        this.isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
 
         // Center on Slovenia initially
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(MAP_CENTER, 7.0f));
         map.setTrafficEnabled(true);
         map.setIndoorEnabled(false);
-
 
         map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
@@ -83,7 +86,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
             Marker m = map.addMarker(new MarkerOptions()
                     .position(new LatLng(event.lat, event.lng))
-                    .title(event.cause)
+                    .title(isSlovenianLocale ? event.cause : event.causeEn)
                     .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
                     .snippet(event.roadName));
 

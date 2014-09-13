@@ -1,5 +1,6 @@
 package si.virag.promet;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
+import si.virag.promet.preferences.PrometPreferences;
 import si.virag.promet.utils.PrometSettings;
 
 import javax.inject.Inject;
@@ -148,6 +150,13 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.menu_settings) {
+            Intent preferenceIntent = new Intent(this, PrometPreferences.class);
+            startActivity(preferenceIntent);
+            return true;
+        }
+
         if (!item.isCheckable())
             return false;
 
@@ -155,7 +164,6 @@ public class MainActivity extends FragmentActivity
         item.setChecked(enabled);
 
         switch (item.getItemId()) {
-
             case R.id.menu_map_avtoceste:
                 prometSettings.setShowAvtoceste(enabled);
                 break;

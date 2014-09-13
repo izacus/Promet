@@ -105,7 +105,7 @@ public class MapFragment extends Fragment {
         if (map != null)
             map.setPadding(0, 0, 0, ((MainActivity)getActivity()).getTintManager().getConfig().getPixelInsetBottom());
 
-        prometMaps.setMapInstance(map);
+        prometMaps.setMapInstance(getActivity(), map);
         displayTrafficData();
     }
 

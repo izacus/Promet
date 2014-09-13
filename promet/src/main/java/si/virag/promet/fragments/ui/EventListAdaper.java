@@ -16,6 +16,7 @@ import si.virag.fuzzydatetime.FuzzyDateTimeFormatter;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.RoadType;
+import si.virag.promet.utils.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +24,16 @@ import java.util.Locale;
 
 public class EventListAdaper extends BaseAdapter implements StickyListHeadersAdapter {
 
-    private final Locale locale;
     private final Context ctx;
     private final LayoutInflater inflater;
+    private final boolean slovenianLocale;
     private List<PrometEvent> data;
 
     public EventListAdaper(Context ctx) {
         inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.ctx = ctx;
-        this.locale = ctx.getResources().getConfiguration().locale;
+
+        slovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
         data = new ArrayList<>();
     }
 
@@ -63,7 +65,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         EventItemHolder holder = (EventItemHolder) v.getTag();
         PrometEvent event = data.get(position);
 
-        SpannableString titleText = new SpannableString(locale.getLanguage().equals("sl") ? event.cause : event.causeEn);
+        SpannableString titleText = new SpannableString(slovenianLocale ? event.cause : event.causeEn);
         SpannableString locationText = new SpannableString(event.roadName);
         if (event.isHighPriority()) {
             int color = ctx.getResources().getColor(android.R.color.holo_red_dark);
@@ -72,7 +74,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         }
 
         holder.titleView.setText(titleText);
-        holder.descriptionView.setText(locale.getLanguage().equals("sl") ? event.description : event.descriptionEn);
+        holder.descriptionView.setText(slovenianLocale ? event.description : event.descriptionEn);
         holder.locationView.setText(locationText);
         holder.timeView.setVisibility(event.entered == null ? View.INVISIBLE : View.VISIBLE);
         holder.timeView.setText(event.entered == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.entered));

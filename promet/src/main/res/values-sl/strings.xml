@@ -4,14 +4,31 @@
     <string name="app_name">Promet</string>
     <string name="tab_map">Zemljevid</string>
     <string name="tab_list">Seznam</string>
+    <string name="settings">Nastavitve</string>
+
+    <string name="freeways">Avtoceste</string>
+    <string name="fast_roads">Hitre ceste</string>
+    <string name="border_crossings">Mejni prehodi</string>
+    <string name="regional_roads">Regionalne ceste</string>
+    <string name="local_roads">Lokalne ceste</string>
+    <string name="misc">Ostalo</string>
+    <string name="preferences_language">Jezik</string>
+    <string name="preferences_language_dialog">Izberite jezik</string>
+    <string name="preferences_title">Nastavitve</string>
 
     <string-array name="road_type_strings">
-        <item>Avtoceste</item>
-        <item>Hitre ceste</item>
-        <item>Mejni prehodi</item>
-        <item>Regionalne ceste</item>
-        <item>Lokalne ceste</item>
-        <item>Ostalo</item>
+        <item>@string/freeways</item>
+        <item>@string/fast_roads</item>
+        <item>@string/border_crossings</item>
+        <item>@string/regional_roads</item>
+        <item>@string/local_roads</item>
+        <item>@string/misc</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>Privzet jezik</item>
+        <item>Slovenščina</item>
+        <item>Angleščina</item>
     </string-array>
 
 </resources>

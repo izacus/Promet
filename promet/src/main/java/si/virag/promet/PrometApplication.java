@@ -2,7 +2,10 @@ package si.virag.promet;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import dagger.ObjectGraph;
 import si.virag.promet.api.opendata.OpenDataApiModule;
 import si.virag.promet.map.MapModule;
@@ -10,8 +13,9 @@ import si.virag.promet.map.MapModule;
 import java.util.Locale;
 
 public class PrometApplication extends Application {
+    private static final String LOG_TAG = "Promet";
 
-    public static final Locale locale = new Locale("sl-SI");
+    public static Locale locale = null;
 
     private ObjectGraph graph;
 
@@ -32,11 +36,18 @@ public class PrometApplication extends Application {
     }
 
     public void checkUpdateLocale(Context ctx) {
-/*        Configuration c = ctx.getResources().getConfiguration();
-        if (!c.locale.equals(locale)) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        String language = prefs.getString("app_lang", "default");
+        if (language.equalsIgnoreCase("default")) return;
+
+        Configuration c = ctx.getResources().getConfiguration();
+        if (!c.locale.equals(locale) || !locale.getLanguage().equalsIgnoreCase(language)) {
+            locale = new Locale(language);
+            Log.d(LOG_TAG, "Switching language to " + locale.getLanguage() + "-" + locale.getCountry());
             c.locale = locale;
+            Locale.setDefault(locale);
             ctx.getResources().updateConfiguration(c, null);
-        } */
+        }
     }
 
 }
