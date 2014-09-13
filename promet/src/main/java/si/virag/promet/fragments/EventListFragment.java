@@ -153,11 +153,11 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         String check = "\u2713";
         String cross = "\u2717";
 
-        String text = String.format("%s\u0020Avtoceste  %s\u0020Mejni\u0020prehodi  %s Reg.\u0020ceste  %s Lok.\u0020ceste",
+        String text = String.format(getString(R.string.list_hint,
                                     prometSettings.getShowAvtoceste() ? check : cross,
                                     prometSettings.getShowBorderCrossings() ? check : cross,
                                     prometSettings.getShowRegionalneCeste() ? check : cross,
-                                    prometSettings.getShowLokalneCeste() ? check : cross);
+                                    prometSettings.getShowLokalneCeste() ? check : cross));
         headerView.setText(text);
     }
 
