@@ -24,6 +24,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import si.virag.promet.Events;
@@ -33,6 +34,8 @@ import si.virag.promet.R;
 import si.virag.promet.api.PrometApi;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.fragments.ui.EventListAdaper;
+import si.virag.promet.fragments.ui.EventListFilter;
+import si.virag.promet.utils.PrometSettings;
 import si.virag.promet.utils.SubscriberAdapter;
 
 import javax.inject.Inject;
@@ -44,6 +47,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     private EventListAdaper adapter;
 
     @Inject protected PrometApi prometApi;
+    @Inject protected PrometSettings prometSettings;
 
     @InjectView(R.id.events_list) protected StickyListHeadersListView list;
     @InjectView(R.id.events_refresh) protected SwipeRefreshLayout refreshLayout;
@@ -92,29 +96,35 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         Crouton.clearCroutonsForActivity(getActivity());
         events.subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
+              .flatMap(new Func1<List<PrometEvent>, Observable<PrometEvent>>() {
+                    @Override
+                    public Observable<PrometEvent> call(List<PrometEvent> prometEvents) {
+                        return Observable.from(prometEvents);
+                    }
+              })
+              .filter(new EventListFilter(prometSettings))
+              .toList()
               .subscribe(new Subscriber<List<PrometEvent>>() {
-                  @Override
-                  public void onNext(List<PrometEvent> prometEvents) {
-                      adapter.setData(prometEvents);
-                      if (force)
-                          EventBus.getDefault().post(new Events.UpdateMap());
-                  }
+                    @Override
+                    public void onNext(List<PrometEvent> prometEvents) {
+                        adapter.setData(prometEvents);
+                        if (force)
+                            EventBus.getDefault().post(new Events.UpdateMap());
+                    }
 
-                  @Override
-                  public void onCompleted() {
-                      refreshLayout.setRefreshing(false);
-                  }
+                    @Override
+                    public void onCompleted() {
+                        refreshLayout.setRefreshing(false);
+                    }
 
-                  @Override
-                  public void onError(Throwable throwable) {
-                      Log.e(LOG_TAG, "Error!", throwable);
-                      refreshLayout.setRefreshing(false);
-                      emptyView.setText("Podatkov ni bilo mogoče naložiti.");
-                      Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
-                  }
-
-
-              });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e(LOG_TAG, "Error!", throwable);
+                        refreshLayout.setRefreshing(false);
+                        emptyView.setText("Podatkov ni bilo mogoče naložiti.");
+                        Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
+                    }
+               });
     }
 
     @Override
@@ -144,5 +154,9 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     public void onEventMainThread(Events.ShowEventInList e) {
         int position = adapter.getItemPosition(e.id);
         list.smoothScrollToPosition(position);
+    }
+
+    public void onEventMainThread(Events.UpdateEventList e) {
+        loadEvents(false);
     }
 }

@@ -6,12 +6,9 @@ import android.util.Log;
 import android.view.*;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.common.collect.ImmutableList;
 import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -26,13 +23,12 @@ import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.PrometApi;
 import si.virag.promet.api.model.PrometEvent;
+import si.virag.promet.fragments.ui.EventListFilter;
 import si.virag.promet.map.PrometMaps;
 import si.virag.promet.utils.PrometSettings;
-import si.virag.promet.utils.SubscriberAdapter;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Map;
 
 public class MapFragment extends Fragment {
 
@@ -75,29 +71,7 @@ public class MapFragment extends Fragment {
                          return Observable.from(prometEvents);
                      }
                  })
-                 .filter(new Func1<PrometEvent, Boolean>() {
-                     @Override
-                     public Boolean call(PrometEvent prometEvent) {
-
-                         if (prometEvent.roadType == null)
-                             return true;
-
-                         switch (prometEvent.roadType) {
-                             case AVTOCESTA:
-                             case HITRA_CESTA:
-                                 return prometSettings.getShowAvtoceste();
-                             case MEJNI_PREHOD:
-                                 return prometSettings.getShowBorderCrossings();
-                             case REGIONALNA_CESTA:
-                                 return prometSettings.getShowRegionalneCeste();
-                             case LOKALNA_CESTA:
-                                 return prometSettings.getShowLokalneCeste();
-
-                             default:
-                                 return true;
-                         }
-                     }
-                 })
+                 .filter(new EventListFilter(prometSettings))
                  .toList()
                  .subscribe(new Subscriber<List<PrometEvent>>() {
 

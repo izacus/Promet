@@ -173,6 +173,7 @@ public class MainActivity extends FragmentActivity
         }
 
         EventBus.getDefault().post(new Events.UpdateMap());
+        EventBus.getDefault().post(new Events.UpdateEventList());
         return true;
     }
 

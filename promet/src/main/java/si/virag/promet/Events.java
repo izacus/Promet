@@ -25,4 +25,7 @@ public class Events {
     }
 
     public static class UpdateMap {}
+
+    public static class UpdateEventList {
+    }
 }
