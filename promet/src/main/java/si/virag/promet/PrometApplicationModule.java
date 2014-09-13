@@ -9,7 +9,7 @@ import si.virag.promet.utils.PrometSettings;
 import javax.inject.Singleton;
 
 @Module(
-        injects = { MapFragment.class },
+        injects = { MainActivity.class, MapFragment.class },
         complete = false
 )
 public class PrometApplicationModule {

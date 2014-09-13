@@ -7,6 +7,11 @@
         android:checkable="true" />
 
     <item
+        android:id="@+id/menu_map_crossings"
+        android:title="Mejni prehodi"
+        android:checkable="true" />
+
+    <item
         android:id="@+id/menu_map_regionalne_ceste"
         android:title="Regionalne ceste"
         android:titleCondensed="Reg. ceste"

@@ -6,6 +6,7 @@
     <string-array name="road_type_strings">
         <item>Avtoceste</item>
         <item>Hitre ceste</item>
+        <item>Mejni prehodi</item>
         <item>Regionalne ceste</item>
         <item>Lokalne ceste</item>
         <item>Ostalo</item>

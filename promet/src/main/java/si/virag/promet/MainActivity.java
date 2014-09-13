@@ -7,8 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.LinearLayout;
 import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
@@ -17,12 +16,18 @@ import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
+import si.virag.promet.utils.PrometSettings;
+
+import javax.inject.Inject;
 
 public class MainActivity extends FragmentActivity
 {
     private ViewPager pager;
     private PagerSlidingTabStrip tabs;
     private SystemBarTintManager tintManager;
+
+    @Inject PrometSettings prometSettings;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,7 @@ public class MainActivity extends FragmentActivity
         }
 
         super.onCreate(savedInstanceState);
+        ((PrometApplication)getApplication()).inject(this);
         Crashlytics.start(this);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_main);
@@ -122,6 +128,52 @@ public class MainActivity extends FragmentActivity
     protected void onDestroy() {
         super.onDestroy();
         Crouton.clearCroutonsForActivity(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_map, menu);
+
+        menu.findItem(R.id.menu_map_avtoceste).setChecked(prometSettings.getShowAvtoceste());
+        menu.findItem(R.id.menu_map_crossings).setChecked(prometSettings.getShowBorderCrossings());
+        menu.findItem(R.id.menu_map_lokalne_ceste).setChecked(prometSettings.getShowLokalneCeste());
+        menu.findItem(R.id.menu_map_regionalne_ceste).setChecked(prometSettings.getShowRegionalneCeste());
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (!item.isCheckable())
+            return false;
+
+        boolean enabled = !item.isChecked();
+        item.setChecked(enabled);
+
+        switch (item.getItemId()) {
+
+            case R.id.menu_map_avtoceste:
+                prometSettings.setShowAvtoceste(enabled);
+                break;
+
+            case R.id.menu_map_crossings:
+                prometSettings.setShowBorderCrossings(enabled);
+                break;
+
+            case R.id.menu_map_regionalne_ceste:
+                prometSettings.setShowRegionalneCeste(enabled);
+                break;
+
+            case R.id.menu_map_lokalne_ceste:
+                prometSettings.setShowLokalneCeste(enabled);
+                break;
+
+            default:
+                return false;
+        }
+
+        EventBus.getDefault().post(new Events.UpdateMap());
+        return true;
     }
 
     public void onEventMainThread(Events.RefreshStarted e) {

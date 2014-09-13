@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 public class PrometSettings {
 
     private static final String PREF_AVTOCESTE = "show.avtoceste";
+    private static final String PREF_BORDER_CROSSINGS = "show.prehodi";
     private static final String PREF_REGIONALNE_CESTE = "show.regionalne.ceste";
     private static final String PREF_LOKALNE_CESTE = "show.lokalne.ceste";
 
@@ -16,10 +17,12 @@ public class PrometSettings {
     private boolean showAvtoceste;
     private boolean showLokalneCeste;
     private boolean showRegionalneCeste;
+    private boolean showBorderCrossings;
 
     public PrometSettings(Context context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         showAvtoceste = preferences.getBoolean(PREF_AVTOCESTE, true);
+        showBorderCrossings = preferences.getBoolean(PREF_BORDER_CROSSINGS, true);
         showRegionalneCeste = preferences.getBoolean(PREF_REGIONALNE_CESTE, true);
         showLokalneCeste = preferences.getBoolean(PREF_LOKALNE_CESTE, true);
     }
@@ -51,5 +54,14 @@ public class PrometSettings {
         this.showRegionalneCeste = showRegionalneCeste;
         preferences.edit().putBoolean(PREF_REGIONALNE_CESTE, showRegionalneCeste).apply();
 
+    }
+
+    public boolean getShowBorderCrossings() {
+        return showBorderCrossings;
+    }
+
+    public void setShowBorderCrossings(boolean showBorderCrossings) {
+        this.showBorderCrossings = showBorderCrossings;
+        preferences.edit().putBoolean(PREF_BORDER_CROSSINGS, showBorderCrossings).apply();
     }
 }

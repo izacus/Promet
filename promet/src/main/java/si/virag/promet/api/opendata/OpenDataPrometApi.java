@@ -14,6 +14,7 @@ import si.virag.promet.api.PrometApi;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.PrometEvents;
 import si.virag.promet.api.model.RoadType;
+import si.virag.promet.fragments.ui.EventListSorter;
 
 import java.util.Date;
 import java.util.List;
@@ -36,7 +37,6 @@ public class OpenDataPrometApi extends PrometApi {
         RestAdapter adapter = new RestAdapter.Builder()
                                              .setEndpoint("http://www.opendata.si")
                                              .setConverter(new GsonConverter(gson))
-                                             .setLogLevel(RestAdapter.LogLevel.FULL)
                                              .build();
 
 
@@ -67,29 +67,23 @@ public class OpenDataPrometApi extends PrometApi {
                     @Override
                     public PrometEvent call(PrometEvent prometEvent) {
                         // Take first two letters of description and see if we can extract the road type from there.
-                        if (prometEvent.roadType == null && prometEvent.description != null) {
+                        if (prometEvent.isBorderCrossing || (prometEvent.roadType == null && prometEvent.description != null)) {
                             attemptAssignRoadType(prometEvent);
                         }
 
                         return prometEvent;
                     }
                 })
-                .toSortedList(new Func2<PrometEvent, PrometEvent, Integer>() {
-                    @Override
-                    public Integer call(PrometEvent lhs, PrometEvent rhs) {
-                        if (lhs.roadType == null)
-                            return rhs.roadType == null ? 0 : 1;
-
-                        if (rhs.roadType == null)
-                            return -1;
-
-                        return lhs.roadType.compareTo(rhs.roadType);
-                    }
-                })
+                .toSortedList(new EventListSorter())
                 .cache();
     }
 
     private void attemptAssignRoadType(PrometEvent prometEvent) {
+        if (prometEvent.isBorderCrossing) {
+            prometEvent.roadType = RoadType.MEJNI_PREHOD;
+            return;
+        }
+
         String letters = prometEvent.description.substring(0, 2);
         prometEvent.roadType = RoadTypeAdapter.typeMapping.get(letters);
 

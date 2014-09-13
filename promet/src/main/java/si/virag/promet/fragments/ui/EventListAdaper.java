@@ -2,6 +2,10 @@ package si.virag.promet.fragments.ui;
 
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,9 +59,18 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
 
         EventItemHolder holder = (EventItemHolder) v.getTag();
         PrometEvent event = data.get(position);
-        holder.titleView.setText(event.cause);
+
+        SpannableString titleText = new SpannableString(event.cause);
+        SpannableString locationText = new SpannableString(event.roadName);
+        if (event.isHighPriority()) {
+            int color = ctx.getResources().getColor(android.R.color.holo_red_dark);
+            titleText.setSpan(new ForegroundColorSpan(color), 0, titleText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            locationText.setSpan(new ForegroundColorSpan(color), 0, locationText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        holder.titleView.setText(titleText);
         holder.descriptionView.setText(event.description);
-        holder.locationView.setText(event.roadName);
+        holder.locationView.setText(locationText);
         holder.timeView.setVisibility(event.entered == null ? View.INVISIBLE : View.VISIBLE);
         holder.timeView.setText(event.entered == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.entered));
         return v;

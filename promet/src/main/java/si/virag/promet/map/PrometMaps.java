@@ -56,7 +56,10 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
             float markerColor = 0;
 
-            if (event.roadType == null) {
+            if (event.isHighPriority()) {
+                markerColor = BitmapDescriptorFactory.HUE_RED;
+            }
+            else if (event.roadType == null) {
                 markerColor = BitmapDescriptorFactory.HUE_ORANGE;
             }
             else {
@@ -66,6 +69,9 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                         break;
                     case HITRA_CESTA:
                         markerColor = BitmapDescriptorFactory.HUE_AZURE;
+                        break;
+                    case MEJNI_PREHOD:
+                        markerColor = BitmapDescriptorFactory.HUE_ORANGE;
                         break;
                     case REGIONALNA_CESTA:
                     case LOKALNA_CESTA:
@@ -79,7 +85,6 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                     .position(new LatLng(event.lat, event.lng))
                     .title(event.cause)
                     .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
-                    .alpha(1.0f - ((float) event.priority / 15.0f))
                     .snippet(event.roadName));
 
             markerIdMap.put(m, event.id);

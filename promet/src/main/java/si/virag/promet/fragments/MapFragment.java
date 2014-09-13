@@ -49,8 +49,6 @@ public class MapFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-
         // Dagger injection
         ((PrometApplication)getActivity().getApplication()).inject(this);
         MapsInitializer.initialize(getActivity());
@@ -88,6 +86,8 @@ public class MapFragment extends Fragment {
                              case AVTOCESTA:
                              case HITRA_CESTA:
                                  return prometSettings.getShowAvtoceste();
+                             case MEJNI_PREHOD:
+                                 return prometSettings.getShowBorderCrossings();
                              case REGIONALNA_CESTA:
                                  return prometSettings.getShowRegionalneCeste();
                              case LOKALNA_CESTA:
@@ -135,46 +135,6 @@ public class MapFragment extends Fragment {
         displayTrafficData();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_map, menu);
-
-        menu.findItem(R.id.menu_map_avtoceste).setChecked(prometSettings.getShowAvtoceste());
-        menu.findItem(R.id.menu_map_lokalne_ceste).setChecked(prometSettings.getShowLokalneCeste());
-        menu.findItem(R.id.menu_map_regionalne_ceste).setChecked(prometSettings.getShowRegionalneCeste());
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (!item.isCheckable())
-            return false;
-
-        boolean enabled = !item.isChecked();
-        item.setChecked(enabled);
-
-        switch (item.getItemId()) {
-
-            case R.id.menu_map_avtoceste:
-                prometSettings.setShowAvtoceste(enabled);
-                break;
-
-            case R.id.menu_map_regionalne_ceste:
-                prometSettings.setShowRegionalneCeste(enabled);
-                break;
-
-            case R.id.menu_map_lokalne_ceste:
-                prometSettings.setShowLokalneCeste(enabled);
-                break;
-
-            default:
-                return false;
-        }
-
-        displayTrafficData();
-        return true;
-    }
 
     @Override
     public void onStart() {

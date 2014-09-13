@@ -38,4 +38,11 @@ public class PrometEvent {
 
     @SerializedName("prioriteta")
     public int priority;
+
+    @SerializedName("isMejniPrehod")
+    public boolean isBorderCrossing;
+
+    public boolean isHighPriority() {
+        return "nesreča".equalsIgnoreCase(cause) || "zastoj".equalsIgnoreCase(cause);
+    }
 }
