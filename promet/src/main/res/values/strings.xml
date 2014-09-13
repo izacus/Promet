@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Promet</string>
+    <string name="app_name">SiTraffic</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_list">List</string>
 
     <string-array name="road_type_strings">
-        <item>Avtoceste</item>
-        <item>Hitre ceste</item>
-        <item>Mejni prehodi</item>
-        <item>Regionalne ceste</item>
-        <item>Lokalne ceste</item>
-        <item>Ostalo</item>
+        <item>Freeways</item>
+        <item>Freeways</item>
+        <item>Border Crossings</item>
+        <item>Regional Roads</item>
+        <item>Local Roads</item>
+        <item>Misc</item>
     </string-array>
 
 </resources>

@@ -32,11 +32,11 @@ public class PrometApplication extends Application {
     }
 
     public void checkUpdateLocale(Context ctx) {
-        Configuration c = ctx.getResources().getConfiguration();
+/*        Configuration c = ctx.getResources().getConfiguration();
         if (!c.locale.equals(locale)) {
             c.locale = locale;
             ctx.getResources().updateConfiguration(c, null);
-        }
+        } */
     }
 
 }

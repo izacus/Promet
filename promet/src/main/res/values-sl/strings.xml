@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">Promet</string>
+    <string name="tab_map">Zemljevid</string>
+    <string name="tab_list">Seznam</string>
 
     <string-array name="road_type_strings">
         <item>Avtoceste</item>

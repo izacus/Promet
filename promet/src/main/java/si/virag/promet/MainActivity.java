@@ -1,5 +1,6 @@
 package si.virag.promet;
 
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -61,15 +62,18 @@ public class MainActivity extends FragmentActivity
     }
 
     private void setupPages() {
-        pager.setAdapter(new MainPagesAdapter(getSupportFragmentManager()));
+        pager.setAdapter(new MainPagesAdapter(getResources(), getSupportFragmentManager()));
         tabs.setShouldExpand(true);
         tabs.setViewPager(pager);
     }
 
     private static class MainPagesAdapter extends FragmentPagerAdapter {
 
-        public MainPagesAdapter(FragmentManager fm) {
+        private final Resources res;
+
+        public MainPagesAdapter(Resources res, FragmentManager fm) {
             super(fm);
+            this.res = res;
         }
 
         @Override
@@ -98,9 +102,9 @@ public class MainActivity extends FragmentActivity
             switch (position)
             {
                 case 0:
-                    return "Zemljevid";
+                    return res.getString(R.string.tab_map);
                 case 1:
-                    return "Seznam";
+                    return res.getString(R.string.tab_list);
 
             }
 
