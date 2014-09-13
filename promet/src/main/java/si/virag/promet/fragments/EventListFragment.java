@@ -11,10 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.FrameLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import com.google.android.gms.maps.model.LatLng;
@@ -71,17 +68,20 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         View v = inflater.inflate(R.layout.fragment_list, container, false);
         ButterKnife.inject(this, v);
 
+        LinearLayout headerViewContainer = new LinearLayout(getActivity());
         headerView = new TextView(getActivity());
+        headerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         headerView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         headerView.setGravity(Gravity.CENTER);
         headerView.setPadding(0, (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4.0f, getResources().getDisplayMetrics()), 0, 0);
+        headerViewContainer.addView(headerView);
 
         SystemBarTintManager manager = ((MainActivity)getActivity()).getTintManager();
         list.setPadding(list.getPaddingTop(), list.getPaddingLeft(), list.getPaddingRight(), list.getPaddingBottom() + manager.getConfig().getPixelInsetBottom());
         list.setEmptyView(emptyView);
+        list.addHeaderView(headerViewContainer);
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
-        list.addHeaderView(headerView);
 
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
@@ -140,16 +140,16 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     private void updateHeaderView() {
-        list.removeHeaderView(headerView);
-
         if (prometSettings.getShowAvtoceste() &&
             prometSettings.getShowLokalneCeste() &&
             prometSettings.getShowBorderCrossings() &&
             prometSettings.getShowRegionalneCeste()) {
+
+            headerView.setVisibility(View.GONE);
             return;
         }
 
-        list.addHeaderView(headerView);
+        headerView.setVisibility(View.VISIBLE);
         String check = "\u2713";
         String cross = "\u2717";
 
