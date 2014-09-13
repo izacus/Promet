@@ -16,6 +16,7 @@ public class PrometPreferences extends PreferenceActivity implements SharedPrefe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActionBar().setTitle(R.string.app_name); // This is wrong if language was changed, so force change :)
         addPreferencesFromResource(R.xml.preferences);
 
         langPreference = (ListPreference) findPreference("app_lang");

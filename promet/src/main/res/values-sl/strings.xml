@@ -31,4 +31,10 @@
         <item>Angleščina</item>
     </string-array>
 
+    <string-array name="languages_values">
+        <item>default</item>
+        <item>sl-SI</item>
+        <item>en-US</item>
+    </string-array>
+
 </resources>

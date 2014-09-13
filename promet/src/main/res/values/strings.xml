@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SiTraffic</string>
+    <string name="app_name">SloTraffic</string>
     <string name="tab_map">Map</string>
     <string name="tab_list">List</string>
     <string name="settings">Nastavitve</string>

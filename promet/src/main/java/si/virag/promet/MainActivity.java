@@ -1,6 +1,7 @@
 package si.virag.promet;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,12 +42,16 @@ public class MainActivity extends FragmentActivity
             w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         ((PrometApplication)getApplication()).inject(this);
         Crashlytics.start(this);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_main);
+        // Fix actionbar name for other locales
+        getActionBar().setTitle(R.string.app_name);
+
+        // Set titlebar tint
         tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintColor(getResources().getColor(R.color.theme_color));
@@ -56,7 +61,12 @@ public class MainActivity extends FragmentActivity
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tabs.getLayoutParams();
-            params.setMargins(0, tintManager.getConfig().getPixelInsetTop(true), 0, 0);
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                params.setMargins(0, tintManager.getConfig().getPixelInsetTop(true), tintManager.getConfig().getPixelInsetRight(), 0);
+            }
+            else {
+                params.setMargins(0, tintManager.getConfig().getPixelInsetTop(true), 0, 0);
+            }
             tabs.setLayoutParams(params);
         }
 

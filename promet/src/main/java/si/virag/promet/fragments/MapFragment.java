@@ -1,5 +1,6 @@
 package si.virag.promet.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -102,8 +103,14 @@ public class MapFragment extends Fragment {
 
         GoogleMap map = mapView.getMap();
         // Fix padding for devices with transparent navigation bar
-        if (map != null)
-            map.setPadding(0, 0, 0, ((MainActivity)getActivity()).getTintManager().getConfig().getPixelInsetBottom());
+        if (map != null) {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                map.setPadding(0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetRight(), 0);
+            }
+            else {
+                map.setPadding(0, 0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetBottom());
+            }
+        }
 
         prometMaps.setMapInstance(getActivity(), map);
         displayTrafficData();
