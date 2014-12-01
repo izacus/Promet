@@ -2,6 +2,7 @@ package si.virag.promet.fragments;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.*;
@@ -15,6 +16,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -43,6 +45,9 @@ public class MapFragment extends Fragment {
     @Inject PrometMaps prometMaps;
     @Inject PrometSettings prometSettings;
 
+    @Nullable
+    private Subscription loadSubscription;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +68,7 @@ public class MapFragment extends Fragment {
         Crouton.clearCroutonsForActivity(getActivity());
         EventBus.getDefault().post(new Events.RefreshStarted());
 
-        prometApi.getPrometEvents()
+        loadSubscription = prometApi.getPrometEvents()
                  .subscribeOn(Schedulers.io())
                  .observeOn(AndroidSchedulers.mainThread())
                  .flatMap(new Func1<List<PrometEvent>, Observable<PrometEvent>>() {
@@ -79,6 +84,7 @@ public class MapFragment extends Fragment {
                      @Override
                      public void onCompleted() {
                          EventBus.getDefault().post(new Events.RefreshCompleted());
+                         loadSubscription = null;
                      }
 
                      @Override
@@ -133,6 +139,11 @@ public class MapFragment extends Fragment {
     public void onPause() {
         super.onPause();
         mapView.onPause();
+
+        if (loadSubscription != null) {
+            loadSubscription.unsubscribe();
+            loadSubscription = null;
+        }
     }
 
     @Override

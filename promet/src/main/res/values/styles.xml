@@ -1,20 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="PrometTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/PrometTheme.ActionBar</item>
+    <style name="PrometTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowBackground">@color/theme_background</item>
-    </style>
-
-    <style name="PrometTheme.ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/theme_color</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:titleTextStyle">@style/PrometTheme.ActionBar.TitleText</item>
-    </style>
-
-    <style name="PrometTheme.ActionBar.TitleText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title.Inverse">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textAllCaps">true</item>
+        <item name="colorPrimary">@color/theme_color</item>
+        <item name="colorPrimaryDark">@color/theme_color</item>
+        <item name="colorAccent">@color/theme_color_highlight</item>
     </style>
 
 </resources>

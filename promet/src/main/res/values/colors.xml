@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="theme_color">#000080</color>
+    <color name="theme_color">#283593</color>
+    <color name="theme_color_dark">#1a237e</color>
     <color name="theme_background">#F0F0F0</color>
+    <color name="theme_color_highlight">#b0120a</color>
 
     <color name="refresh_color_1">#00003D</color>
     <color name="refresh_color_2">#000080</color>

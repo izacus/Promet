@@ -22,6 +22,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -53,6 +54,9 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     @InjectView(R.id.events_empty) protected TextView emptyView;
 
     private TextView headerView;
+
+    @Nullable
+    private Subscription loadSubscription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,6 +98,15 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         loadEvents(false);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (loadSubscription != null) {
+            loadSubscription.unsubscribe();
+            loadSubscription = null;
+        }
+    }
+
     private void loadEvents(final boolean force)
     {
         refreshLayout.setRefreshing(true);
@@ -104,39 +117,40 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
             events = prometApi.getPrometEvents();
 
         Crouton.clearCroutonsForActivity(getActivity());
-        events.subscribeOn(Schedulers.io())
-              .observeOn(AndroidSchedulers.mainThread())
-              .flatMap(new Func1<List<PrometEvent>, Observable<PrometEvent>>() {
-                  @Override
-                  public Observable<PrometEvent> call(List<PrometEvent> prometEvents) {
-                      return Observable.from(prometEvents);
-                  }
-              })
-              .filter(new EventListFilter(prometSettings))
-              .toList()
-              .subscribe(new Subscriber<List<PrometEvent>>() {
-                  @Override
-                  public void onNext(List<PrometEvent> prometEvents) {
-                      updateHeaderView();
-                      adapter.setData(prometEvents);
+        loadSubscription = events.subscribeOn(Schedulers.io())
+                                  .observeOn(AndroidSchedulers.mainThread())
+                                  .flatMap(new Func1<List<PrometEvent>, Observable<PrometEvent>>() {
+                                      @Override
+                                      public Observable<PrometEvent> call(List<PrometEvent> prometEvents) {
+                                          return Observable.from(prometEvents);
+                                      }
+                                  })
+                                  .filter(new EventListFilter(prometSettings))
+                                  .toList()
+                                  .subscribe(new Subscriber<List<PrometEvent>>() {
+                                      @Override
+                                      public void onNext(List<PrometEvent> prometEvents) {
+                                          updateHeaderView();
+                                          adapter.setData(prometEvents);
 
-                      if (force)
-                          EventBus.getDefault().post(new Events.UpdateMap());
-                  }
+                                          if (force)
+                                              EventBus.getDefault().post(new Events.UpdateMap());
+                                      }
 
-                  @Override
-                  public void onCompleted() {
-                      refreshLayout.setRefreshing(false);
-                  }
+                                      @Override
+                                      public void onCompleted() {
+                                          refreshLayout.setRefreshing(false);
+                                          loadSubscription = null;
+                                      }
 
-                  @Override
-                  public void onError(Throwable throwable) {
-                      Log.e(LOG_TAG, "Error!", throwable);
-                      refreshLayout.setRefreshing(false);
-                      emptyView.setText("Podatkov ni bilo mogoče naložiti.");
-                      Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
-                  }
-              });
+                                      @Override
+                                      public void onError(Throwable throwable) {
+                                          Log.e(LOG_TAG, "Error!", throwable);
+                                          refreshLayout.setRefreshing(false);
+                                          emptyView.setText("Podatkov ni bilo mogoče naložiti.");
+                                          Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
+                                      }
+                                  });
     }
 
     private void updateHeaderView() {
@@ -153,11 +167,11 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         String check = "\u2713";
         String cross = "\u2717";
 
-        String text = String.format(getString(R.string.list_hint,
-                                    prometSettings.getShowAvtoceste() ? check : cross,
-                                    prometSettings.getShowBorderCrossings() ? check : cross,
-                                    prometSettings.getShowRegionalneCeste() ? check : cross,
-                                    prometSettings.getShowLokalneCeste() ? check : cross));
+        String text = getString(R.string.list_hint,
+                                prometSettings.getShowAvtoceste() ? check : cross,
+                                prometSettings.getShowBorderCrossings() ? check : cross,
+                                prometSettings.getShowRegionalneCeste() ? check : cross,
+                                prometSettings.getShowLokalneCeste() ? check : cross);
         headerView.setText(text);
     }
 
@@ -169,7 +183,8 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         // On item click we must focus the map on the event in previous fragment
-        PrometEvent event = (PrometEvent) adapter.getItem(position);
+        PrometEvent event = adapter.getEventById(id);
+        if (event == null) return;
         EventBus.getDefault().post(new Events.ShowPointOnMap(new LatLng(event.lat, event.lng)));
     }
 

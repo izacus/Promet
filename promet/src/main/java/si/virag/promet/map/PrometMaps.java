@@ -2,10 +2,16 @@ package si.virag.promet.map;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.Pair;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.*;
 import de.greenrobot.event.EventBus;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.utils.LocaleUtil;
@@ -18,6 +24,13 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     private static final LatLng MAP_CENTER = new LatLng(46.055556, 14.508333);
 
+    private static boolean markersInitialized = false;
+    private static BitmapDescriptor RED_MARKER;
+    private static BitmapDescriptor ORANGE_MARKER;
+    private static BitmapDescriptor GREEN_MARKER;
+    private static BitmapDescriptor YELLOW_MARKER;
+    private static BitmapDescriptor AZURE_MARKER;
+
     private GoogleMap map;
     private Map<Marker, Long> markerIdMap;
     private boolean isSlovenianLocale;
@@ -25,6 +38,9 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
     public void setMapInstance(Context ctx, GoogleMap gMap) {
         if (gMap == null)
             return;
+
+        if (!markersInitialized)
+            initializeMarkers();
 
         this.map = gMap;
         this.isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
@@ -48,6 +64,16 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     }
 
+    private void initializeMarkers() {
+        // Marker creation is really slow, so do it only once
+        RED_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+        ORANGE_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
+        GREEN_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+        YELLOW_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+        AZURE_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        markersInitialized = true;
+    }
+
     public void showEvents(List<PrometEvent> prometEvents) {
         if (map == null)
             return;
@@ -55,43 +81,52 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         map.clear();
         markerIdMap = new HashMap<>();
 
-        for (PrometEvent event : prometEvents) {
+        Observable.from(prometEvents)
+                  .map(new Func1<PrometEvent, Pair<Long, MarkerOptions>>() {
+                      @Override
+                      public Pair<Long, MarkerOptions> call(PrometEvent event) {
 
-            float markerColor = 0;
+                          BitmapDescriptor icon = null;
+                          if (event.isHighPriority()) {
+                              icon = RED_MARKER;
+                          }
+                          else if (event.roadType == null) {
+                              icon = ORANGE_MARKER;
+                          }
+                          else {
+                              switch (event.roadType) {
+                                  case AVTOCESTA:
+                                      icon = GREEN_MARKER;
+                                      break;
+                                  case HITRA_CESTA:
+                                      icon = AZURE_MARKER;
+                                      break;
+                                  case MEJNI_PREHOD:
+                                      icon = ORANGE_MARKER;
+                                      break;
+                                  case REGIONALNA_CESTA:
+                                  case LOKALNA_CESTA:
+                                      icon = YELLOW_MARKER;
+                                      break;
+                              }
+                          }
 
-            if (event.isHighPriority()) {
-                markerColor = BitmapDescriptorFactory.HUE_RED;
-            }
-            else if (event.roadType == null) {
-                markerColor = BitmapDescriptorFactory.HUE_ORANGE;
-            }
-            else {
-                switch (event.roadType) {
-                    case AVTOCESTA:
-                        markerColor = BitmapDescriptorFactory.HUE_GREEN;
-                        break;
-                    case HITRA_CESTA:
-                        markerColor = BitmapDescriptorFactory.HUE_AZURE;
-                        break;
-                    case MEJNI_PREHOD:
-                        markerColor = BitmapDescriptorFactory.HUE_ORANGE;
-                        break;
-                    case REGIONALNA_CESTA:
-                    case LOKALNA_CESTA:
-                        markerColor = BitmapDescriptorFactory.HUE_YELLOW;
-                        break;
-                }
-            }
-
-
-            Marker m = map.addMarker(new MarkerOptions()
-                    .position(new LatLng(event.lat, event.lng))
-                    .title(isSlovenianLocale ? event.cause : event.causeEn)
-                    .icon(BitmapDescriptorFactory.defaultMarker(markerColor))
-                    .snippet(event.roadName));
-
-            markerIdMap.put(m, event.id);
-        }
+                          return new Pair<>(event.id, new MarkerOptions()
+                                  .position(new LatLng(event.lat, event.lng))
+                                  .title(isSlovenianLocale ? event.cause : event.causeEn)
+                                  .icon(icon)
+                                  .snippet(event.roadName));
+                      }
+                  })
+                  .subscribeOn(Schedulers.computation())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .subscribe(new Action1<Pair<Long, MarkerOptions>>() {
+                      @Override
+                      public void call(Pair<Long, MarkerOptions> idMarkerPair) {
+                          Marker m = map.addMarker(idMarkerPair.second);
+                          markerIdMap.put(m, idMarkerPair.first);
+                      }
+                  });
     }
 
     public void showPoint(LatLng point) {

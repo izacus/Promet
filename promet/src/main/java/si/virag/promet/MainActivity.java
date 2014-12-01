@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.*;
 import android.widget.LinearLayout;
 import com.astuetz.PagerSlidingTabStrip;
@@ -24,7 +26,7 @@ import si.virag.promet.utils.PrometSettings;
 
 import javax.inject.Inject;
 
-public class MainActivity extends FragmentActivity
+public class MainActivity extends ActionBarActivity
 {
     private ViewPager pager;
     private PagerSlidingTabStrip tabs;
@@ -42,14 +44,17 @@ public class MainActivity extends FragmentActivity
             w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
+
+        supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         ((PrometApplication)getApplication()).inject(this);
         Crashlytics.start(this);
         setContentView(R.layout.activity_main);
         // Fix actionbar name for other locales
-        getActionBar().setTitle(R.string.app_name);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null)
+            ab.setTitle(R.string.app_name);
 
         // Set titlebar tint
         tintManager = new SystemBarTintManager(this);

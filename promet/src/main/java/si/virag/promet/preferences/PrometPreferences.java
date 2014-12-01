@@ -1,10 +1,12 @@
 package si.virag.promet.preferences;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
+
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
@@ -16,7 +18,10 @@ public class PrometPreferences extends PreferenceActivity implements SharedPrefe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setTitle(R.string.app_name); // This is wrong if language was changed, so force change :)
+        ActionBar ab = getActionBar();
+        if (ab != null)
+            ab.setTitle(R.string.app_name); // This is wrong if language was changed, so force change :)
+
         addPreferencesFromResource(R.xml.preferences);
 
         langPreference = (ListPreference) findPreference("app_lang");

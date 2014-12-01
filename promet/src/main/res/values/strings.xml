@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SloTraffic</string>
+    <string name="app_name">Traffic</string>
     <string name="tab_map">Map</string>
     <string name="tab_list">List</string>
-    <string name="settings">Nastavitve</string>
+    <string name="settings">Settings</string>
 
     <string name="freeways">Freeways</string>
     <string name="fast_roads">Freeways</string>

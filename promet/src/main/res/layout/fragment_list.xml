@@ -31,6 +31,7 @@
             android:fitsSystemWindows="true"
             android:clipToPadding="false"
             android:padding="8dp"
+            android:dividerHeight="0dp"
             />
 
     </android.support.v4.widget.SwipeRefreshLayout>

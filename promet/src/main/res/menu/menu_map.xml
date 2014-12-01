@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/menu_settings"
         android:title="@string/settings"
         android:icon="@drawable/ic_action_settings"
-        android:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menu_map_avtoceste"
         android:title="@string/freeways"
         android:checkable="true"
-        android:showAsAction="never"
+        app:showAsAction="never"
         />
 
     <item
         android:id="@+id/menu_map_crossings"
         android:title="@string/border_crossings"
         android:checkable="true"
-        android:showAsAction="never"
+        app:showAsAction="never"
 
         />
 
@@ -27,7 +29,7 @@
         android:title="@string/regional_roads"
         android:titleCondensed="Reg. ceste"
         android:checkable="true"
-        android:showAsAction="never"
+        app:showAsAction="never"
 
         />
 
@@ -36,7 +38,7 @@
         android:title="@string/local_roads"
         android:titleCondensed="Lok. ceste"
         android:checkable="true"
-        android:showAsAction="never"
-
+        app:showAsAction="never"
         />
+
 </menu>
