@@ -3,6 +3,7 @@ package si.virag.promet.fragments.ui;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -11,8 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import de.greenrobot.event.EventBus;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import si.virag.fuzzydatetime.FuzzyDateTimeFormatter;
+import si.virag.promet.Events;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.RoadType;
@@ -71,7 +77,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         }
 
         EventItemHolder holder = (EventItemHolder) v.getTag();
-        PrometEvent event = data.get(position);
+        final PrometEvent event = data.get(position);
 
         SpannableString titleText = new SpannableString(slovenianLocale ? event.cause : event.causeEn);
         SpannableString locationText = new SpannableString(event.roadName);
@@ -86,6 +92,12 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         holder.locationView.setText(locationText);
         holder.timeView.setVisibility(event.entered == null ? View.INVISIBLE : View.VISIBLE);
         holder.timeView.setText(event.entered == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.entered));
+        holder.card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new Events.ShowPointOnMap(new LatLng(event.lat, event.lng)));
+            }
+        });
         return v;
     }
 
@@ -131,12 +143,14 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
     }
 
     private static class EventItemHolder {
+        public CardView card;
         public TextView titleView;
         public TextView descriptionView;
         public TextView timeView;
         public TextView locationView;
 
         public EventItemHolder(View view) {
+            this.card = (CardView) view.findViewById(R.id.item_event_card);
             this.titleView = (TextView) view.findViewById(R.id.item_event_title);
             this.descriptionView = (TextView) view.findViewById(R.id.item_event_description);
             this.timeView = (TextView)view.findViewById(R.id.item_event_time);

@@ -5,6 +5,7 @@ import android.location.Location;
 import android.util.Pair;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.*;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -49,6 +50,11 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(MAP_CENTER, 7.0f));
         map.setTrafficEnabled(true);
         map.setIndoorEnabled(false);
+        UiSettings uiSettings = map.getUiSettings();
+        uiSettings.setZoomControlsEnabled(true);
+        uiSettings.setZoomGesturesEnabled(true);
+        uiSettings.setCompassEnabled(true);
+        uiSettings.setMyLocationButtonEnabled(true);
 
         map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override

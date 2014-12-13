@@ -1,8 +1,11 @@
 package si.virag.promet;
 
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -73,6 +76,12 @@ public class MainActivity extends ActionBarActivity
                 params.setMargins(0, tintManager.getConfig().getPixelInsetTop(true), 0, 0);
             }
             tabs.setLayoutParams(params);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_car);
+            ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(getString(R.string.app_name), icon, getResources().getColor(R.color.theme_color));
+            setTaskDescription(description);
         }
 
         setupPages();

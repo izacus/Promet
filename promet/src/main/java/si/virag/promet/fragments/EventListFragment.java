@@ -41,7 +41,7 @@ import si.virag.promet.utils.SubscriberAdapter;
 import javax.inject.Inject;
 import java.util.List;
 
-public class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
+public  class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = "Promet.EventList";
     private EventListAdaper adapter;
@@ -85,7 +85,6 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         list.setEmptyView(emptyView);
         list.addHeaderView(headerViewContainer);
         list.setAdapter(adapter);
-        list.setOnItemClickListener(this);
 
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
@@ -178,14 +177,6 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onRefresh() {
         loadEvents(true);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // On item click we must focus the map on the event in previous fragment
-        PrometEvent event = adapter.getEventById(id);
-        if (event == null) return;
-        EventBus.getDefault().post(new Events.ShowPointOnMap(new LatLng(event.lat, event.lng)));
     }
 
     @Override

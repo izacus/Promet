@@ -11,6 +11,8 @@ import butterknife.InjectView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+
 import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -106,20 +108,21 @@ public class MapFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap map) {
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    map.setPadding(0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetRight(), 0);
+                }
+                else {
+                    map.setPadding(0, 0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetBottom());
+                }
 
-        GoogleMap map = mapView.getMap();
-        // Fix padding for devices with transparent navigation bar
-        if (map != null) {
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                map.setPadding(0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetRight(), 0);
+                prometMaps.setMapInstance(getActivity(), map);
+                displayTrafficData();
             }
-            else {
-                map.setPadding(0, 0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetBottom());
-            }
-        }
+        });
 
-        prometMaps.setMapInstance(getActivity(), map);
-        displayTrafficData();
     }
 
 
