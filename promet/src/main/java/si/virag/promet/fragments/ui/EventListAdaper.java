@@ -59,13 +59,6 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         return data.get(position).id;
     }
 
-    public PrometEvent getEventById(long id) {
-        for (PrometEvent e : data) {
-            if (e.id == id) return e;
-        }
-
-        return null;
-    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

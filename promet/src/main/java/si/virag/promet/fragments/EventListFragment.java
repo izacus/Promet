@@ -41,7 +41,7 @@ import si.virag.promet.utils.SubscriberAdapter;
 import javax.inject.Inject;
 import java.util.List;
 
-public  class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = "Promet.EventList";
     private EventListAdaper adapter;
@@ -179,6 +179,7 @@ public  class EventListFragment extends Fragment implements SwipeRefreshLayout.O
         loadEvents(true);
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
@@ -193,7 +194,7 @@ public  class EventListFragment extends Fragment implements SwipeRefreshLayout.O
 
     public void onEventMainThread(Events.ShowEventInList e) {
         int position = adapter.getItemPosition(e.id);
-        list.smoothScrollToPosition(position);
+        list.smoothScrollToPosition(position + 1);
     }
 
     public void onEventMainThread(Events.UpdateEventList e) {
