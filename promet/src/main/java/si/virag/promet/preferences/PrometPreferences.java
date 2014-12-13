@@ -24,12 +24,12 @@ public class PrometPreferences extends PreferenceActivity implements SharedPrefe
 
         addPreferencesFromResource(R.xml.preferences);
 
-        langPreference = (ListPreference) findPreference("app_lang");
+        langPreference = (ListPreference) findPreference("app_language");
         langPreference.setSummary(langPreference.getEntry());
     }
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equalsIgnoreCase("app_lang")) {
+        if (key.equalsIgnoreCase("app_language")) {
             langPreference.setSummary(langPreference.getEntry());
             ((PrometApplication)getApplication()).checkUpdateLocale(this);
             finish();

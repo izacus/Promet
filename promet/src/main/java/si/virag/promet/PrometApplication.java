@@ -37,7 +37,7 @@ public class PrometApplication extends Application {
 
     public void checkUpdateLocale(Context ctx) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String language = prefs.getString("app_lang", "default");
+        String language = prefs.getString("app_language", "default");
         if (language.equalsIgnoreCase("default")) return;
 
         Configuration c = ctx.getResources().getConfiguration();
@@ -46,7 +46,7 @@ public class PrometApplication extends Application {
             Log.d(LOG_TAG, "Switching language to " + locale.getLanguage() + "-" + locale.getCountry());
             c.locale = locale;
             Locale.setDefault(locale);
-            ctx.getResources().updateConfiguration(c, null);
+            getBaseContext().getResources().updateConfiguration(c, getBaseContext().getResources().getDisplayMetrics());
         }
     }
 

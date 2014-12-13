@@ -40,7 +40,6 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((PrometApplication)getApplication()).checkUpdateLocale(getApplication());
         // Transluscent navigation
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow(); // in Activity's onCreate() for instance
@@ -50,6 +49,8 @@ public class MainActivity extends ActionBarActivity
 
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
+        ((PrometApplication)getApplication()).checkUpdateLocale(getApplication());
+
 
         ((PrometApplication)getApplication()).inject(this);
         Crashlytics.start(this);

@@ -55,6 +55,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         uiSettings.setZoomGesturesEnabled(true);
         uiSettings.setCompassEnabled(true);
         uiSettings.setMyLocationButtonEnabled(true);
+        uiSettings.setMapToolbarEnabled(false);
 
         map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override

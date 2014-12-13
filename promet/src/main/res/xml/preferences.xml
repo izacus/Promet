@@ -5,7 +5,7 @@
         android:title="@string/preferences_title">
 
         <ListPreference
-            android:key="app_lang"
+            android:key="app_language"
             android:title="@string/preferences_language"
             android:dialogTitle="@string/preferences_language_dialog"
             android:entries="@array/languages"
