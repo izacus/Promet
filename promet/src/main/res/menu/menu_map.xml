@@ -6,7 +6,7 @@
     <item
         android:id="@+id/menu_settings"
         android:title="@string/settings"
-        android:icon="@drawable/ic_action_settings"
+        android:icon="@drawable/ic_cog"
         app:showAsAction="ifRoom" />
 
     <item

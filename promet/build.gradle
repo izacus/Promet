@@ -19,12 +19,13 @@ repositories {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1.1'
+    buildToolsVersion '21.1.2'
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 4
         versionName "1.2"
+        resConfigs "en", "sl"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
