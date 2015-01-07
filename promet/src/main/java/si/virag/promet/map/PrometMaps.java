@@ -5,6 +5,7 @@ import android.location.Location;
 import android.util.Pair;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.*;
 import de.greenrobot.event.EventBus;
@@ -41,7 +42,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
             return;
 
         if (!markersInitialized)
-            initializeMarkers();
+            initializeMarkers(ctx);
 
         this.map = gMap;
         this.isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
@@ -71,7 +72,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     }
 
-    private void initializeMarkers() {
+    private void initializeMarkers(Context ctx) {
+        MapsInitializer.initialize(ctx.getApplicationContext());
         // Marker creation is really slow, so do it only once
         RED_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
         ORANGE_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE);
