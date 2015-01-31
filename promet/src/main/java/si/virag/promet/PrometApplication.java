@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import dagger.ObjectGraph;
 import si.virag.promet.api.opendata.OpenDataApiModule;
+import si.virag.promet.api.push.PushDataPrometApi;
+import si.virag.promet.gcm.RegistrationService;
 import si.virag.promet.map.MapModule;
 
 import java.util.Locale;
@@ -27,8 +29,11 @@ public class PrometApplication extends Application {
         graph = ObjectGraph.create(
                 OpenDataApiModule.class,
                 MapModule.class,
-                new PrometApplicationModule(this)
-        );
+                new PrometApplicationModule(this),
+                PushDataPrometApi.class
+                );
+
+        RegistrationService.scheduleGcmUpdate(this);
     }
 
     public void inject(Object object) {
