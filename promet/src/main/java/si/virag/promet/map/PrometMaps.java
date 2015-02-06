@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
-    private static final LatLng MAP_CENTER = new LatLng(46.055556, 14.508333);
+    public static final LatLng MAP_CENTER = new LatLng(46.055556, 14.508333);
 
     private static boolean markersInitialized = false;
     private static BitmapDescriptor RED_MARKER;

@@ -98,8 +98,6 @@ public class RegistrationService extends IntentService {
             String registrationId = gcm.register(GCM_ID);
             if (!currentGcmId.equals(registrationId)) {
                 prefs.edit().putBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, true)
-                            .putString(PREF_GCM_KEY, registrationId)
-                            .putInt(PREF_GCM_APP_VERSION, getAppVersion(getApplicationContext()))
                             .apply();
             }
 
@@ -133,7 +131,11 @@ public class RegistrationService extends IntentService {
             throw new IOException("Failed to push API key to server.", e);
         }
 
-        prefs.edit().putBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, false).apply();
+        prefs.edit()
+            .putBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, false)
+            .putString(PREF_GCM_KEY, gcmId)
+            .putInt(PREF_GCM_APP_VERSION, getAppVersion(getApplicationContext()))
+            .apply();
         Log.i(LOG_TAG, "GCM ID registered ok.");
     }
 
