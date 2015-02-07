@@ -39,6 +39,9 @@ public class PrometEvent {
     @SerializedName("prioriteta")
     public int priority;
 
+    @SerializedName("prioritetaCeste")
+    public int roadPriority;
+
     @SerializedName("isMejniPrehod")
     public boolean isBorderCrossing;
 

@@ -9,6 +9,8 @@ public class PushNotification extends RealmObject {
     private String causeEn;
     private String road;
     private String roadEn;
+    private int roadPriority;
+    private boolean isCrossing;
 
     private long created;
     private long validUntil;
@@ -19,16 +21,18 @@ public class PushNotification extends RealmObject {
     public PushNotification() {
     }
 
-    public PushNotification(long id, String cause, String causeEn, String road, String roadEn, long created, long validUntil, double lat, double lng) {
+    public PushNotification(long id, String cause, String causeEn, String road, String roadEn, int roadPriority, boolean isCrossing, long created, long validUntil, double lat, double lng) {
         this.id = id;
         this.cause = cause;
         this.causeEn = causeEn;
         this.road = road;
         this.roadEn = roadEn;
+        this.roadPriority = roadPriority;
         this.created = created;
         this.validUntil = validUntil;
         this.lat = lat;
         this.lng = lng;
+        this.isCrossing = isCrossing;
     }
 
     public long getId() {
@@ -101,5 +105,21 @@ public class PushNotification extends RealmObject {
 
     public void setLng(double lng) {
         this.lng = lng;
+    }
+
+    public int getRoadPriority() {
+        return roadPriority;
+    }
+
+    public void setRoadPriority(int roadPriority) {
+        this.roadPriority = roadPriority;
+    }
+
+    public boolean getIsCrossing() {
+        return isCrossing;
+    }
+
+    public void setIsCrossing(boolean isCrossing) {
+        this.isCrossing = isCrossing;
     }
 }

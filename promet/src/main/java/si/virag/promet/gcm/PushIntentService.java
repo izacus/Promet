@@ -7,15 +7,21 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.ConditionVariable;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,17 +43,35 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.exceptions.RealmMigrationNeededException;
 import si.virag.promet.R;
+import si.virag.promet.api.model.RoadType;
 import si.virag.promet.map.PrometMaps;
+import si.virag.promet.utils.DataUtils;
 
-public class PushIntentService extends IntentService {
+public class PushIntentService extends IntentService implements GoogleApiClient.ConnectionCallbacks, com.google.android.gms.location.LocationListener {
+
+    private static final int CURRENT_LOCATION_MAX_AGE_MS = 10 * 60 * 1000;
+    private static final int HIGHWAY_NOTIFICATION_DISTANCE = 200000;
+    private static final int REGIONAL_NOTIFICATION_DISTANCE = 30000;
+    private static final int LOCAL_NOTIFICATION_DISTANCE = 25000;
 
     private static final String LOG_TAG = "Promet.GCM.Receive";
+    private GoogleApiClient googleApiClient;
+
+    @Nullable
+    private Location currentLocation;
 
     public PushIntentService() {
         super("Push receiver");
     }
 
-    private Bitmap bmp;
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        googleApiClient = new GoogleApiClient.Builder(this)
+                            .addConnectionCallbacks(this)
+                            .addApi(LocationServices.API)
+                            .build();
+    }
 
     /**
      * [{"id":177103,"cause":"Delo na cesti","created":1422692083237,"validUntil":1422916200000,"y_wgs":45.92806862270888,"road":"R2-444, Selo - Nova Gorica","x_wgs":13.749834141365874,"causeEn":"Roadworks","roadEn":""},
@@ -93,6 +117,8 @@ public class PushIntentService extends IntentService {
                                                                      event.getString("causeEn"),
                                                                      event.getString("road"),
                                                                      event.getString("roadEn"),
+                                                                     event.getInt("roadPriority"),
+                                                                     event.getBoolean("isBorderCrossing"),
                                                                      event.getLong("created"),
                                                                      event.getLong("validUntil"),
                                                                      event.getDouble("y_wgs"),
@@ -117,6 +143,9 @@ public class PushIntentService extends IntentService {
     }
 
     private void showWaitingNotifications() {
+        // Clean up old / stale / out of date notifications.
+        filterNotifications();
+
         Realm realm = Realm.getInstance(this);
         realm.beginTransaction();
         RealmResults<PushNotification> notifications = realm.allObjectsSorted(PushNotification.class, "created", false);
@@ -141,7 +170,6 @@ public class PushIntentService extends IntentService {
         notification.setSmallIcon(R.drawable.ic_car);
         notification.setAutoCancel(true);
         notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        notification.setStyle(new NotificationCompat.BigPictureStyle(notification).bigPicture(bmp));
 
         Intent intent = new Intent(this, ClearNotificationsService.class);
         PendingIntent pi = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -211,8 +239,96 @@ public class PushIntentService extends IntentService {
                 notification.removeFromRealm();
             }
         }
+        realm.commitTransaction();
+
+        if (realm.allObjects(PushNotification.class).size() > 0)
+            googleApiClient.blockingConnect();
+
+        // Now get location
+        Calendar now = Calendar.getInstance();
+        if (currentLocation == null || now.getTimeInMillis() - currentLocation.getTime() > CURRENT_LOCATION_MAX_AGE_MS) {
+            // Wait 1 sec to try to get a location fix
+            waitForTime(1000);
+        }
+
+        if (currentLocation != null && now.getTimeInMillis() - currentLocation.getTime() <= CURRENT_LOCATION_MAX_AGE_MS ) {
+            filterNotificationsByDistance(realm, currentLocation);
+        }
+    }
+
+    private static void filterNotificationsByDistance(Realm realm, Location location) {
+        realm.beginTransaction();
+        float[] result = new float[1];
+        RealmResults<PushNotification> notifications = realm.allObjects(PushNotification.class);
+        for (int i = 0; i < notifications.size(); i++) {
+            PushNotification notification = notifications.get(i);
+            Location.distanceBetween(location.getLatitude(), location.getLongitude(), notification.getLat(), notification.getLng(), result);
+            Log.d(LOG_TAG, notification.getId() + " - Distance from current location: " + result[0]);
+
+            RoadType type = DataUtils.roadPriorityToRoadType(notification.getRoadPriority(), notification.getIsCrossing());
+            int maxDistance = Integer.MAX_VALUE;
+            switch (type) {
+                case MEJNI_PREHOD:
+                case AVTOCESTA:
+                case HITRA_CESTA:
+                    maxDistance = HIGHWAY_NOTIFICATION_DISTANCE;
+                    break;
+                case REGIONALNA_CESTA:
+                    maxDistance = REGIONAL_NOTIFICATION_DISTANCE;
+                    break;
+                case LOKALNA_CESTA:
+                    maxDistance = LOCAL_NOTIFICATION_DISTANCE;
+                    break;
+            }
+
+            if (result[0] > maxDistance) {
+                Log.d(LOG_TAG, "Filtering too far event " + result[0] + "/" + maxDistance + "[" + notification + "]");
+                notification.removeFromRealm();
+            }
+        }
 
         realm.commitTransaction();
     }
 
+    private void waitForTime(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (googleApiClient.isConnected() || googleApiClient.isConnecting())
+            googleApiClient.disconnect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        Log.d(LOG_TAG, "Current location: " + currentLocation);
+        startLocationRequests();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    private void startLocationRequests() {
+        LocationRequest lr = LocationRequest.create();
+        lr.setNumUpdates(1);
+        lr.setExpirationDuration(1000);
+        lr.setPriority(LocationRequest.PRIORITY_NO_POWER);
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, lr, this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(LOG_TAG, "Location update: " + location);
+        currentLocation = location;
+    }
 }

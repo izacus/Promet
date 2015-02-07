@@ -1,7 +1,5 @@
 package si.virag.promet.api.opendata;
 
-
-import android.util.Log;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,19 +7,19 @@ import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 import rx.Observable;
 import rx.functions.Func1;
-import rx.functions.Func2;
 import si.virag.promet.api.PrometApi;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.PrometEvents;
 import si.virag.promet.api.model.RoadType;
 import si.virag.promet.fragments.ui.EventListSorter;
+import si.virag.promet.utils.DataUtils;
 
 import java.util.Date;
 import java.util.List;
 
 public class OpenDataPrometApi extends PrometApi {
 
-    private static final String LOG_TAG = "Promet.OpenDataPrometApi";
+    private static final String LOG_TAG = "Promet.OpenDataApi";
     private final OpenDataApi openDataApi;
 
     private Observable<List<PrometEvent>> prometEventsObserver;
@@ -68,7 +66,7 @@ public class OpenDataPrometApi extends PrometApi {
                     public PrometEvent call(PrometEvent prometEvent) {
                         // Take first two letters of description and see if we can extract the road type from there.
                         if (prometEvent.isBorderCrossing || (prometEvent.roadType == null && prometEvent.description != null)) {
-                            attemptAssignRoadType(prometEvent);
+                            prometEvent.roadType = DataUtils.roadPriorityToRoadType(prometEvent.roadPriority, prometEvent.isBorderCrossing);
                         }
 
                         return prometEvent;
@@ -76,31 +74,5 @@ public class OpenDataPrometApi extends PrometApi {
                 })
                 .toSortedList(new EventListSorter())
                 .cache();
-    }
-
-    private void attemptAssignRoadType(PrometEvent prometEvent) {
-        if (prometEvent.isBorderCrossing) {
-            prometEvent.roadType = RoadType.MEJNI_PREHOD;
-            return;
-        }
-
-        String letters = prometEvent.description.substring(0, 2);
-        prometEvent.roadType = RoadTypeAdapter.typeMapping.get(letters);
-
-        if (prometEvent.roadType == null) {
-            // See if we can use some heuroistics
-            String description = prometEvent.description.toLowerCase();
-            if (description.startsWith("na avtocesti"))
-                prometEvent.roadType = RoadType.AVTOCESTA;
-            else if (description.contains("obvoznici"))
-                prometEvent.roadType = RoadType.HITRA_CESTA;
-            else if (description.contains("avtocestn") && description.contains("odsek"))
-                prometEvent.roadType = RoadType.AVTOCESTA;
-            else if (description.contains("občina"))
-                prometEvent.roadType = RoadType.LOKALNA_CESTA;
-        }
-
-        if (prometEvent.roadType != null)
-            Log.d(LOG_TAG, "Assigned " + prometEvent.roadType + " for " + prometEvent.description);
     }
 }
