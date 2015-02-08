@@ -293,11 +293,11 @@ public class MainActivity extends ActionBarActivity
     }
 
     public void onEventMainThread(Events.RefreshStarted e) {
-        setProgressBarIndeterminateVisibility(true);
+        setSupportProgressBarIndeterminateVisibility(true);
     }
 
     public void onEventMainThread(Events.RefreshCompleted e) {
-        setProgressBarIndeterminateVisibility(false);
+        setSupportProgressBarIndeterminateVisibility(false);
     }
 
     public void onEventMainThread(Events.ShowPointOnMap e) {
