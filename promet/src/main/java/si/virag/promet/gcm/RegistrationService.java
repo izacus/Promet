@@ -114,6 +114,8 @@ public class RegistrationService extends IntentService {
             } else {
                 Log.w(LOG_TAG, "GCM registration delay limit reached, giving up.");
             }
+        } finally {
+            PushBroadcastReceiver.completeWakefulIntent(intent);
         }
     }
 
