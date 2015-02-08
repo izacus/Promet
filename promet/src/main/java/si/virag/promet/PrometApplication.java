@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.util.Locale;
 
+import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.gcm.RegistrationService;
 import si.virag.promet.map.LocationModule;
 
@@ -26,6 +27,7 @@ public class PrometApplication extends Application {
         component = Dagger_PrometComponent.builder()
                                           .prometApplicationModule(new PrometApplicationModule(this))
                                           .locationModule(new LocationModule(this))
+                                          .pushDataPrometApi(new PushDataPrometApi(this))
                                           .build();
         RegistrationService.scheduleGcmUpdate(this);
     }
