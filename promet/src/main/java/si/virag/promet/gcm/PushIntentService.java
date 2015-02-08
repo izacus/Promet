@@ -4,31 +4,16 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
-import android.os.ConditionVariable;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,12 +24,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.realm.Realm;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.exceptions.RealmMigrationNeededException;
 import si.virag.promet.R;
 import si.virag.promet.api.model.RoadType;
-import si.virag.promet.map.PrometMaps;
 import si.virag.promet.utils.DataUtils;
 
 public class PushIntentService extends IntentService implements GoogleApiClient.ConnectionCallbacks, com.google.android.gms.location.LocationListener {

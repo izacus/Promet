@@ -9,25 +9,30 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
+
 import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+
+import javax.inject.Inject;
+
 import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.preferences.PrometPreferences;
 import si.virag.promet.utils.PrometSettings;
-
-import javax.inject.Inject;
 
 public class MainActivity extends ActionBarActivity
 {
@@ -47,12 +52,13 @@ public class MainActivity extends ActionBarActivity
             w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
+        PrometApplication application = (PrometApplication) getApplication();
+        application.checkUpdateLocale(this);
+
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-        ((PrometApplication)getApplication()).checkUpdateLocale(getApplication());
+        application.component().inject(this);
 
-
-        ((PrometApplication)getApplication()).inject(this);
         Crashlytics.start(this);
         setContentView(R.layout.activity_main);
         // Fix actionbar name for other locales

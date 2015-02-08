@@ -2,12 +2,8 @@ package si.virag.promet.map;
 
 import dagger.Module;
 import dagger.Provides;
-import si.virag.promet.fragments.MapFragment;
 
-@Module(
-        injects = MapFragment.class,
-        complete = false
-)
+@Module
 public class MapModule {
 
     static PrometMaps maps = new PrometMaps();

@@ -5,14 +5,21 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.*;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -31,9 +38,6 @@ import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.fragments.ui.EventListFilter;
 import si.virag.promet.map.PrometMaps;
 import si.virag.promet.utils.PrometSettings;
-
-import javax.inject.Inject;
-import java.util.List;
 
 public class MapFragment extends Fragment {
 
@@ -54,7 +58,8 @@ public class MapFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Dagger injection
-        ((PrometApplication)getActivity().getApplication()).inject(this);
+        PrometApplication application = (PrometApplication) getActivity().getApplication();
+        application.component().inject(this);
         MapsInitializer.initialize(getActivity());
     }
 

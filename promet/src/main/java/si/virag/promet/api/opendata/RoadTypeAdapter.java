@@ -4,11 +4,12 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import si.virag.promet.api.model.RoadType;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import si.virag.promet.api.model.RoadType;
 
 public class RoadTypeAdapter extends TypeAdapter<RoadType> {
 

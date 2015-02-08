@@ -13,12 +13,8 @@ import retrofit.converter.Converter;
 import retrofit.mime.TypedInput;
 import retrofit.mime.TypedOutput;
 import retrofit.mime.TypedString;
-import si.virag.promet.gcm.RegistrationService;
 
-@Module(
-        injects = RegistrationService.class,
-        complete = false
-)
+@Module
 public class PushDataPrometApi implements Converter {
 
     private final RestAdapter adapter;

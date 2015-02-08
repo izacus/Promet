@@ -75,7 +75,8 @@ public class RegistrationService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        ((PrometApplication)getApplication()).inject(this);
+        PrometApplication app = (PrometApplication) getApplication();
+        app.component().inject(this);
     }
 
     /**

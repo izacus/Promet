@@ -6,38 +6,30 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import dagger.ObjectGraph;
-import si.virag.promet.api.opendata.OpenDataApiModule;
-import si.virag.promet.api.push.PushDataPrometApi;
-import si.virag.promet.gcm.RegistrationService;
-import si.virag.promet.map.MapModule;
 
 import java.util.Locale;
+
+import si.virag.promet.gcm.RegistrationService;
 
 public class PrometApplication extends Application {
     private static final String LOG_TAG = "Promet";
 
     public static Locale locale = null;
-
-    private ObjectGraph graph;
+    private PrometComponent component;
 
     @Override
     public void onCreate() {
         checkUpdateLocale(this);
         super.onCreate();
 
-        graph = ObjectGraph.create(
-                OpenDataApiModule.class,
-                MapModule.class,
-                new PrometApplicationModule(this),
-                PushDataPrometApi.class
-                );
-
+        component = Dagger_PrometComponent.builder()
+                                          .prometApplicationModule(new PrometApplicationModule(this))
+                                          .build();
         RegistrationService.scheduleGcmUpdate(this);
     }
 
-    public void inject(Object object) {
-        graph.inject(object);
+    public PrometComponent component() {
+        return component;
     }
 
     public void checkUpdateLocale(Context ctx) {

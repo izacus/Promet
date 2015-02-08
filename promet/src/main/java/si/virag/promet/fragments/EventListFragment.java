@@ -3,7 +3,6 @@ package si.virag.promet.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.util.TypedValue;
@@ -11,12 +10,17 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.readystatesoftware.systembartint.SystemBarTintManager;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.common.collect.ImmutableList;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
@@ -36,10 +40,6 @@ import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.fragments.ui.EventListAdaper;
 import si.virag.promet.fragments.ui.EventListFilter;
 import si.virag.promet.utils.PrometSettings;
-import si.virag.promet.utils.SubscriberAdapter;
-
-import javax.inject.Inject;
-import java.util.List;
 
 public class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -62,7 +62,8 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         adapter = new EventListAdaper(getActivity());
-        ((PrometApplication) getActivity().getApplication()).inject(this);
+        PrometApplication application = (PrometApplication) getActivity().getApplication();
+        application.component().inject(this);
     }
 
     @Nullable

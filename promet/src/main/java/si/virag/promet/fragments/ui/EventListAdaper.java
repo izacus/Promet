@@ -2,7 +2,6 @@ package si.virag.promet.fragments.ui;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -15,6 +14,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.greenrobot.event.EventBus;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import si.virag.fuzzydatetime.FuzzyDateTimeFormatter;
@@ -23,10 +25,6 @@ import si.virag.promet.R;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.RoadType;
 import si.virag.promet.utils.LocaleUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class EventListAdaper extends BaseAdapter implements StickyListHeadersAdapter {
 

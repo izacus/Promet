@@ -3,6 +3,10 @@ package si.virag.promet.api.opendata;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.util.Date;
+import java.util.List;
+
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 import rx.Observable;
@@ -13,9 +17,6 @@ import si.virag.promet.api.model.PrometEvents;
 import si.virag.promet.api.model.RoadType;
 import si.virag.promet.fragments.ui.EventListSorter;
 import si.virag.promet.utils.DataUtils;
-
-import java.util.Date;
-import java.util.List;
 
 public class OpenDataPrometApi extends PrometApi {
 

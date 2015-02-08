@@ -3,11 +3,21 @@ package si.virag.promet.map;
 import android.content.Context;
 import android.location.Location;
 import android.util.Pair;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.*;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -17,10 +27,6 @@ import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.utils.LocaleUtil;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
