@@ -49,4 +49,25 @@
         <item>en</item>
     </string-array>
 
+    <plurals name="notifications_multiple_title">
+        <item quantity="one">En nov dogodek</item>
+        <item quantity="two">%d nova dogodka</item>
+        <item quantity="few">%d novi dogodki</item>
+        <item quantity="other">%d novih dogodkov</item>
+    </plurals>
+
+    <plurals name="notifications_multiple_ticker">
+        <item quantity="one">En nov prometen dogodek</item>
+        <item quantity="two">%d nova prometna dogodka</item>
+        <item quantity="few">%d novi prometni dogodki</item>
+        <item quantity="other">%d novih prometnih dogodkov</item>
+    </plurals>
+
+    <plurals name="notifications_multiple_summary">
+        <item quantity="one">… in še en.</item>
+        <item quantity="two">… in še %d.</item>
+        <item quantity="few">… in še %d.</item>
+        <item quantity="other">… in še %d.</item>
+    </plurals>
+
 </resources>
