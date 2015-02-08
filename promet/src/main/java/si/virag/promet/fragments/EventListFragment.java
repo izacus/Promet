@@ -135,6 +135,14 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
                                           updateHeaderView();
                                           adapter.setData(prometEvents);
 
+                                          // We might have a scroll event pending, execute it now.
+                                          Events.ShowEventInList eventInList = EventBus.getDefault().getStickyEvent(Events.ShowEventInList.class);
+                                          if (eventInList != null) {
+                                              int position = adapter.getItemPosition(eventInList.id);
+                                              list.smoothScrollToPosition(position + 1);
+                                              EventBus.getDefault().removeStickyEvent(eventInList);
+                                          }
+
                                           if (force)
                                               EventBus.getDefault().post(new Events.UpdateMap());
                                       }
@@ -196,21 +204,11 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     public void onEventMainThread(final Events.ShowEventInList e) {
-        int delay = 0;
-        if (adapter.getCount() == 0) {
-            delay = 1000;
-        }
+        int position = adapter.getItemPosition(e.id);
+        list.smoothScrollToPosition(position + 1);
 
-        Handler h = new Handler(Looper.getMainLooper());
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                int position = adapter.getItemPosition(e.id);
-                list.smoothScrollToPosition(position + 1);
-                EventBus.getDefault().removeStickyEvent(e);
-            }
-        }, delay);
-
+        if (adapter.getCount() > 0)
+            EventBus.getDefault().removeStickyEvent(e);
     }
 
     public void onEventMainThread(Events.UpdateEventList e) {
