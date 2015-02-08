@@ -21,34 +21,19 @@ import retrofit.converter.Converter;
 import retrofit.mime.TypedInput;
 import retrofit.mime.TypedOutput;
 import retrofit.mime.TypedString;
+import si.virag.promet.utils.DataUtils;
 
 @Module
 public class PushDataPrometApi implements Converter {
 
     private final RestAdapter adapter;
 
-    public PushDataPrometApi(Context context) {
-        int appVersion = 0;
-
-        try {
-            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            appVersion = pInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            Crashlytics.logException(e);
-        }
-
-        final String header = String.format("Promet/%d %s/%s/%s Android %s/%d (%s)", appVersion,
-                Build.MANUFACTURER,
-                Build.MODEL,
-                Build.DEVICE,
-                Build.VERSION.RELEASE,
-                Build.VERSION.SDK_INT,
-                Build.FINGERPRINT);
-
+    public PushDataPrometApi(final Context context) {
+        final String userAgent = DataUtils.getUserAgent(context);
         RequestInterceptor ri = new RequestInterceptor() {
             @Override
             public void intercept(RequestFacade request) {
-                request.addHeader("User-Agent", header);
+                request.addHeader("User-Agent", userAgent);
             }
         };
 

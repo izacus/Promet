@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.util.Locale;
 
+import si.virag.promet.api.opendata.OpenDataApiModule;
 import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.gcm.RegistrationService;
 import si.virag.promet.map.LocationModule;
@@ -28,6 +29,7 @@ public class PrometApplication extends Application {
                                           .prometApplicationModule(new PrometApplicationModule(this))
                                           .locationModule(new LocationModule(this))
                                           .pushDataPrometApi(new PushDataPrometApi(this))
+                                          .openDataApiModule(new OpenDataApiModule(this))
                                           .build();
         RegistrationService.scheduleGcmUpdate(this);
     }

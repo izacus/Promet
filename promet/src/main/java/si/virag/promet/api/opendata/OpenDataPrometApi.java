@@ -1,5 +1,7 @@
 package si.virag.promet.api.opendata;
 
+import android.content.Context;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import java.util.Date;
 import java.util.List;
 
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 import rx.Observable;
@@ -25,7 +28,15 @@ public class OpenDataPrometApi extends PrometApi {
 
     private Observable<List<PrometEvent>> prometEventsObserver;
 
-    public OpenDataPrometApi() {
+    public OpenDataPrometApi(Context context) {
+
+        final String userAgent = DataUtils.getUserAgent(context);
+        RequestInterceptor ri = new RequestInterceptor() {
+            @Override
+            public void intercept(RequestFacade request) {
+                request.addHeader("User-Agent", userAgent);
+            }
+        };
 
         Gson gson = new GsonBuilder()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -35,6 +46,7 @@ public class OpenDataPrometApi extends PrometApi {
 
         RestAdapter adapter = new RestAdapter.Builder()
                                              .setEndpoint("http://www.opendata.si")
+                                             .setRequestInterceptor(ri)
                                              .setConverter(new GsonConverter(gson))
                                              .build();
 
