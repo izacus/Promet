@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import si.virag.promet.map.LocationModule;
 import si.virag.promet.utils.PrometSettings;
 
 @Module
@@ -20,4 +21,7 @@ public class PrometApplicationModule {
     @Provides @Singleton PrometSettings provideSettings() {
         return new PrometSettings(ctx);
     }
+
+    @Provides @Singleton
+    LocationModule provideLocation() { return new LocationModule(ctx); }
 }

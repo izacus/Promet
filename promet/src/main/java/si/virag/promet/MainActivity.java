@@ -36,6 +36,8 @@ import si.virag.promet.utils.PrometSettings;
 
 public class MainActivity extends ActionBarActivity
 {
+    public static final String PARAM_SHOW_LIST = "ShowList";
+
     private ViewPager pager;
     private PagerSlidingTabStrip tabs;
     private SystemBarTintManager tintManager;
@@ -91,13 +93,25 @@ public class MainActivity extends ActionBarActivity
             setTaskDescription(description);
         }
 
-        setupPages();
+        setupPages(getIntent().getBooleanExtra(PARAM_SHOW_LIST, false));
     }
 
-    private void setupPages() {
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra(PARAM_SHOW_LIST, false)) {
+            pager.setCurrentItem(1, true);
+        }
+    }
+
+    private void setupPages(boolean showList) {
         pager.setAdapter(new MainPagesAdapter(getResources(), getSupportFragmentManager()));
         tabs.setShouldExpand(true);
         tabs.setViewPager(pager);
+
+        if (showList) {
+            pager.setCurrentItem(1);
+        }
     }
 
     private static class MainPagesAdapter extends FragmentPagerAdapter {

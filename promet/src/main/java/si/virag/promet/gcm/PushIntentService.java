@@ -23,22 +23,21 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.exceptions.RealmMigrationNeededException;
+import si.virag.promet.MainActivity;
+import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.model.RoadType;
 import si.virag.promet.utils.DataUtils;
 
-public class PushIntentService extends IntentService implements GoogleApiClient.ConnectionCallbacks, com.google.android.gms.location.LocationListener {
-
-    private static final int CURRENT_LOCATION_MAX_AGE_MS = 10 * 60 * 1000;
-    private static final int HIGHWAY_NOTIFICATION_DISTANCE = 200000;
-    private static final int REGIONAL_NOTIFICATION_DISTANCE = 30000;
-    private static final int LOCAL_NOTIFICATION_DISTANCE = 25000;
-
+public class PushIntentService extends IntentService {
     private static final String LOG_TAG = "Promet.GCM.Receive";
-    private GoogleApiClient googleApiClient;
+
+    @Inject NotificationStorageModule storage;
 
     @Nullable
     private Location currentLocation;
@@ -50,10 +49,8 @@ public class PushIntentService extends IntentService implements GoogleApiClient.
     @Override
     public void onCreate() {
         super.onCreate();
-        googleApiClient = new GoogleApiClient.Builder(this)
-                            .addConnectionCallbacks(this)
-                            .addApi(LocationServices.API)
-                            .build();
+        PrometApplication app = (PrometApplication) getApplication();
+        app.component().inject(this);
     }
 
     /**
@@ -77,58 +74,14 @@ public class PushIntentService extends IntentService implements GoogleApiClient.
             return;
         }
 
-        String events = extras.getString("events");
+        storage.storeIncomingEvents(this, extras.getString("events"));
+        storage.filterNotifications(this);
+        showWaitingNotifications();
 
-        try {
-            JSONArray eventArray = new JSONArray(events);
-
-            // Store events to db
-            Realm realm;
-            try {
-                realm = Realm.getInstance(this);
-            } catch (RealmMigrationNeededException e) {
-                Realm.deleteRealmFile(this);
-                realm = Realm.getInstance(this);
-            }
-
-            realm.beginTransaction();
-
-            for (int i = 0; i < eventArray.length(); i++) {
-                JSONObject event = eventArray.getJSONObject(i);
-                PushNotification notification = new PushNotification(event.getLong("id"),
-                                                                     event.getString("cause"),
-                                                                     event.getString("causeEn"),
-                                                                     event.getString("road"),
-                                                                     event.getString("roadEn"),
-                                                                     event.getInt("roadPriority"),
-                                                                     event.getBoolean("isBorderCrossing"),
-                                                                     event.getLong("created"),
-                                                                     event.getLong("validUntil"),
-                                                                     event.getDouble("y_wgs"),
-                                                                     event.getDouble("x_wgs"));
-
-                // Check if notification already exists
-                PushNotification notifs = null;
-//                PushNotification notifs = realm.where(PushNotification.class).equalTo("id", notification.getId()).findFirst();
-                if (notifs == null) realm.copyToRealm(notification);
-            }
-
-            realm.commitTransaction();
-            realm.close();
-            Log.d(LOG_TAG, "Got new push events.");
-            showWaitingNotifications();
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Failed to parse GCM message.", e);
-        }
-        finally {
-            PushBroadcastReceiver.completeWakefulIntent(intent);
-        }
-    }
+        PushBroadcastReceiver.completeWakefulIntent(intent);
+}
 
     private void showWaitingNotifications() {
-        // Clean up old / stale / out of date notifications.
-        filterNotifications();
-
         Realm realm = Realm.getInstance(this);
         realm.beginTransaction();
         RealmResults<PushNotification> notifications = realm.allObjectsSorted(PushNotification.class, "created", false);
@@ -154,9 +107,22 @@ public class PushIntentService extends IntentService implements GoogleApiClient.
         notification.setAutoCancel(true);
         notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-        Intent intent = new Intent(this, ClearNotificationsService.class);
-        PendingIntent pi = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (pushNotification.getDescription() != null && pushNotification.getDescription().length() > 0) {
+            NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(notification);
+            style.setBigContentTitle(pushNotification.getCause());
+            style.bigText(pushNotification.getDescription());
+            style.setSummaryText(pushNotification.getRoad());
+            notification.setStyle(style);
+        }
+
+        Intent clearIntent = new Intent(this, ClearNotificationsService.class);
+        PendingIntent pi = PendingIntent.getService(this, 0, clearIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setDeleteIntent(pi);
+
+        Intent tapIntent = new Intent(this, MainActivity.class);
+        tapIntent.putExtra(MainActivity.PARAM_SHOW_LIST, true);
+        PendingIntent tpi = PendingIntent.getActivity(this, 0, tapIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(tpi);
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.notify(0, notification.build());
@@ -200,118 +166,16 @@ public class PushIntentService extends IntentService implements GoogleApiClient.
         notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         notification.setAutoCancel(true);
 
-        Intent intent = new Intent(this, ClearNotificationsService.class);
-        PendingIntent pi = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent clearIntent = new Intent(this, ClearNotificationsService.class);
+        PendingIntent pi = PendingIntent.getService(this, 0, clearIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setDeleteIntent(pi);
+
+        Intent tapIntent = new Intent(this, MainActivity.class);
+        tapIntent.putExtra(MainActivity.PARAM_SHOW_LIST, true);
+        PendingIntent tpi = PendingIntent.getActivity(this, 0, tapIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(tpi);
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.notify(0, notification.build());
-    }
-
-
-    private void filterNotifications() {
-        Realm realm = Realm.getInstance(this);
-        long currentTime = Calendar.getInstance().getTimeInMillis();
-
-        realm.beginTransaction();
-        RealmResults<PushNotification> notifications = realm.allObjects(PushNotification.class);
-        for (int i = 0; i < notifications.size(); i++) {
-            PushNotification notification = notifications.get(i);
-            if (notification.getValidUntil() < currentTime) {
-                Log.d(LOG_TAG, "Clearing expired notification " + notification);
-                notification.removeFromRealm();
-            }
-        }
-        realm.commitTransaction();
-
-        if (realm.allObjects(PushNotification.class).size() > 0)
-            googleApiClient.blockingConnect();
-
-        // Now get location
-        Calendar now = Calendar.getInstance();
-        if (currentLocation == null || now.getTimeInMillis() - currentLocation.getTime() > CURRENT_LOCATION_MAX_AGE_MS) {
-            // Wait 1 sec to try to get a location fix
-            waitForTime(1000);
-        }
-
-        if (currentLocation != null && now.getTimeInMillis() - currentLocation.getTime() <= CURRENT_LOCATION_MAX_AGE_MS ) {
-            filterNotificationsByDistance(realm, currentLocation);
-        }
-    }
-
-    private static void filterNotificationsByDistance(Realm realm, Location location) {
-        realm.beginTransaction();
-        float[] result = new float[1];
-        RealmResults<PushNotification> notifications = realm.allObjects(PushNotification.class);
-        for (int i = 0; i < notifications.size(); i++) {
-            PushNotification notification = notifications.get(i);
-            Location.distanceBetween(location.getLatitude(), location.getLongitude(), notification.getLat(), notification.getLng(), result);
-            Log.d(LOG_TAG, notification.getId() + " - Distance from current location: " + result[0]);
-
-            RoadType type = DataUtils.roadPriorityToRoadType(notification.getRoadPriority(), notification.getIsCrossing());
-            int maxDistance = Integer.MAX_VALUE;
-            switch (type) {
-                case MEJNI_PREHOD:
-                case AVTOCESTA:
-                case HITRA_CESTA:
-                    maxDistance = HIGHWAY_NOTIFICATION_DISTANCE;
-                    break;
-                case REGIONALNA_CESTA:
-                    maxDistance = REGIONAL_NOTIFICATION_DISTANCE;
-                    break;
-                case LOKALNA_CESTA:
-                    maxDistance = LOCAL_NOTIFICATION_DISTANCE;
-                    break;
-            }
-
-            if (result[0] > maxDistance) {
-                Log.d(LOG_TAG, "Filtering too far event " + result[0] + "/" + maxDistance + "[" + notification + "]");
-                notification.removeFromRealm();
-            }
-        }
-
-        realm.commitTransaction();
-    }
-
-    private void waitForTime(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        if (googleApiClient.isConnected() || googleApiClient.isConnecting())
-            googleApiClient.disconnect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        Log.d(LOG_TAG, "Current location: " + currentLocation);
-        startLocationRequests();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    private void startLocationRequests() {
-        LocationRequest lr = LocationRequest.create();
-        lr.setNumUpdates(1);
-        lr.setExpirationDuration(1000);
-        lr.setPriority(LocationRequest.PRIORITY_NO_POWER);
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, lr, this);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(LOG_TAG, "Location update: " + location);
-        currentLocation = location;
     }
 }
