@@ -8,6 +8,8 @@ import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.SwitchPreference;
 
+import javax.inject.Inject;
+
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
@@ -17,6 +19,8 @@ import si.virag.promet.utils.PrometSettings;
 public class PrometPreferences extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ListPreference langPreference;
+
+    @Inject PrometSettings settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,9 @@ public class PrometPreferences extends PreferenceActivity implements SharedPrefe
 
         langPreference = (ListPreference) findPreference("app_language");
         langPreference.setSummary(langPreference.getEntry());
+
+        PrometApplication application = (PrometApplication) getApplication();
+        application.component().inject(this);
     }
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -43,6 +50,8 @@ public class PrometPreferences extends PreferenceActivity implements SharedPrefe
             checkSetEnabledNotificationPreferences();
             sharedPreferences.edit().putBoolean(RegistrationService.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
         }
+
+        settings.reload();
     }
 
     @Override

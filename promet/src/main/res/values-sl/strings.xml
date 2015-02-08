@@ -16,6 +16,13 @@
     <string name="preferences_language_dialog">Izberite jezik</string>
     <string name="preferences_title">Nastavitve</string>
     <string name="list_hint">%1$s\u0020Avtoceste  %2$s\u0020Mejni\u0020prehodi  %3$s\u0020Reg.\u0020ceste  %4$s\u0020Lok.\u0020ceste</string>
+    <string name="preferences_notifications">Obvestila</string>
+    <string name="preferences_notifications_enabled">Obvestila o novih dogodkih</string>
+    <string name="preferences_notifications_categories">Obveščaj o dogodkih na</string>
+    <string name="preferences_notifications_crossings">Mejnih prehodih</string>
+    <string name="preferences_notifications_highways">Avtocestah</string>
+    <string name="preferences_notifications_regional">Regionalnih cestah</string>
+    <string name="preferences_notifications_local">Lokalnih cestah</string>
 
     <string-array name="road_type_strings">
         <item>@string/freeways</item>

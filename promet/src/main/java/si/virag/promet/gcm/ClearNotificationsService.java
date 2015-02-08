@@ -17,5 +17,6 @@ public class ClearNotificationsService extends IntentService {
         realm.beginTransaction();
         realm.allObjects(PushNotification.class).clear();
         realm.commitTransaction();
+        realm.close();
     }
 }

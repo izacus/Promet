@@ -53,7 +53,6 @@ public class LocationModule implements GoogleApiClient.ConnectionCallbacks, Loca
         }
 
         waitForTimeout.close();
-
         LocationRequest lr = LocationRequest.create();
         lr.setNumUpdates(1);
         lr.setExpirationDuration(1000);

@@ -16,6 +16,13 @@
     <string name="preferences_language_dialog">Choose language</string>
     <string name="preferences_title">Settings</string>
     <string name="list_hint">%1$s\u0020Freeways  %2$s\u0020Border\u0020cross.  %3$s\u0020Reg.\u0020roads  %4$s\u0020Loc.\u0020roads</string>
+    <string name="preferences_notifications">Notifications</string>
+    <string name="preferences_notifications_enabled">Notify when a new event occurs</string>
+    <string name="preferences_notifications_categories">Notify about new events on </string>
+    <string name="preferences_notifications_crossings">Border crossings</string>
+    <string name="preferences_notifications_highways">Freeways</string>
+    <string name="preferences_notifications_regional">Regional roads</string>
+    <string name="preferences_notifications_local">Local roads</string>
 
     <string-array name="road_type_strings">
         <item>@string/freeways</item>
@@ -37,5 +44,20 @@
         <item>sl</item>
         <item>en</item>
     </string-array>
+
+    <plurals name="notifications_multiple_title">
+        <item quantity="one">One new event</item>
+        <item quantity="other">%d new events</item>
+    </plurals>
+
+    <plurals name="notifications_multiple_ticker">
+        <item quantity="one">One new traffic event</item>
+        <item quantity="other">%d new traffic events</item>
+    </plurals>
+
+    <plurals name="notifications_multiple_summary">
+        <item quantity="one">… and one more.</item>
+        <item quantity="other">… and %d more.</item>
+    </plurals>
 
 </resources>

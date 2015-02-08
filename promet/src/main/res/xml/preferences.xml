@@ -15,45 +15,45 @@
 
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="Obvestila">
+        android:title="@string/preferences_notifications">
 
         <SwitchPreference
             android:id="@+id/preferences_notifications"
             android:key="gcm_enabled"
-            android:title="Obvestila o novih dogodkih"
+            android:title="@string/preferences_notifications_enabled"
             android:defaultValue="false"
             />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Obveščaj o dogodkih na">
+        android:title="@string/preferences_notifications_categories">
 
         <SwitchPreference
             android:id="@+id/preferences_notifications_crossings"
             android:key="gcm_crossings"
-            android:title="Mejnih prehodih"
+            android:title="@string/preferences_notifications_crossings"
             android:defaultValue="true"
             />
 
         <SwitchPreference
             android:id="@+id/preferences_notifications_highways"
             android:key="gcm_highways"
-            android:title="Avtocestah"
+            android:title="@string/preferences_notifications_highways"
             android:defaultValue="true"
             />
 
         <SwitchPreference
             android:id="@+id/preferences_notifications_regional"
             android:key="gcm_regional"
-            android:title="Regionalnih cestah"
+            android:title="@string/preferences_notifications_regional"
             android:defaultValue="true"
             />
 
         <SwitchPreference
             android:id="@+id/preferences_notifications_local"
             android:key="gcm_local"
-            android:title="Lokalnih cestah"
+            android:title="@string/preferences_notifications_local"
             android:defaultValue="true"
             />
 

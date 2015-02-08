@@ -6,10 +6,12 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.LocationRequest;
@@ -33,14 +35,14 @@ import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.model.RoadType;
 import si.virag.promet.utils.DataUtils;
+import si.virag.promet.utils.LocaleUtil;
+import si.virag.promet.utils.PrometSettings;
 
 public class PushIntentService extends IntentService {
     private static final String LOG_TAG = "Promet.GCM.Receive";
 
     @Inject NotificationStorageModule storage;
-
-    @Nullable
-    private Location currentLocation;
+    @Inject PrometSettings settings;
 
     public PushIntentService() {
         super("Push receiver");
@@ -48,6 +50,7 @@ public class PushIntentService extends IntentService {
 
     @Override
     public void onCreate() {
+        ((PrometApplication)getApplication()).checkUpdateLocale(this);
         super.onCreate();
         PrometApplication app = (PrometApplication) getApplication();
         app.component().inject(this);
@@ -64,25 +67,41 @@ public class PushIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-        String messageType = gcm.getMessageType(intent);
-        Bundle extras = intent.getExtras();
-        if (!GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType) ||
-            extras == null ||
-            !extras.containsKey("events")) {
+        Realm realm = null;
+        try {
+
+            try {
+                realm = Realm.getInstance(this);
+            } catch (RealmMigrationNeededException e) {
+                if (realm != null) realm.close();
+                Realm.deleteRealmFile(this);
+                realm = Realm.getInstance(this);
+            }
+
+            GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+            String messageType = gcm.getMessageType(intent);
+            Bundle extras = intent.getExtras();
+            if (!GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType) ||
+                    extras == null ||
+                    !extras.containsKey("events")) {
+                return;
+            }
+
+            if (!settings.getShouldReceiveNotifications()) return;
+
+            storage.storeIncomingEvents(realm, extras.getString("events"));
+            storage.filterNotifications(realm);
+            showWaitingNotifications(realm);
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+            throw e;
+        } finally {
+            if (realm != null)realm.close();
             PushBroadcastReceiver.completeWakefulIntent(intent);
-            return;
         }
+    }
 
-        storage.storeIncomingEvents(this, extras.getString("events"));
-        storage.filterNotifications(this);
-        showWaitingNotifications();
-
-        PushBroadcastReceiver.completeWakefulIntent(intent);
-}
-
-    private void showWaitingNotifications() {
-        Realm realm = Realm.getInstance(this);
+    private void showWaitingNotifications(@NonNull final Realm realm) {
         realm.beginTransaction();
         RealmResults<PushNotification> notifications = realm.allObjectsSorted(PushNotification.class, "created", false);
         if (notifications.size() == 0) return;
@@ -91,15 +110,14 @@ public class PushIntentService extends IntentService {
         } else {
             showCompoundNotification(notifications);
         }
-        realm.commitTransaction();
-        realm.close();
+        realm.cancelTransaction();
     }
 
     private void showSingleNotification(PushNotification pushNotification) {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(this);
-        notification.setContentTitle(pushNotification.getCause());
-        notification.setContentText(pushNotification.getRoad());
-        notification.setTicker(pushNotification.getCause() + " - " + pushNotification.getRoad());
+        notification.setContentTitle(getNotificationCause(pushNotification));
+        notification.setContentText(getNotificationRoad(pushNotification));
+        notification.setTicker(getNotificationCause(pushNotification) + " - " + getNotificationRoad(pushNotification));
         notification.setWhen(pushNotification.getCreated());
         notification.setShowWhen(true);
         notification.setDefaults(NotificationCompat.DEFAULT_ALL);
@@ -107,11 +125,11 @@ public class PushIntentService extends IntentService {
         notification.setAutoCancel(true);
         notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-        if (pushNotification.getDescription() != null && pushNotification.getDescription().length() > 0) {
+        if (getNotificationDescription(pushNotification) != null && getNotificationDescription(pushNotification).length() > 0) {
             NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(notification);
-            style.setBigContentTitle(pushNotification.getCause());
-            style.bigText(pushNotification.getDescription());
-            style.setSummaryText(pushNotification.getRoad());
+            style.setBigContentTitle(getNotificationCause(pushNotification));
+            style.bigText(getNotificationDescription(pushNotification));
+            style.setSummaryText(getNotificationRoad(pushNotification));
             notification.setStyle(style);
         }
 
@@ -132,8 +150,9 @@ public class PushIntentService extends IntentService {
 
     private void showCompoundNotification(RealmResults<PushNotification> pushNotifications) {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(this);
-        notification.setContentTitle(pushNotifications.size() + " novih dogodkov");
-        notification.setTicker(pushNotifications.size() + " novih prometnih dogodkov");
+
+        notification.setContentTitle(getResources().getQuantityString(R.plurals.notifications_multiple_title, pushNotifications.size(), pushNotifications.size()));
+        notification.setTicker(getResources().getQuantityString(R.plurals.notifications_multiple_ticker, pushNotifications.size(), pushNotifications.size()));
         notification.setNumber(pushNotifications.size());
         notification.setDefaults(NotificationCompat.DEFAULT_ALL);
         notification.setSmallIcon(R.drawable.ic_car);
@@ -141,17 +160,18 @@ public class PushIntentService extends IntentService {
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(notification);
 
         for (int i = 0; i < Math.min(pushNotifications.size(), 5); i++) {
-            style.addLine(pushNotifications.get(i).getCause() + " - " + pushNotifications.get(i).getRoad());
+            style.addLine(getNotificationCause(pushNotifications.get(i)) + " - " + getNotificationRoad(pushNotifications.get(i)));
 
         }
 
         if (pushNotifications.size() > 5) {
-            style.setSummaryText(" ... še " + String.valueOf(pushNotifications.size() - 5) + " novih.");
+            int value = pushNotifications.size() - 5;
+            style.setSummaryText(getResources().getQuantityString(R.plurals.notifications_multiple_summary, value, value));
         }
 
         Set<String> causes = new HashSet<>();
         for (int i = 0; i < pushNotifications.size(); i++) {
-            causes.add(pushNotifications.get(i).getCause());
+            causes.add(getNotificationCause(pushNotifications.get(i)));
         }
 
         StringBuilder contentText = new StringBuilder();
@@ -181,5 +201,19 @@ public class PushIntentService extends IntentService {
 
         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.notify(0, notification.build());
+    }
+
+
+    private String getNotificationCause(PushNotification notification) {
+        return LocaleUtil.isSlovenianLocale(this) ? notification.getCause() : notification.getCauseEn();
+    }
+
+
+    private String getNotificationRoad(PushNotification notification) {
+        return LocaleUtil.isSlovenianLocale(this) || notification.getRoadEn() == null || notification.getRoadEn().length() == 0 ? notification.getRoad() : notification.getRoadEn();
+    }
+
+    private String getNotificationDescription(PushNotification notification) {
+        return LocaleUtil.isSlovenianLocale(this) ? notification.getDescription() : notification.getDescrptionEn();
     }
 }

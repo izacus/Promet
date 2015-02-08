@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import si.virag.promet.api.model.RoadType;
-import si.virag.promet.gcm.RegistrationService;
 
 public class PrometSettings {
 
@@ -22,23 +21,25 @@ public class PrometSettings {
     public static final String PREF_NOTIFICATIONS_LOCAL = "gcm_local";
 
 
-    private final SharedPreferences preferences;
+    private SharedPreferences preferences;
     private final Context context;
 
     private boolean showAvtoceste;
     private boolean showLokalneCeste;
     private boolean showRegionalneCeste;
     private boolean showBorderCrossings;
-    private boolean receiveGcmNotifications;
 
     public PrometSettings(Context context) {
         this.context = context.getApplicationContext();
+        reload();
+    }
+
+    public void reload() {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
         showAvtoceste = preferences.getBoolean(PREF_AVTOCESTE, true);
         showBorderCrossings = preferences.getBoolean(PREF_BORDER_CROSSINGS, true);
         showRegionalneCeste = preferences.getBoolean(PREF_REGIONALNE_CESTE, true);
         showLokalneCeste = preferences.getBoolean(PREF_LOKALNE_CESTE, true);
-        receiveGcmNotifications = preferences.getBoolean(PREF_NOTIFICATIONS, true);
     }
 
     public boolean getShowAvtoceste() {

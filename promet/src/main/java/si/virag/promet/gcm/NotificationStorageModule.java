@@ -41,22 +41,12 @@ public class NotificationStorageModule {
     public NotificationStorageModule() {
     }
 
-    public void storeIncomingEvents(@NonNull final Context context, @NonNull final String events) {
-        Realm realm = null;
+    public void storeIncomingEvents(@NonNull final Realm realm, @NonNull final String events) {
 
         try {
             JSONArray eventArray = new JSONArray(events);
 
-            // Store events to db
-            try {
-                realm = Realm.getInstance(context);
-            } catch (RealmMigrationNeededException e) {
-                Realm.deleteRealmFile(context);
-                realm = Realm.getInstance(context);
-            }
-
             realm.beginTransaction();
-
             for (int i = 0; i < eventArray.length(); i++) {
                 JSONObject event = eventArray.getJSONObject(i);
                 long id = event.getLong("id");
@@ -86,21 +76,15 @@ public class NotificationStorageModule {
         } catch (JSONException e) {
             Crashlytics.logException(e);
         }
-        finally {
-            if (realm != null)
-                realm.close();
-        }
     }
 
     /**
      * Filters stored notifications according to valid time and distance
      */
-    public void filterNotifications(@NonNull final Context context) {
-        final Realm realm = Realm.getInstance(context);
+    public void filterNotifications(@NonNull final Realm realm) {
         final long currentTime = Calendar.getInstance().getTimeInMillis();
 
         realm.beginTransaction();
-
         RealmResults<PushNotification> notifications = realm.allObjects(PushNotification.class);
         for (int i = 0; i < notifications.size(); i++) {
             PushNotification notification = notifications.get(i);
@@ -111,22 +95,20 @@ public class NotificationStorageModule {
             }
         }
 
-        realm.commitTransaction();
-
-        Location currentLocation = location.getLocationWithTimeout(1000);
-        if (currentLocation != null) {
-            filterNotificationsByDistance(realm, currentLocation);
+        if (realm.allObjects(PushNotification.class).size() > 0) {
+            Location currentLocation = location.getLocationWithTimeout(1000);
+            if (currentLocation != null) {
+                filterNotificationsByDistance(realm, currentLocation);
+            }
         }
 
-        realm.close();
+        realm.commitTransaction();
     }
 
     private static void filterNotificationsByDistance(@NonNull final Realm realm, @NonNull final Location location) {
         final float[] result = new float[1];
 
-        realm.beginTransaction();
         RealmResults<PushNotification> notifications = realm.allObjects(PushNotification.class);
-
         for (int i = 0; i < notifications.size(); i++) {
             PushNotification notification = notifications.get(i);
             Location.distanceBetween(location.getLatitude(), location.getLongitude(), notification.getLat(), notification.getLng(), result);
@@ -153,8 +135,6 @@ public class NotificationStorageModule {
                 notification.removeFromRealm();
             }
         }
-
-        realm.commitTransaction();
     }
 
 }
