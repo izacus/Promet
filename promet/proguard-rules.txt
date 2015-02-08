@@ -81,3 +81,11 @@
 # Gson
 -keepclasseswithmembers class com.google.gson.** { *; }
 -keep class com.google.gson.internal.** { *; }
+
+# Realm
+-keep class io.realm.** { *; }
+-dontwarn javax.**
+-dontwarn io.realm.**
+
+# Dagger
+-dontwarn com.google.auto.common.**
