@@ -17,10 +17,44 @@
     <PreferenceCategory
         android:title="Obvestila">
 
-        <CheckBoxPreference
-            android:key="notifications_enabled"
+        <SwitchPreference
+            android:id="@+id/preferences_notifications"
+            android:key="gcm_enabled"
             android:title="Obvestila o novih dogodkih"
             android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Obveščaj o dogodkih na">
+
+        <SwitchPreference
+            android:id="@+id/preferences_notifications_crossings"
+            android:key="gcm_crossings"
+            android:title="Mejnih prehodih"
+            android:defaultValue="true"
+            />
+
+        <SwitchPreference
+            android:id="@+id/preferences_notifications_highways"
+            android:key="gcm_highways"
+            android:title="Avtocestah"
+            android:defaultValue="true"
+            />
+
+        <SwitchPreference
+            android:id="@+id/preferences_notifications_regional"
+            android:key="gcm_regional"
+            android:title="Regionalnih cestah"
+            android:defaultValue="true"
+            />
+
+        <SwitchPreference
+            android:id="@+id/preferences_notifications_local"
+            android:key="gcm_local"
+            android:title="Lokalnih cestah"
+            android:defaultValue="true"
             />
 
     </PreferenceCategory>

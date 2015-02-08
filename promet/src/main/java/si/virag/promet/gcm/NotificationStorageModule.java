@@ -23,6 +23,7 @@ import io.realm.exceptions.RealmMigrationNeededException;
 import si.virag.promet.api.model.RoadType;
 import si.virag.promet.map.LocationModule;
 import si.virag.promet.utils.DataUtils;
+import si.virag.promet.utils.PrometSettings;
 
 @Module
 @Singleton
@@ -34,6 +35,7 @@ public class NotificationStorageModule {
     private static final int LOCAL_NOTIFICATION_DISTANCE = 25000;
 
     @Inject LocationModule location;
+    @Inject PrometSettings settings;
 
     @Inject
     public NotificationStorageModule() {
@@ -102,8 +104,9 @@ public class NotificationStorageModule {
         RealmResults<PushNotification> notifications = realm.allObjects(PushNotification.class);
         for (int i = 0; i < notifications.size(); i++) {
             PushNotification notification = notifications.get(i);
-            if (notification.getValidUntil() < currentTime) {
-                Log.d(LOG_TAG, "Clearing expired notification " + notification);
+            if (notification.getValidUntil() < currentTime ||
+                !settings.shouldShowNotification(DataUtils.roadPriorityToRoadType(notification.getRoadPriority(), notification.isCrossing()))) {
+                Log.d(LOG_TAG, "Clearing expired/disabled notification " + notification);
                 notification.removeFromRealm();
             }
         }

@@ -10,7 +10,7 @@ public interface PushApi {
     @POST("/register")
     public Response register(@Body String gcmId);
 
-    @DELETE("/register")
+    @POST("/unregister")
     public Response unregister(@Body String gcmId);
 
 }

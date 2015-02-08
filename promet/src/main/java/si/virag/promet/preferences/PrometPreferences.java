@@ -6,10 +6,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
+import android.preference.SwitchPreference;
 
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
+import si.virag.promet.gcm.RegistrationService;
+import si.virag.promet.utils.PrometSettings;
 
 public class PrometPreferences extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -36,12 +39,16 @@ public class PrometPreferences extends PreferenceActivity implements SharedPrefe
             Intent i = new Intent(this, MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
+        } else if (key.equalsIgnoreCase("gcm_enabled")) {
+            checkSetEnabledNotificationPreferences();
+            sharedPreferences.edit().putBoolean(RegistrationService.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        checkSetEnabledNotificationPreferences();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -49,5 +56,18 @@ public class PrometPreferences extends PreferenceActivity implements SharedPrefe
     protected void onPause() {
         super.onPause();
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+
+        Intent i = new Intent(this, RegistrationService.class);
+        startService(i);
+    }
+
+    private void checkSetEnabledNotificationPreferences() {
+        SharedPreferences preferences = getPreferenceScreen().getSharedPreferences();
+        boolean enable = preferences.getBoolean(PrometSettings.PREF_NOTIFICATIONS, false);
+
+        findPreference(PrometSettings.PREF_NOTIFICATIONS_CROSSINGS).setEnabled(enable);
+        findPreference(PrometSettings.PREF_NOTIFICATIONS_HIGHWAYS).setEnabled(enable);
+        findPreference(PrometSettings.PREF_NOTIFICATIONS_REGIONAL).setEnabled(enable);
+        findPreference(PrometSettings.PREF_NOTIFICATIONS_LOCAL).setEnabled(enable);
     }
 }
