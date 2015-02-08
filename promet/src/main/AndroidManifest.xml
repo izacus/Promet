@@ -33,6 +33,7 @@
             android:name="si.virag.promet.MainActivity"
             android:logo="@drawable/logo"
             android:label="@string/app_name"
+            android:launchMode="singleInstance"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

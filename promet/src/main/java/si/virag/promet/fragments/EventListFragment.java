@@ -1,6 +1,8 @@
 package si.virag.promet.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -184,7 +186,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().registerSticky(this);
     }
 
     @Override
@@ -193,9 +195,22 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         EventBus.getDefault().unregister(this);
     }
 
-    public void onEventMainThread(Events.ShowEventInList e) {
-        int position = adapter.getItemPosition(e.id);
-        list.smoothScrollToPosition(position + 1);
+    public void onEventMainThread(final Events.ShowEventInList e) {
+        int delay = 0;
+        if (adapter.getCount() == 0) {
+            delay = 1000;
+        }
+
+        Handler h = new Handler(Looper.getMainLooper());
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int position = adapter.getItemPosition(e.id);
+                list.smoothScrollToPosition(position + 1);
+                EventBus.getDefault().removeStickyEvent(e);
+            }
+        }, delay);
+
     }
 
     public void onEventMainThread(Events.UpdateEventList e) {

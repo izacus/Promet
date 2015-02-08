@@ -31,12 +31,14 @@ import de.greenrobot.event.EventBus;
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
+import si.virag.promet.gcm.ClearNotificationsService;
 import si.virag.promet.preferences.PrometPreferences;
 import si.virag.promet.utils.PrometSettings;
 
 public class MainActivity extends ActionBarActivity
 {
     public static final String PARAM_SHOW_LIST = "ShowList";
+    public static final String PARAM_SHOW_ITEM_ID = "ShowListItemId";
 
     private ViewPager pager;
     private PagerSlidingTabStrip tabs;
@@ -94,6 +96,16 @@ public class MainActivity extends ActionBarActivity
         }
 
         setupPages(getIntent().getBooleanExtra(PARAM_SHOW_LIST, false));
+        if (getIntent().hasExtra(PARAM_SHOW_ITEM_ID)) {
+            EventBus.getDefault().postSticky(new Events.ShowEventInList(getIntent().getLongExtra(PARAM_SHOW_ITEM_ID, 0)));
+        }
+
+        clearPendingNotifications();
+    }
+
+    private void clearPendingNotifications() {
+        Intent i = new Intent(this, ClearNotificationsService.class);
+        startService(i);
     }
 
     @Override
@@ -102,6 +114,12 @@ public class MainActivity extends ActionBarActivity
         if (intent.getBooleanExtra(PARAM_SHOW_LIST, false)) {
             pager.setCurrentItem(1, true);
         }
+
+        if (intent.hasExtra(PARAM_SHOW_ITEM_ID)) {
+            EventBus.getDefault().postSticky(new Events.ShowEventInList(intent.getLongExtra(PARAM_SHOW_ITEM_ID, 0)));
+        }
+
+        clearPendingNotifications();
     }
 
     private void setupPages(boolean showList) {

@@ -14,4 +14,14 @@
             />
 
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Obvestila">
+
+        <CheckBoxPreference
+            android:key="notifications_enabled"
+            android:title="Obvestila o novih dogodkih"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
 </PreferenceScreen>

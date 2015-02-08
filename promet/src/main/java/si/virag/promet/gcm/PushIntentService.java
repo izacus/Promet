@@ -121,6 +121,8 @@ public class PushIntentService extends IntentService {
 
         Intent tapIntent = new Intent(this, MainActivity.class);
         tapIntent.putExtra(MainActivity.PARAM_SHOW_LIST, true);
+        tapIntent.putExtra(MainActivity.PARAM_SHOW_ITEM_ID, pushNotification.getId());
+        tapIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent tpi = PendingIntent.getActivity(this, 0, tapIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setContentIntent(tpi);
 
@@ -172,6 +174,8 @@ public class PushIntentService extends IntentService {
 
         Intent tapIntent = new Intent(this, MainActivity.class);
         tapIntent.putExtra(MainActivity.PARAM_SHOW_LIST, true);
+        tapIntent.putExtra(MainActivity.PARAM_SHOW_ITEM_ID, pushNotifications.get(0).getId());
+        tapIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent tpi = PendingIntent.getActivity(this, 0, tapIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setContentIntent(tpi);
 
