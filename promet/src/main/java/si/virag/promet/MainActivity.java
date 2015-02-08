@@ -2,12 +2,14 @@ package si.virag.promet;
 
 import android.app.ActivityManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,6 +23,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -32,6 +35,7 @@ import de.keyboardsurfer.android.widget.crouton.Crouton;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.gcm.ClearNotificationsService;
+import si.virag.promet.gcm.RegistrationService;
 import si.virag.promet.preferences.PrometPreferences;
 import si.virag.promet.utils.PrometSettings;
 
@@ -101,6 +105,7 @@ public class MainActivity extends ActionBarActivity
         }
 
         clearPendingNotifications();
+        checkShowNotificationsDialog();
     }
 
     private void clearPendingNotifications() {
@@ -122,6 +127,37 @@ public class MainActivity extends ActionBarActivity
         clearPendingNotifications();
     }
 
+    private void checkShowNotificationsDialog() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.contains(PrometSettings.PREF_NOTIFICATIONS)) {
+            new MaterialDialog.Builder(this)
+                              .title(getString(R.string.alert_notifications_title))
+                              .content(getString(R.string.alert_notifications_content))
+                              .positiveText(getString(R.string.alert_notifications_yes))
+                              .negativeText(getString(R.string.altert_notifications_no))
+                              .callback(new MaterialDialog.ButtonCallback() {
+                                  @Override
+                                  public void onPositive(MaterialDialog dialog) {
+                                      prefs.edit().putBoolean(PrometSettings.PREF_NOTIFICATIONS, true)
+                                                  .putBoolean(RegistrationService.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
+                                      prometSettings.reload();
+
+                                      Intent registerIntent = new Intent(MainActivity.this, RegistrationService.class);
+                                      startService(registerIntent);
+
+                                      showPreferences();
+                                  }
+
+                                  @Override
+                                  public void onNegative(MaterialDialog dialog) {
+                                      prefs.edit().putBoolean(PrometSettings.PREF_NOTIFICATIONS, false).apply();
+                                      prometSettings.reload();
+                                  }
+                              })
+                              .show();
+        }
+    }
+
     private void setupPages(boolean showList) {
         pager.setAdapter(new MainPagesAdapter(getResources(), getSupportFragmentManager()));
         tabs.setShouldExpand(true);
@@ -130,6 +166,11 @@ public class MainActivity extends ActionBarActivity
         if (showList) {
             pager.setCurrentItem(1);
         }
+    }
+
+    private void showPreferences() {
+        Intent preferenceIntent = new Intent(this, PrometPreferences.class);
+        startActivity(preferenceIntent);
     }
 
     private static class MainPagesAdapter extends FragmentPagerAdapter {
@@ -215,8 +256,7 @@ public class MainActivity extends ActionBarActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.menu_settings) {
-            Intent preferenceIntent = new Intent(this, PrometPreferences.class);
-            startActivity(preferenceIntent);
+            showPreferences();
             return true;
         }
 

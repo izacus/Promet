@@ -23,6 +23,10 @@
     <string name="preferences_notifications_highways">Avtocestah</string>
     <string name="preferences_notifications_regional">Regionalnih cestah</string>
     <string name="preferences_notifications_local">Lokalnih cestah</string>
+    <string name="alert_notifications_title">Obveščanje</string>
+    <string name="alert_notifications_content">Ali želite biti obveščeni o novih dogodkih na cesti?</string>
+    <string name="alert_notifications_yes">Da, obveščaj me</string>
+    <string name="altert_notifications_no">Ne</string>
 
     <string-array name="road_type_strings">
         <item>@string/freeways</item>

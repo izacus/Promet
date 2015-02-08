@@ -17,7 +17,7 @@
     <PreferenceCategory
         android:title="@string/preferences_notifications">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:id="@+id/preferences_notifications"
             android:key="gcm_enabled"
             android:title="@string/preferences_notifications_enabled"
@@ -29,28 +29,28 @@
     <PreferenceCategory
         android:title="@string/preferences_notifications_categories">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:id="@+id/preferences_notifications_crossings"
             android:key="gcm_crossings"
             android:title="@string/preferences_notifications_crossings"
             android:defaultValue="true"
             />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:id="@+id/preferences_notifications_highways"
             android:key="gcm_highways"
             android:title="@string/preferences_notifications_highways"
             android:defaultValue="true"
             />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:id="@+id/preferences_notifications_regional"
             android:key="gcm_regional"
             android:title="@string/preferences_notifications_regional"
             android:defaultValue="true"
             />
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:id="@+id/preferences_notifications_local"
             android:key="gcm_local"
             android:title="@string/preferences_notifications_local"
