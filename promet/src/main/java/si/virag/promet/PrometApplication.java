@@ -25,7 +25,7 @@ public class PrometApplication extends Application {
         checkUpdateLocale(this);
         super.onCreate();
 
-        component = Dagger_PrometComponent.builder()
+        component = DaggerPrometComponent.builder()
                                           .prometApplicationModule(new PrometApplicationModule(this))
                                           .locationModule(new LocationModule(this))
                                           .pushDataPrometApi(new PushDataPrometApi(this))
