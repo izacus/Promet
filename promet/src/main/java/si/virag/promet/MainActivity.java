@@ -249,6 +249,7 @@ public class MainActivity extends ActionBarActivity
         menu.findItem(R.id.menu_map_crossings).setChecked(prometSettings.getShowBorderCrossings());
         menu.findItem(R.id.menu_map_lokalne_ceste).setChecked(prometSettings.getShowLokalneCeste());
         menu.findItem(R.id.menu_map_regionalne_ceste).setChecked(prometSettings.getShowRegionalneCeste());
+        menu.findItem(R.id.menu_map_dela_na_cesti).setChecked(prometSettings.getShowRoadworks());
         return true;
     }
 
@@ -281,6 +282,10 @@ public class MainActivity extends ActionBarActivity
 
             case R.id.menu_map_lokalne_ceste:
                 prometSettings.setShowLokalneCeste(enabled);
+                break;
+
+            case R.id.menu_map_dela_na_cesti:
+                prometSettings.setShowRoadworks(enabled);
                 break;
 
             default:

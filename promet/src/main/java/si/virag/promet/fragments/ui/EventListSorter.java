@@ -8,14 +8,14 @@ public class EventListSorter implements Func2<PrometEvent, PrometEvent, Integer>
     public Integer call(PrometEvent lhs, PrometEvent rhs)
     {
         // Sort by roadType first
-        if (lhs.roadType != rhs.roadType) {
-            if (lhs.roadType == null)
-                return rhs.roadType == null ? 0 : 1;
+        if (lhs.eventGroup != rhs.eventGroup) {
+            if (lhs.eventGroup == null)
+                return rhs.eventGroup == null ? 0 : 1;
 
-            if (rhs.roadType == null)
+            if (rhs.eventGroup == null)
                 return -1;
 
-            return lhs.roadType.compareTo(rhs.roadType);
+            return lhs.eventGroup.compareTo(rhs.eventGroup);
         }
 
         // Now sort by what kind of event it is

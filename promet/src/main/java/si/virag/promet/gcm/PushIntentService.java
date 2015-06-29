@@ -4,24 +4,13 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,8 +22,6 @@ import io.realm.exceptions.RealmMigrationNeededException;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
-import si.virag.promet.api.model.RoadType;
-import si.virag.promet.utils.DataUtils;
 import si.virag.promet.utils.LocaleUtil;
 import si.virag.promet.utils.PrometSettings;
 

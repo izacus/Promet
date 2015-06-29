@@ -31,7 +31,7 @@ public class PrometEvent {
     public double lat;
 
     @SerializedName("kategorija")
-    public RoadType roadType;
+    public EventGroup eventGroup;
 
     @SerializedName("vneseno")
     public Date entered;

@@ -11,11 +11,12 @@
     <string name="border_crossings">Mejni prehodi</string>
     <string name="regional_roads">Regionalne ceste</string>
     <string name="local_roads">Lokalne ceste</string>
+    <string name="roadworks">Delo na cesti</string>
     <string name="misc">Ostalo</string>
     <string name="preferences_language">Jezik</string>
     <string name="preferences_language_dialog">Izberite jezik</string>
     <string name="preferences_title">Nastavitve</string>
-    <string name="list_hint">%1$s\u0020Avtoceste  %2$s\u0020Mejni\u0020prehodi  %3$s\u0020Reg.\u0020ceste  %4$s\u0020Lok.\u0020ceste</string>
+    <string name="list_hint">%1$s\u0020Avtoceste  %2$s\u0020Mejni\u0020prehodi  %3$s\u0020Reg.\u0020ceste\n%4$s\u0020Lokalne\u0020ceste %5$s\u0020Dela</string>
     <string name="preferences_notifications">Obvestila</string>
     <string name="preferences_notifications_enabled">Obvestila o novih dogodkih</string>
     <string name="preferences_notifications_categories">Obveščaj o dogodkih na</string>
@@ -34,6 +35,7 @@
         <item>@string/border_crossings</item>
         <item>@string/regional_roads</item>
         <item>@string/local_roads</item>
+        <item>@string/roadworks</item>
         <item>@string/misc</item>
     </string-array>
 

@@ -7,21 +7,21 @@ import android.os.Build;
 
 import com.crashlytics.android.Crashlytics;
 
-import si.virag.promet.api.model.RoadType;
+import si.virag.promet.api.model.EventGroup;
 
 public class DataUtils {
     
-    public static RoadType roadPriorityToRoadType(int priority, boolean isCrossing) {
+    public static EventGroup roadPriorityToRoadType(int priority, boolean isCrossing) {
         if (isCrossing) {
-            return RoadType.MEJNI_PREHOD;
+            return EventGroup.MEJNI_PREHOD;
         } else if (priority < 6) {
-            return RoadType.AVTOCESTA;
+            return EventGroup.AVTOCESTA;
         } else if (priority < 13) {
-            return RoadType.HITRA_CESTA;
+            return EventGroup.HITRA_CESTA;
         } else if (priority < 17) {
-            return RoadType.REGIONALNA_CESTA;
+            return EventGroup.REGIONALNA_CESTA;
         } else {
-            return RoadType.LOKALNA_CESTA;
+            return EventGroup.LOKALNA_CESTA;
         }
     }
 

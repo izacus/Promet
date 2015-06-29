@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import si.virag.promet.api.model.RoadType;
+import si.virag.promet.api.model.EventGroup;
 
 public class PrometSettings {
 
@@ -13,6 +13,7 @@ public class PrometSettings {
     private static final String PREF_BORDER_CROSSINGS = "show.prehodi";
     private static final String PREF_REGIONALNE_CESTE = "show.regionalne.ceste";
     private static final String PREF_LOKALNE_CESTE = "show.lokalne.ceste";
+    private static final String PREF_ROADWORKS = "show.dela.na.cesti";
 
     public static final String PREF_NOTIFICATIONS = "gcm_enabled";
     public static final String PREF_NOTIFICATIONS_CROSSINGS = "gcm_crossings";
@@ -28,6 +29,7 @@ public class PrometSettings {
     private boolean showLokalneCeste;
     private boolean showRegionalneCeste;
     private boolean showBorderCrossings;
+    private boolean showRoadworks;
 
     public PrometSettings(Context context) {
         this.context = context.getApplicationContext();
@@ -40,6 +42,7 @@ public class PrometSettings {
         showBorderCrossings = preferences.getBoolean(PREF_BORDER_CROSSINGS, true);
         showRegionalneCeste = preferences.getBoolean(PREF_REGIONALNE_CESTE, true);
         showLokalneCeste = preferences.getBoolean(PREF_LOKALNE_CESTE, true);
+        showRoadworks = preferences.getBoolean(PREF_ROADWORKS, true);
     }
 
     public boolean getShowAvtoceste() {
@@ -71,6 +74,15 @@ public class PrometSettings {
 
     }
 
+    public boolean getShowRoadworks() {
+        return showRoadworks;
+    }
+
+    public void setShowRoadworks(boolean showRoadworks) {
+        this.showRoadworks = showRoadworks;
+        preferences.edit().putBoolean(PREF_ROADWORKS, showRoadworks).apply();
+    }
+
     public boolean getShowBorderCrossings() {
         return showBorderCrossings;
     }
@@ -84,7 +96,7 @@ public class PrometSettings {
         return preferences.getBoolean(PREF_NOTIFICATIONS, false);
     }
 
-    public boolean shouldShowNotification(RoadType type) {
+    public boolean shouldShowNotification(EventGroup type) {
         switch (type) {
             case MEJNI_PREHOD:
                 return preferences.getBoolean(PREF_NOTIFICATIONS_CROSSINGS, true);

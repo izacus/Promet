@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -94,7 +95,13 @@ public class MapFragment extends Fragment {
                 .filter(new EventListFilter(prometSettings))
                 .toList();
 
-        Observable<List<PrometCounter>> counters = prometApi.getPrometCounters();
+        Observable<List<PrometCounter>> counters = prometApi.getPrometCounters()
+                                                   .onErrorReturn(new Func1<Throwable, List<PrometCounter>>() {
+                                                       @Override
+                                                       public List<PrometCounter> call(Throwable throwable) {
+                                                           return new ArrayList<>();
+                                                       }
+                                                   });
 
         loadSubscription = events.zipWith(counters, new Func2<List<PrometEvent>, List<PrometCounter>, Pair<List<PrometEvent>, List<PrometCounter>>>() {
             @Override

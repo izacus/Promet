@@ -41,4 +41,11 @@
         app:showAsAction="never"
         />
 
+    <item
+        android:id="@+id/menu_map_dela_na_cesti"
+        android:title="@string/roadworks"
+        android:titleCondensed="Dela"
+        android:checkable="true"
+        app:showAsAction="never" />
+
 </menu>

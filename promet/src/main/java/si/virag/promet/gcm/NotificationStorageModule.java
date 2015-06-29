@@ -1,6 +1,5 @@
 package si.virag.promet.gcm;
 
-import android.content.Context;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -19,8 +18,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import io.realm.exceptions.RealmMigrationNeededException;
-import si.virag.promet.api.model.RoadType;
+import si.virag.promet.api.model.EventGroup;
 import si.virag.promet.map.LocationModule;
 import si.virag.promet.utils.DataUtils;
 import si.virag.promet.utils.PrometSettings;
@@ -114,7 +112,7 @@ public class NotificationStorageModule {
             Location.distanceBetween(location.getLatitude(), location.getLongitude(), notification.getLat(), notification.getLng(), result);
             Log.d(LOG_TAG, notification.getId() + " - Distance from current location: " + result[0]);
 
-            RoadType type = DataUtils.roadPriorityToRoadType(notification.getRoadPriority(), notification.isCrossing());
+            EventGroup type = DataUtils.roadPriorityToRoadType(notification.getRoadPriority(), notification.isCrossing());
             int maxDistance = Integer.MAX_VALUE;
             switch (type) {
                 case MEJNI_PREHOD:

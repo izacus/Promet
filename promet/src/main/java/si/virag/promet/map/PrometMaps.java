@@ -32,6 +32,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
+import si.virag.promet.R;
 import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.utils.LocaleUtil;
@@ -51,9 +52,9 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
             { Color.TRANSPARENT, Color.TRANSPARENT },  // NO DATA
             { Color.argb(128, 102, 255, 0), Color.argb(16, 102, 255, 0) }, // NORMAL TRAFFIC
             { Color.argb(128, 242, 255, 0), Color.argb(16, 242, 255, 0) }, // INCREASED TRAFFIC
-            { Color.argb(128, 255, 208, 0), Color.argb(16, 255, 208, 0) }, // DENSER TRAFFIC
-            { Color.argb(128, 255, 119, 0), Color.argb(16, 255, 119, 0) }, // DENSE TRAFFIC
-            { Color.argb(128, 255, 0, 0), Color.argb(16, 255, 0, 0)}
+            { Color.argb(138, 255, 208, 0), Color.argb(16, 255, 208, 0) }, // DENSER TRAFFIC
+            { Color.argb(148, 255, 119, 0), Color.argb(16, 255, 119, 0) }, // DENSE TRAFFIC
+            { Color.argb(160, 255, 0, 0), Color.argb(32, 255, 0, 0)}
     };
 
     private Context ctx;
@@ -119,16 +120,20 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                   .map(new Func1<PrometEvent, Pair<Long, MarkerOptions>>() {
                       @Override
                       public Pair<Long, MarkerOptions> call(PrometEvent event) {
+                          MarkerOptions opts = new MarkerOptions();
+                          opts.position(new LatLng(event.lat, event.lng))
+                              .title(isSlovenianLocale ? event.cause : event.causeEn)
+                              .snippet(event.roadName);
 
                           BitmapDescriptor icon = null;
                           if (event.isHighPriority()) {
                               icon = RED_MARKER;
                           }
-                          else if (event.roadType == null) {
+                          else if (event.eventGroup == null) {
                               icon = ORANGE_MARKER;
                           }
                           else {
-                              switch (event.roadType) {
+                              switch (event.eventGroup) {
                                   case AVTOCESTA:
                                       icon = GREEN_MARKER;
                                       break;
@@ -142,14 +147,15 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                                   case LOKALNA_CESTA:
                                       icon = YELLOW_MARKER;
                                       break;
+                                  case ROADWORKS:
+                                      icon = BitmapDescriptorFactory.fromResource(R.drawable.map_cone);
+                                      opts.anchor(0.5f, 0.9f);
+                                      break;
                               }
                           }
 
-                          return new Pair<>(event.id, new MarkerOptions()
-                                  .position(new LatLng(event.lat, event.lng))
-                                  .title(isSlovenianLocale ? event.cause : event.causeEn)
-                                  .icon(icon)
-                                  .snippet(event.roadName));
+                          opts.icon(icon);
+                          return new Pair<>(event.id, opts);
                       }
                   })
                   .subscribeOn(Schedulers.computation())

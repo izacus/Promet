@@ -14,10 +14,10 @@ public class EventListFilter implements Func1<PrometEvent, Boolean> {
     @Override
     public Boolean call(PrometEvent prometEvent) {
 
-        if (prometEvent.roadType == null)
+        if (prometEvent.eventGroup == null)
             return true;
 
-        switch (prometEvent.roadType) {
+        switch (prometEvent.eventGroup) {
             case AVTOCESTA:
             case HITRA_CESTA:
                 return prometSettings.getShowAvtoceste();
@@ -27,7 +27,8 @@ public class EventListFilter implements Func1<PrometEvent, Boolean> {
                 return prometSettings.getShowRegionalneCeste();
             case LOKALNA_CESTA:
                 return prometSettings.getShowLokalneCeste();
-
+            case ROADWORKS:
+                return prometSettings.getShowRoadworks();
             default:
                 return true;
         }

@@ -23,7 +23,7 @@ import si.virag.fuzzydatetime.FuzzyDateTimeFormatter;
 import si.virag.promet.Events;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometEvent;
-import si.virag.promet.api.model.RoadType;
+import si.virag.promet.api.model.EventGroup;
 import si.virag.promet.utils.LocaleUtil;
 
 public class EventListAdaper extends BaseAdapter implements StickyListHeadersAdapter {
@@ -104,10 +104,10 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
             v = inflater.inflate(R.layout.item_list_header, parent, false);
 
         TextView textView = (TextView) v.findViewById(R.id.item_event_header);
-        RoadType type = data.get(position).roadType;
+        EventGroup type = data.get(position).eventGroup;
 
         // Avtoceste and hitre ceste are merged
-        if (type == RoadType.HITRA_CESTA) type = RoadType.AVTOCESTA;
+        if (type == EventGroup.HITRA_CESTA) type = EventGroup.AVTOCESTA;
 
         String[] strings = ctx.getResources().getStringArray(R.array.road_type_strings);
         textView.setText(type == null ? strings[strings.length - 1] : strings[type.ordinal()]);
@@ -116,9 +116,9 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
 
     @Override
     public long getHeaderId(int position) {
-        RoadType type = data.get(position).roadType;
-        if (type == RoadType.HITRA_CESTA)   // Join this with highways
-            return RoadType.AVTOCESTA.ordinal();
+        EventGroup type = data.get(position).eventGroup;
+        if (type == EventGroup.HITRA_CESTA)   // Join this with highways
+            return EventGroup.AVTOCESTA.ordinal();
 
         return type == null ? 100 : type.ordinal();
     }

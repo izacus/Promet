@@ -19,7 +19,7 @@ import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometCounters;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.PrometEvents;
-import si.virag.promet.api.model.RoadType;
+import si.virag.promet.api.model.EventGroup;
 import si.virag.promet.api.model.TrafficStatus;
 import si.virag.promet.fragments.ui.EventListSorter;
 import si.virag.promet.utils.DataUtils;
@@ -43,7 +43,7 @@ public class OpenDataPrometApi extends PrometApi {
 
         Gson gson = new GsonBuilder()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                    .registerTypeAdapter(RoadType.class, new RoadTypeAdapter())
+                    .registerTypeAdapter(EventGroup.class, new EventGroupAdapter())
                     .registerTypeAdapter(Date.class, new EpochDateTypeAdapter())
                     .registerTypeAdapter(TrafficStatus.class, new TrafficStatusAdapter())
                     .create();
@@ -93,8 +93,12 @@ public class OpenDataPrometApi extends PrometApi {
                     @Override
                     public PrometEvent call(PrometEvent prometEvent) {
                         // Take first two letters of description and see if we can extract the road type from there.
-                        if (prometEvent.isBorderCrossing || (prometEvent.roadType == null && prometEvent.description != null)) {
-                            prometEvent.roadType = DataUtils.roadPriorityToRoadType(prometEvent.roadPriority, prometEvent.isBorderCrossing);
+                        if (prometEvent.isBorderCrossing || (prometEvent.eventGroup == null && prometEvent.description != null)) {
+                            prometEvent.eventGroup = DataUtils.roadPriorityToRoadType(prometEvent.roadPriority, prometEvent.isBorderCrossing);
+                        }
+
+                        if (prometEvent.causeEn.equalsIgnoreCase("Roadworks") || prometEvent.cause.equalsIgnoreCase("Delo na cesti")) {
+                            prometEvent.eventGroup = EventGroup.ROADWORKS;
                         }
 
                         return prometEvent;
