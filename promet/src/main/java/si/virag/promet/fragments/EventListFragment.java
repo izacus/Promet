@@ -1,5 +1,8 @@
 package si.virag.promet.fragments;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.nispok.snackbar.Snackbar;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import java.util.List;
@@ -24,13 +28,10 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -119,7 +120,6 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         else
             events = prometApi.getPrometEvents();
 
-        Crouton.clearCroutonsForActivity(getActivity());
         loadSubscription = events.subscribeOn(Schedulers.io())
                                   .observeOn(AndroidSchedulers.mainThread())
                                   .flatMap(new Func1<List<PrometEvent>, Observable<PrometEvent>>() {
@@ -158,8 +158,15 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
                                       public void onError(Throwable throwable) {
                                           Log.e(LOG_TAG, "Error!", throwable);
                                           refreshLayout.setRefreshing(false);
-                                          emptyView.setText("Podatkov ni bilo mogoče naložiti.");
-                                          Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
+                                          emptyView.setText(R.string.load_error);
+                                          Activity activity = getActivity();
+                                          if (activity != null) {
+                                            Snackbar.with(getActivity().getApplicationContext())
+                                                    .text(R.string.load_error)
+                                                    .textTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD))
+                                                    .color(Color.RED)
+                                                    .show(activity);
+                                          }
                                       }
                                   });
     }

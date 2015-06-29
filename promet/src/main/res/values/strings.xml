@@ -28,6 +28,7 @@
     <string name="alert_notifications_content">Do you want to be notified about new events on the road?</string>
     <string name="alert_notifications_yes">Yes, notify me</string>
     <string name="altert_notifications_no">No</string>
+    <string name="load_error">Data could not be loaded.</string>
 
     <string-array name="road_type_strings">
         <item>@string/freeways</item>

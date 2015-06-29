@@ -31,7 +31,6 @@ import com.readystatesoftware.systembartint.SystemBarTintManager;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.gcm.ClearNotificationsService;
@@ -232,12 +231,6 @@ public class MainActivity extends ActionBarActivity
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Crouton.clearCroutonsForActivity(this);
     }
 
     @Override

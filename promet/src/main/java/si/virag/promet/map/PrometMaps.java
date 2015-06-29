@@ -47,6 +47,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
     private static BitmapDescriptor GREEN_MARKER;
     private static BitmapDescriptor YELLOW_MARKER;
     private static BitmapDescriptor AZURE_MARKER;
+    private static BitmapDescriptor CONE_MARKER;
 
     private static final int[][] TRAFFIC_DENSITY_COLORS = {
             { Color.TRANSPARENT, Color.TRANSPARENT },  // NO DATA
@@ -57,13 +58,13 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
             { Color.argb(160, 255, 0, 0), Color.argb(32, 255, 0, 0)}
     };
 
-    private Context ctx;
+    private static BitmapDescriptor[] TRAFFIC_DENSITY_MARKER_BITMAPS;
+
     private GoogleMap map;
     private Map<Marker, Long> markerIdMap;
     private boolean isSlovenianLocale;
 
     public void setMapInstance(Context ctx, GoogleMap gMap) {
-        this.ctx = ctx;
         if (gMap == null)
             return;
 
@@ -106,10 +107,28 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         GREEN_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
         YELLOW_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
         AZURE_MARKER = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        CONE_MARKER = BitmapDescriptorFactory.fromResource(R.drawable.map_cone);
+
+        final Paint p = new Paint();
+        TRAFFIC_DENSITY_MARKER_BITMAPS = new BitmapDescriptor[TRAFFIC_DENSITY_COLORS.length];
+        for (int i = 0; i < TRAFFIC_DENSITY_COLORS.length; i++) {
+            int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, ctx.getResources().getDisplayMetrics());
+            final Bitmap bmp = Bitmap.createBitmap(circleRadius * 2, circleRadius * 2, Bitmap.Config.ARGB_8888);
+            p.setShader(new RadialGradient(circleRadius,
+                    circleRadius,
+                    circleRadius,
+                    TRAFFIC_DENSITY_COLORS[i][0],
+                    TRAFFIC_DENSITY_COLORS[i][1],
+                    Shader.TileMode.CLAMP));
+            final Canvas c = new Canvas(bmp);
+            c.drawCircle(circleRadius, circleRadius, circleRadius, p);
+            TRAFFIC_DENSITY_MARKER_BITMAPS[i] = BitmapDescriptorFactory.fromBitmap(bmp);
+        }
+
         markersInitialized = true;
     }
 
-    public void showEvents(List<PrometEvent> prometEvents, List<PrometCounter> prometCounters) {
+    public void showEvents(List<PrometEvent> prometEvents, final List<PrometCounter> prometCounters) {
         if (map == null)
             return;
 
@@ -148,7 +167,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                                       icon = YELLOW_MARKER;
                                       break;
                                   case ROADWORKS:
-                                      icon = BitmapDescriptorFactory.fromResource(R.drawable.map_cone);
+                                      icon = CONE_MARKER;
                                       opts.anchor(0.5f, 0.9f);
                                       break;
                               }
@@ -169,27 +188,14 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                   });
 
 
-        final Paint p = new Paint();
         Observable.from(prometCounters)
                 .map(new Func1<PrometCounter, MarkerOptions>() {
                     @Override
                     public MarkerOptions call(PrometCounter event) {
-                        int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, ctx.getResources().getDisplayMetrics());
-                        final Bitmap bmp = Bitmap.createBitmap(circleRadius * 2, circleRadius * 2, Bitmap.Config.ARGB_8888);
-                        p.setShader(new RadialGradient(circleRadius,
-                                                       circleRadius,
-                                                       circleRadius,
-                                                       TRAFFIC_DENSITY_COLORS[event.status.ordinal()][0],
-                                                       TRAFFIC_DENSITY_COLORS[event.status.ordinal()][1],
-                                                       Shader.TileMode.CLAMP));
-                        final Canvas c = new Canvas(bmp);
-                        c.drawCircle(circleRadius, circleRadius, circleRadius, p);
-
-                        BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bmp);
                         return new MarkerOptions()
                                 .position(new LatLng(event.lat, event.lng))
                                 .anchor(0.5f, 0.5f)
-                                .icon(icon);
+                                .icon(TRAFFIC_DENSITY_MARKER_BITMAPS[event.status.ordinal()]);
                     }
                 })
                 .subscribeOn(Schedulers.computation())

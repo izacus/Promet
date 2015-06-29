@@ -28,6 +28,7 @@
     <string name="alert_notifications_content">Ali želite biti obveščeni o novih dogodkih na cesti?</string>
     <string name="alert_notifications_yes">Da, obveščaj me</string>
     <string name="altert_notifications_no">Ne</string>
+    <string name="load_error">Podatkov ni bilo mogoče naložiti.</string>
 
     <string-array name="road_type_strings">
         <item>@string/freeways</item>

@@ -1,7 +1,9 @@
 package si.virag.promet.fragments;
 
+import android.app.Activity;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,11 +17,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CircleOptions;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.maps.android.heatmaps.HeatmapTileProvider;
-import com.google.maps.android.heatmaps.WeightedLatLng;
+import com.nispok.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +27,12 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
-import de.keyboardsurfer.android.widget.crouton.Crouton;
-import de.keyboardsurfer.android.widget.crouton.Style;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func2;
-import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
@@ -82,7 +77,6 @@ public class MapFragment extends Fragment {
     }
 
     private void displayTrafficData() {
-        Crouton.clearCroutonsForActivity(getActivity());
         EventBus.getDefault().post(new Events.RefreshStarted());
 
         Observable<List<PrometEvent>> events = prometApi.getPrometEvents()
@@ -121,7 +115,14 @@ public class MapFragment extends Fragment {
             public void onError(Throwable e) {
                 Log.d(LOG_TAG, "Error when loading!", e);
                 EventBus.getDefault().post(new Events.RefreshCompleted());
-                Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
+                Activity activity = getActivity();
+                if (activity != null) {
+                    Snackbar.with(getActivity().getApplicationContext())
+                            .text(R.string.load_error)
+                            .textTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD))
+                            .color(Color.RED)
+                            .show(activity);
+                }
             }
 
             @Override
