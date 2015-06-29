@@ -1,8 +1,15 @@
 package si.virag.promet.map;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RadialGradient;
+import android.graphics.Shader;
 import android.location.Location;
 import android.util.Pair;
+import android.util.TypedValue;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,6 +32,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
+import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.utils.LocaleUtil;
 
@@ -39,11 +47,22 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
     private static BitmapDescriptor YELLOW_MARKER;
     private static BitmapDescriptor AZURE_MARKER;
 
+    private static final int[][] TRAFFIC_DENSITY_COLORS = {
+            { Color.TRANSPARENT, Color.TRANSPARENT },  // NO DATA
+            { Color.argb(128, 102, 255, 0), Color.argb(16, 102, 255, 0) }, // NORMAL TRAFFIC
+            { Color.argb(128, 242, 255, 0), Color.argb(16, 242, 255, 0) }, // INCREASED TRAFFIC
+            { Color.argb(128, 255, 208, 0), Color.argb(16, 255, 208, 0) }, // DENSER TRAFFIC
+            { Color.argb(128, 255, 119, 0), Color.argb(16, 255, 119, 0) }, // DENSE TRAFFIC
+            { Color.argb(128, 255, 0, 0), Color.argb(16, 255, 0, 0)}
+    };
+
+    private Context ctx;
     private GoogleMap map;
     private Map<Marker, Long> markerIdMap;
     private boolean isSlovenianLocale;
 
     public void setMapInstance(Context ctx, GoogleMap gMap) {
+        this.ctx = ctx;
         if (gMap == null)
             return;
 
@@ -55,7 +74,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
         // Center on Slovenia initially
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(MAP_CENTER, 7.0f));
-        map.setTrafficEnabled(true);
+        map.setTrafficEnabled(false);
         map.setIndoorEnabled(false);
         UiSettings uiSettings = map.getUiSettings();
         uiSettings.setZoomControlsEnabled(true);
@@ -89,7 +108,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         markersInitialized = true;
     }
 
-    public void showEvents(List<PrometEvent> prometEvents) {
+    public void showEvents(List<PrometEvent> prometEvents, List<PrometCounter> prometCounters) {
         if (map == null)
             return;
 
@@ -142,6 +161,39 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                           markerIdMap.put(m, idMarkerPair.first);
                       }
                   });
+
+
+        final Paint p = new Paint();
+        Observable.from(prometCounters)
+                .map(new Func1<PrometCounter, MarkerOptions>() {
+                    @Override
+                    public MarkerOptions call(PrometCounter event) {
+                        int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, ctx.getResources().getDisplayMetrics());
+                        final Bitmap bmp = Bitmap.createBitmap(circleRadius * 2, circleRadius * 2, Bitmap.Config.ARGB_8888);
+                        p.setShader(new RadialGradient(circleRadius,
+                                                       circleRadius,
+                                                       circleRadius,
+                                                       TRAFFIC_DENSITY_COLORS[event.status.ordinal()][0],
+                                                       TRAFFIC_DENSITY_COLORS[event.status.ordinal()][1],
+                                                       Shader.TileMode.CLAMP));
+                        final Canvas c = new Canvas(bmp);
+                        c.drawCircle(circleRadius, circleRadius, circleRadius, p);
+
+                        BitmapDescriptor icon = BitmapDescriptorFactory.fromBitmap(bmp);
+                        return new MarkerOptions()
+                                .position(new LatLng(event.lat, event.lng))
+                                .anchor(0.5f, 0.5f)
+                                .icon(icon);
+                    }
+                })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<MarkerOptions>() {
+                    @Override
+                    public void call(MarkerOptions marker) {
+                        map.addMarker(marker);
+                    }
+                });
     }
 
     public void showPoint(LatLng point) {

@@ -2,12 +2,16 @@ package si.virag.promet.api.opendata;
 
 import retrofit.http.GET;
 import rx.Observable;
+import si.virag.promet.api.model.PrometCounters;
 import si.virag.promet.api.model.PrometEvents;
 
 
 public interface OpenDataApi {
 
     @GET("/promet/events/")
-    public Observable<PrometEvents> getEvents();
+    Observable<PrometEvents> getEvents();
+
+    @GET("/promet/counters/")
+    Observable<PrometCounters> getCounters();
 
 }

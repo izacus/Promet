@@ -1,10 +1,12 @@
 package si.virag.promet.fragments;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
+import com.google.maps.android.heatmaps.WeightedLatLng;
 
 import java.util.List;
 
@@ -28,12 +35,14 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.PrometApi;
+import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.fragments.ui.EventListFilter;
 import si.virag.promet.map.PrometMaps;
@@ -75,39 +84,45 @@ public class MapFragment extends Fragment {
         Crouton.clearCroutonsForActivity(getActivity());
         EventBus.getDefault().post(new Events.RefreshStarted());
 
-        loadSubscription = prometApi.getPrometEvents()
-                 .subscribeOn(Schedulers.io())
-                 .observeOn(AndroidSchedulers.mainThread())
-                 .flatMap(new Func1<List<PrometEvent>, Observable<PrometEvent>>() {
-                     @Override
-                     public Observable<PrometEvent> call(List<PrometEvent> prometEvents) {
-                         return Observable.from(prometEvents);
-                     }
-                 })
-                 .filter(new EventListFilter(prometSettings))
-                 .toList()
-                 .subscribe(new Subscriber<List<PrometEvent>>() {
+        Observable<List<PrometEvent>> events = prometApi.getPrometEvents()
+                .flatMap(new Func1<List<PrometEvent>, Observable<PrometEvent>>() {
+                    @Override
+                    public Observable<PrometEvent> call(List<PrometEvent> prometEvents) {
+                        return Observable.from(prometEvents);
+                    }
+                })
+                .filter(new EventListFilter(prometSettings))
+                .toList();
 
-                     @Override
-                     public void onCompleted() {
-                         EventBus.getDefault().post(new Events.RefreshCompleted());
-                         loadSubscription = null;
-                     }
+        Observable<List<PrometCounter>> counters = prometApi.getPrometCounters();
 
-                     @Override
-                     public void onError(Throwable throwable) {
-                         Log.d(LOG_TAG, "Error when loading!", throwable);
-                         EventBus.getDefault().post(new Events.RefreshCompleted());
-                         Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
-                     }
+        loadSubscription = events.zipWith(counters, new Func2<List<PrometEvent>, List<PrometCounter>, Pair<List<PrometEvent>, List<PrometCounter>>>() {
+            @Override
+            public Pair<List<PrometEvent>, List<PrometCounter>> call(List<PrometEvent> prometEvents, List<PrometCounter> prometCounters) {
+                return new Pair<>(prometEvents, prometCounters);
+            }
+        })
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<Pair<List<PrometEvent>, List<PrometCounter>>>() {
+            @Override
+            public void onCompleted() {
+                EventBus.getDefault().post(new Events.RefreshCompleted());
+                loadSubscription = null;
+            }
 
-                     @Override
-                     public void onNext(List<PrometEvent> prometEvents) {
-                         prometMaps.showEvents(prometEvents);
-                     }
-                 });
+            @Override
+            public void onError(Throwable e) {
+                Log.d(LOG_TAG, "Error when loading!", e);
+                EventBus.getDefault().post(new Events.RefreshCompleted());
+                Crouton.makeText(getActivity(), "Podatkov ni bilo mogoče naložiti.", Style.ALERT).show();
+            }
+
+            @Override
+            public void onNext(Pair<List<PrometEvent>, List<PrometCounter>> eventPair) {
+                prometMaps.showEvents(eventPair.first, eventPair.second);
+            }
+        });
     }
-
 
     @Override
     public void onResume() {

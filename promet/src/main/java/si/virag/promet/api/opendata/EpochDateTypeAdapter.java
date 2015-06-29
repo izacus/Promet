@@ -22,6 +22,6 @@ public class EpochDateTypeAdapter extends TypeAdapter<Date> {
             return null;
         }
 
-        return new Date(in.nextLong());
+        return new Date(in.nextLong() * 1000);
     }
 }

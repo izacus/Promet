@@ -15,9 +15,12 @@ import retrofit.converter.GsonConverter;
 import rx.Observable;
 import rx.functions.Func1;
 import si.virag.promet.api.PrometApi;
+import si.virag.promet.api.model.PrometCounter;
+import si.virag.promet.api.model.PrometCounters;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.PrometEvents;
 import si.virag.promet.api.model.RoadType;
+import si.virag.promet.api.model.TrafficStatus;
 import si.virag.promet.fragments.ui.EventListSorter;
 import si.virag.promet.utils.DataUtils;
 
@@ -42,6 +45,7 @@ public class OpenDataPrometApi extends PrometApi {
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(RoadType.class, new RoadTypeAdapter())
                     .registerTypeAdapter(Date.class, new EpochDateTypeAdapter())
+                    .registerTypeAdapter(TrafficStatus.class, new TrafficStatusAdapter())
                     .create();
 
         RestAdapter adapter = new RestAdapter.Builder()
@@ -64,6 +68,17 @@ public class OpenDataPrometApi extends PrometApi {
     @Override
     public Observable<List<PrometEvent>> getPrometEvents() {
         return prometEventsObserver;
+    }
+
+    @Override
+    public Observable<List<PrometCounter>> getPrometCounters() {
+        return openDataApi.getCounters()
+               .flatMap(new Func1<PrometCounters, Observable<List<PrometCounter>>>() {
+                   @Override
+                   public Observable<List<PrometCounter>> call(PrometCounters prometCounters) {
+                       return Observable.just(prometCounters.counters.counters);
+                   }
+               });
     }
 
     private void createPrometEventsObserver() {
