@@ -107,6 +107,8 @@ public class PrometSettings {
                 return preferences.getBoolean(PREF_NOTIFICATIONS_REGIONAL, true);
             case LOKALNA_CESTA:
                 return preferences.getBoolean(PREF_NOTIFICATIONS_LOCAL, true);
+            case ROADWORKS:
+                return false;
         }
 
         return true;
