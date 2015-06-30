@@ -29,7 +29,8 @@
     <string name="alert_notifications_yes">Yes, notify me</string>
     <string name="altert_notifications_no">No</string>
     <string name="load_error">Data could not be loaded.</string>
-
+    <string name="map_traffic_detail">Avg. speed %1$d km/h, gap %2$.1f s</string>
+    
     <string-array name="road_type_strings">
         <item>@string/freeways</item>
         <item>@string/fast_roads</item>
@@ -66,5 +67,14 @@
         <item quantity="one">… and one more.</item>
         <item quantity="other">… and %d more.</item>
     </plurals>
+
+    <string-array name="traffic_status_strings">
+        <item>No data</item>
+        <item>Normal traffic</item>
+        <item>Increased traffic</item>
+        <item>Denser traffic</item>
+        <item>Dense traffic</item>
+        <item>Dense traffic with jams</item>
+    </string-array>
 
 </resources>

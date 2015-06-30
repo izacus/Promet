@@ -40,6 +40,7 @@ import si.virag.promet.R;
 import si.virag.promet.api.PrometApi;
 import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
+import si.virag.promet.api.model.TrafficStatus;
 import si.virag.promet.fragments.ui.EventListFilter;
 import si.virag.promet.map.PrometMaps;
 import si.virag.promet.utils.PrometSettings;
@@ -95,7 +96,19 @@ public class MapFragment extends Fragment {
                                                        public List<PrometCounter> call(Throwable throwable) {
                                                            return new ArrayList<>();
                                                        }
-                                                   });
+                                                   })
+                                                   .flatMap(new Func1<List<PrometCounter>, Observable<PrometCounter>>() {
+                                                       @Override
+                                                       public Observable<PrometCounter> call(List<PrometCounter> prometCounters) {
+                                                           return Observable.from(prometCounters);
+                                                       }
+                                                   })
+                                                   .filter(new Func1<PrometCounter, Boolean>() {
+                                                       @Override
+                                                       public Boolean call(PrometCounter prometCounter) {
+                                                           return prometCounter.status != TrafficStatus.NORMAL_TRAFFIC && prometCounter.status != TrafficStatus.NO_DATA;
+                                                       }
+                                                   }).toList();
 
         loadSubscription = events.zipWith(counters, new Func2<List<PrometEvent>, List<PrometCounter>, Pair<List<PrometEvent>, List<PrometCounter>>>() {
             @Override
@@ -127,7 +140,7 @@ public class MapFragment extends Fragment {
 
             @Override
             public void onNext(Pair<List<PrometEvent>, List<PrometCounter>> eventPair) {
-                prometMaps.showEvents(eventPair.first, eventPair.second);
+                prometMaps.showEvents(getActivity(), eventPair.first, eventPair.second);
             }
         });
     }

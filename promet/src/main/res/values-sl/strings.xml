@@ -29,6 +29,7 @@
     <string name="alert_notifications_yes">Da, obveščaj me</string>
     <string name="altert_notifications_no">Ne</string>
     <string name="load_error">Podatkov ni bilo mogoče naložiti.</string>
+    <string name="map_traffic_detail">Povpr. hitrost %1$d km/h, razmak %2$.1f s</string>
 
     <string-array name="road_type_strings">
         <item>@string/freeways</item>
@@ -72,5 +73,14 @@
         <item quantity="few">… in še %d.</item>
         <item quantity="other">… in še %d.</item>
     </plurals>
+    
+    <string-array name="traffic_status_strings">
+        <item>Ni podatkov</item>
+        <item>Normalen promet</item>
+        <item>Povečan promet</item>
+        <item>Zgoščen promet</item>
+        <item>Gost promet</item>
+        <item>Gost promet z zastoji</item>
+    </string-array>
 
 </resources>

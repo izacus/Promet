@@ -29,16 +29,28 @@ public class PrometCounter {
     @SerializedName("stevci_stat")
     public TrafficStatus status;
 
+    @SerializedName("stevci_hit")
+    public int avgSpeed;
+
+    @SerializedName("stevci_lokacijaOpis")
+    public String locationName;
+
+    @SerializedName("stevci_gap")
+    public float gap;
+
     @Override
     public String toString() {
         return "PrometCounter{" +
-                "id='" + id + '\'' +
+                "avgSpeed=" + avgSpeed +
+                ", id='" + id + '\'' +
                 ", lat=" + lat +
                 ", lng=" + lng +
                 ", updated=" + updated +
                 ", occupancy=" + occupancy +
                 ", numVehicles=" + numVehicles +
                 ", status=" + status +
+                ", locationName='" + locationName + '\'' +
+                ", gap=" + gap +
                 '}';
     }
 }

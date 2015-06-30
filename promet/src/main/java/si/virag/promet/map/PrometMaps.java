@@ -133,7 +133,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         markersInitialized = true;
     }
 
-    public void showEvents(List<PrometEvent> prometEvents, final List<PrometCounter> prometCounters) {
+    public void showEvents(final Context context, final List<PrometEvent> prometEvents, final List<PrometCounter> prometCounters) {
         if (map == null)
             return;
 
@@ -200,6 +200,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                                 .anchor(0.5f, 0.5f)
                                 .flat(true)
                                 .draggable(false)
+                                .title(context.getResources().getStringArray(R.array.traffic_status_strings)[event.status.ordinal()] + " - " + event.locationName)
+                                .snippet(context.getResources().getString(R.string.map_traffic_detail, event.avgSpeed, event.gap))
                                 .icon(TRAFFIC_DENSITY_MARKER_BITMAPS[event.status.ordinal()]);
                     }
                 })
