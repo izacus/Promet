@@ -51,11 +51,11 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     private static final int[][] TRAFFIC_DENSITY_COLORS = {
             { Color.TRANSPARENT, Color.TRANSPARENT },  // NO DATA
-            { Color.argb(128, 102, 255, 0), Color.argb(16, 102, 255, 0) }, // NORMAL TRAFFIC
-            { Color.argb(128, 242, 255, 0), Color.argb(16, 242, 255, 0) }, // INCREASED TRAFFIC
-            { Color.argb(138, 255, 208, 0), Color.argb(16, 255, 208, 0) }, // DENSER TRAFFIC
-            { Color.argb(148, 255, 119, 0), Color.argb(16, 255, 119, 0) }, // DENSE TRAFFIC
-            { Color.argb(160, 255, 0, 0), Color.argb(32, 255, 0, 0)}
+            { Color.argb(240, 102, 255, 0), Color.argb(64, 102, 255, 0) }, // NORMAL TRAFFIC
+            { Color.argb(240, 242, 255, 0), Color.argb(64, 242, 255, 0) }, // INCREASED TRAFFIC
+            { Color.argb(240, 255, 208, 0), Color.argb(64, 255, 208, 0) }, // DENSER TRAFFIC
+            { Color.argb(240, 255, 119, 0), Color.argb(64, 255, 119, 0) }, // DENSE TRAFFIC
+            { Color.argb(256, 255, 0, 0), Color.argb(128, 255, 0, 0)}
     };
 
     private static BitmapDescriptor[] TRAFFIC_DENSITY_MARKER_BITMAPS;
@@ -78,6 +78,9 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(MAP_CENTER, 7.0f));
         map.setTrafficEnabled(false);
         map.setIndoorEnabled(false);
+        map.setBuildingsEnabled(false);
+
+
         UiSettings uiSettings = map.getUiSettings();
         uiSettings.setZoomControlsEnabled(true);
         uiSettings.setZoomGesturesEnabled(true);
@@ -110,9 +113,11 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         CONE_MARKER = BitmapDescriptorFactory.fromResource(R.drawable.map_cone);
 
         final Paint p = new Paint();
+        p.setStyle(Paint.Style.FILL_AND_STROKE);
+        p.setColor(Color.WHITE);
         TRAFFIC_DENSITY_MARKER_BITMAPS = new BitmapDescriptor[TRAFFIC_DENSITY_COLORS.length];
         for (int i = 0; i < TRAFFIC_DENSITY_COLORS.length; i++) {
-            int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5.0f, ctx.getResources().getDisplayMetrics());
+            int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8.0f, ctx.getResources().getDisplayMetrics());
             final Bitmap bmp = Bitmap.createBitmap(circleRadius * 2, circleRadius * 2, Bitmap.Config.ARGB_8888);
             p.setShader(new RadialGradient(circleRadius,
                     circleRadius,
@@ -147,11 +152,12 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                           BitmapDescriptor icon = null;
                           if (event.isHighPriority()) {
                               icon = RED_MARKER;
-                          }
-                          else if (event.eventGroup == null) {
+                          } else if (event.isRoadworks()) {
+                              icon = CONE_MARKER;
+                              opts.anchor(0.5f, 0.9f);
+                          } else if (event.eventGroup == null) {
                               icon = ORANGE_MARKER;
-                          }
-                          else {
+                          } else {
                               switch (event.eventGroup) {
                                   case AVTOCESTA:
                                       icon = GREEN_MARKER;
@@ -166,23 +172,20 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                                   case LOKALNA_CESTA:
                                       icon = YELLOW_MARKER;
                                       break;
-                                  case ROADWORKS:
-                                      icon = CONE_MARKER;
-                                      opts.anchor(0.5f, 0.9f);
-                                      break;
                               }
                           }
 
                           opts.icon(icon);
+                          opts.draggable(false);
                           return new Pair<>(event.id, opts);
                       }
                   })
                   .subscribeOn(Schedulers.computation())
-                  .observeOn(AndroidSchedulers.mainThread())
-                  .subscribe(new Action1<Pair<Long, MarkerOptions>>() {
-                      @Override
-                      public void call(Pair<Long, MarkerOptions> idMarkerPair) {
-                          Marker m = map.addMarker(idMarkerPair.second);
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Pair<Long, MarkerOptions>>() {
+                    @Override
+                    public void call(Pair<Long, MarkerOptions> idMarkerPair) {
+                        Marker m = map.addMarker(idMarkerPair.second);
                           markerIdMap.put(m, idMarkerPair.first);
                       }
                   });
@@ -195,6 +198,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                         return new MarkerOptions()
                                 .position(new LatLng(event.lat, event.lng))
                                 .anchor(0.5f, 0.5f)
+                                .flat(true)
+                                .draggable(false)
                                 .icon(TRAFFIC_DENSITY_MARKER_BITMAPS[event.status.ordinal()]);
                     }
                 })

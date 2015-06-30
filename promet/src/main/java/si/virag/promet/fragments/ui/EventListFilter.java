@@ -27,8 +27,6 @@ public class EventListFilter implements Func1<PrometEvent, Boolean> {
                 return prometSettings.getShowRegionalneCeste();
             case LOKALNA_CESTA:
                 return prometSettings.getShowLokalneCeste();
-            case ROADWORKS:
-                return prometSettings.getShowRoadworks();
             default:
                 return true;
         }

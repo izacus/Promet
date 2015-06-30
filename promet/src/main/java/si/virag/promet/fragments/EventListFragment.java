@@ -189,8 +189,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
                                 prometSettings.getShowAvtoceste() ? check : cross,
                                 prometSettings.getShowBorderCrossings() ? check : cross,
                                 prometSettings.getShowRegionalneCeste() ? check : cross,
-                                prometSettings.getShowLokalneCeste() ? check : cross,
-                                prometSettings.getShowRoadworks() ? check : cross);
+                                prometSettings.getShowLokalneCeste() ? check : cross);
         headerView.setText(text);
     }
 

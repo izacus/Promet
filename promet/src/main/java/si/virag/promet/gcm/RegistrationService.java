@@ -93,6 +93,8 @@ public class RegistrationService extends IntentService {
         Log.d(LOG_TAG, "Starting GCM registration check...");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+        if (gcm == null) return;
+
         String currentGcmId = getCurrentRegistrationId(prefs);
 
         try {

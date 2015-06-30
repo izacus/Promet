@@ -48,4 +48,8 @@ public class PrometEvent {
     public boolean isHighPriority() {
         return "nesreča".equalsIgnoreCase(cause) || "zastoj".equalsIgnoreCase(cause);
     }
+
+    public boolean isRoadworks() {
+        return "Roadworks".equalsIgnoreCase(causeEn) || "Delo na cesti".equalsIgnoreCase(cause);
+    }
 }

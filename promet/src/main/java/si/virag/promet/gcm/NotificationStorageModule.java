@@ -87,7 +87,8 @@ public class NotificationStorageModule {
         for (int i = 0; i < notifications.size(); i++) {
             PushNotification notification = notifications.get(i);
             if (notification.getValidUntil() < currentTime ||
-                !settings.shouldShowNotification(DataUtils.roadPriorityToRoadType(notification.getRoadPriority(), notification.isCrossing()))) {
+                !settings.shouldShowNotification(DataUtils.roadPriorityToRoadType(notification.getRoadPriority(), notification.isCrossing())) ||
+                "Roadworks".equalsIgnoreCase(notification.getCauseEn())) {
                 Log.d(LOG_TAG, "Clearing expired/disabled notification " + notification);
                 notification.removeFromRealm();
             }

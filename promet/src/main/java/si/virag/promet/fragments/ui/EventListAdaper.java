@@ -108,6 +108,10 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
 
         // Avtoceste and hitre ceste are merged
         if (type == EventGroup.HITRA_CESTA) type = EventGroup.AVTOCESTA;
+        if (data.get(position).isRoadworks()) {
+            textView.setText(R.string.roadworks);
+            return v;
+        }
 
         String[] strings = ctx.getResources().getStringArray(R.array.road_type_strings);
         textView.setText(type == null ? strings[strings.length - 1] : strings[type.ordinal()]);
@@ -119,6 +123,9 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         EventGroup type = data.get(position).eventGroup;
         if (type == EventGroup.HITRA_CESTA)   // Join this with highways
             return EventGroup.AVTOCESTA.ordinal();
+
+        if (data.get(position).isRoadworks())
+            return 101;
 
         return type == null ? 100 : type.ordinal();
     }

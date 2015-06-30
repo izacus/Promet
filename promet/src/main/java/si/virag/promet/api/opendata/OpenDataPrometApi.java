@@ -97,10 +97,6 @@ public class OpenDataPrometApi extends PrometApi {
                             prometEvent.eventGroup = DataUtils.roadPriorityToRoadType(prometEvent.roadPriority, prometEvent.isBorderCrossing);
                         }
 
-                        if (prometEvent.causeEn.equalsIgnoreCase("Roadworks") || prometEvent.cause.equalsIgnoreCase("Delo na cesti")) {
-                            prometEvent.eventGroup = EventGroup.ROADWORKS;
-                        }
-
                         return prometEvent;
                     }
                 })
