@@ -30,7 +30,7 @@
     <string name="altert_notifications_no">No</string>
     <string name="load_error">Data could not be loaded.</string>
     <string name="map_traffic_detail">Avg. speed %1$d km/h, gap %2$.1f s</string>
-    
+
     <string-array name="road_type_strings">
         <item>@string/freeways</item>
         <item>@string/fast_roads</item>

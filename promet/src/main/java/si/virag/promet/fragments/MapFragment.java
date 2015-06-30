@@ -140,6 +140,7 @@ public class MapFragment extends Fragment {
 
             @Override
             public void onNext(Pair<List<PrometEvent>, List<PrometCounter>> eventPair) {
+                Log.d(LOG_TAG, eventPair.first.toString());
                 prometMaps.showEvents(getActivity(), eventPair.first, eventPair.second);
             }
         });

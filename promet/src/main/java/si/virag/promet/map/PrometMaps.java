@@ -54,8 +54,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
             { Color.argb(240, 102, 255, 0), Color.argb(64, 102, 255, 0) }, // NORMAL TRAFFIC
             { Color.argb(240, 242, 255, 0), Color.argb(64, 242, 255, 0) }, // INCREASED TRAFFIC
             { Color.argb(240, 255, 208, 0), Color.argb(64, 255, 208, 0) }, // DENSER TRAFFIC
-            { Color.argb(240, 255, 119, 0), Color.argb(64, 255, 119, 0) }, // DENSE TRAFFIC
-            { Color.argb(256, 255, 0, 0), Color.argb(128, 255, 0, 0)}
+            { Color.argb(240, 255, 18, 0), Color.argb(64, 255, 18, 0) }, // DENSE TRAFFIC
+            { Color.argb(256, 255, 0, 0), Color.argb(256, 255, 0, 0)}
     };
 
     private static BitmapDescriptor[] TRAFFIC_DENSITY_MARKER_BITMAPS;

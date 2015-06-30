@@ -7,6 +7,8 @@ import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import java.util.Locale;
 
 import si.virag.promet.api.opendata.OpenDataApiModule;
@@ -24,6 +26,7 @@ public class PrometApplication extends Application {
     public void onCreate() {
         checkUpdateLocale(this);
         super.onCreate();
+        JodaTimeAndroid.init(this);
 
         component = DaggerPrometComponent.builder()
                                           .prometApplicationModule(new PrometApplicationModule(this))
