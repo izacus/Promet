@@ -94,6 +94,7 @@ public class MapFragment extends Fragment {
                                                    .onErrorReturn(new Func1<Throwable, List<PrometCounter>>() {
                                                        @Override
                                                        public List<PrometCounter> call(Throwable throwable) {
+                                                           Log.e(LOG_TAG, "Failed to load traffic counters!", throwable);
                                                            return new ArrayList<>();
                                                        }
                                                    })

@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -82,7 +84,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         holder.descriptionView.setText(slovenianLocale ? event.description : event.descriptionEn);
         holder.locationView.setText(locationText);
         holder.timeView.setVisibility(event.entered == null ? View.INVISIBLE : View.VISIBLE);
-        holder.timeView.setText(event.entered == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.validFrom));
+        holder.timeView.setText(event.entered == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.entered));
         holder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +96,23 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
 
     public void setData(List<PrometEvent> prometEvents) {
         this.data = prometEvents;
+        Collections.sort(data, new Comparator<PrometEvent>() {
+            @Override
+            public int compare(PrometEvent lhs, PrometEvent rhs) {
+                if (!rhs.isRoadworks() && lhs.isRoadworks())
+                    return 1;
+
+                if (!lhs.isRoadworks() && rhs.isRoadworks())
+                    return -1;
+
+                if (lhs.eventGroup != rhs.eventGroup) {
+                    return lhs.eventGroup.ordinal() - rhs.eventGroup.ordinal();
+                }
+
+                return rhs.entered.compareTo(lhs.entered);
+            }
+        });
+
         notifyDataSetChanged();
     }
 

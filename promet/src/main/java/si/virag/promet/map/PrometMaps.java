@@ -51,11 +51,11 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     private static final int[][] TRAFFIC_DENSITY_COLORS = {
             { Color.TRANSPARENT, Color.TRANSPARENT },  // NO DATA
-            { Color.argb(240, 102, 255, 0), Color.argb(64, 102, 255, 0) }, // NORMAL TRAFFIC
-            { Color.argb(240, 242, 255, 0), Color.argb(64, 242, 255, 0) }, // INCREASED TRAFFIC
-            { Color.argb(240, 255, 208, 0), Color.argb(64, 255, 208, 0) }, // DENSER TRAFFIC
-            { Color.argb(240, 255, 18, 0), Color.argb(64, 255, 18, 0) }, // DENSE TRAFFIC
-            { Color.argb(256, 255, 0, 0), Color.argb(256, 255, 0, 0)}
+            { Color.argb(140, 102, 255, 0), Color.argb(64, 102, 255, 0) }, // NORMAL TRAFFIC
+            { Color.argb(100, 242, 255, 0), Color.argb(160, 242, 255, 0) }, // INCREASED TRAFFIC
+            { Color.argb(180, 255, 208, 0), Color.argb(256, 255, 184, 0) }, // DENSER TRAFFIC
+            { Color.argb(180, 255, 18, 0), Color.argb(256, 255, 18, 0) }, // DENSE TRAFFIC
+            { Color.argb(200, 255, 0, 0), Color.argb(256, 255, 0, 0)}
     };
 
     private static BitmapDescriptor[] TRAFFIC_DENSITY_MARKER_BITMAPS;
@@ -113,20 +113,20 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         CONE_MARKER = BitmapDescriptorFactory.fromResource(R.drawable.map_cone);
 
         final Paint p = new Paint();
-        p.setStyle(Paint.Style.FILL_AND_STROKE);
-        p.setColor(Color.WHITE);
+        p.setStyle(Paint.Style.FILL);
+        final Paint borderPaint = new Paint();
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(3.0f);
+        borderPaint.setAntiAlias(true);
         TRAFFIC_DENSITY_MARKER_BITMAPS = new BitmapDescriptor[TRAFFIC_DENSITY_COLORS.length];
         for (int i = 0; i < TRAFFIC_DENSITY_COLORS.length; i++) {
-            int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8.0f, ctx.getResources().getDisplayMetrics());
+            int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, ctx.getResources().getDisplayMetrics());
             final Bitmap bmp = Bitmap.createBitmap(circleRadius * 2, circleRadius * 2, Bitmap.Config.ARGB_8888);
-            p.setShader(new RadialGradient(circleRadius,
-                    circleRadius,
-                    circleRadius,
-                    TRAFFIC_DENSITY_COLORS[i][0],
-                    TRAFFIC_DENSITY_COLORS[i][1],
-                    Shader.TileMode.CLAMP));
+            p.setColor(TRAFFIC_DENSITY_COLORS[i][0]);
+            borderPaint.setColor(TRAFFIC_DENSITY_COLORS[i][1]);
             final Canvas c = new Canvas(bmp);
             c.drawCircle(circleRadius, circleRadius, circleRadius, p);
+            c.drawCircle(circleRadius, circleRadius, circleRadius, borderPaint);
             TRAFFIC_DENSITY_MARKER_BITMAPS[i] = BitmapDescriptorFactory.fromBitmap(bmp);
         }
 
