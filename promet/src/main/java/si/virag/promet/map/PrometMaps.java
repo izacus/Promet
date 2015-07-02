@@ -120,7 +120,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         borderPaint.setAntiAlias(true);
         TRAFFIC_DENSITY_MARKER_BITMAPS = new BitmapDescriptor[TRAFFIC_DENSITY_COLORS.length];
         for (int i = 0; i < TRAFFIC_DENSITY_COLORS.length; i++) {
-            int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, ctx.getResources().getDisplayMetrics());
+            int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7.0f, ctx.getResources().getDisplayMetrics());
             final Bitmap bmp = Bitmap.createBitmap(circleRadius * 2, circleRadius * 2, Bitmap.Config.ARGB_8888);
             p.setColor(TRAFFIC_DENSITY_COLORS[i][0]);
             borderPaint.setColor(TRAFFIC_DENSITY_COLORS[i][1]);
