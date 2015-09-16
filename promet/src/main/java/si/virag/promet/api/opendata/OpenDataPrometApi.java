@@ -48,6 +48,7 @@ public class OpenDataPrometApi extends PrometApi {
                     .registerTypeAdapter(EventGroup.class, new EventGroupAdapter())
                     .registerTypeAdapter(DateTime.class, new EpochDateTypeAdapter())
                     .registerTypeAdapter(TrafficStatus.class, new TrafficStatusAdapter())
+                    .registerTypeAdapter(Double.class, new FunnyDoubleAdapter())
                     .create();
 
         RestAdapter adapter = new RestAdapter.Builder()

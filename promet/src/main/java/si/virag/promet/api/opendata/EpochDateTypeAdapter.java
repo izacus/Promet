@@ -24,6 +24,9 @@ public class EpochDateTypeAdapter extends TypeAdapter<DateTime> {
             return null;
         }
 
-        return new DateTime(in.nextLong());
+        // Sometimes the API sends time that requires * 1000, sometimes not. Compare to 1971 epoch and decide.
+        final long timestamp = in.nextLong();
+        boolean needsCorrection =  timestamp < 31539661000l;
+        return new DateTime(needsCorrection ? timestamp * 1000l : timestamp);
     }
 }
