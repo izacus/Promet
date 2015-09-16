@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.RadialGradient;
 import android.graphics.Shader;
 import android.location.Location;
+import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
 
@@ -40,6 +41,7 @@ import si.virag.promet.utils.LocaleUtil;
 public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     public static final LatLng MAP_CENTER = new LatLng(46.055556, 14.508333);
+    private static final String LOG_TAG = "Promet.Maps";
 
     private static boolean markersInitialized = false;
     private static BitmapDescriptor RED_MARKER;
@@ -211,6 +213,11 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                     @Override
                     public void call(MarkerOptions marker) {
                         map.addMarker(marker);
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.e(LOG_TAG, "Failed to load traffic counters!", throwable);
                     }
                 });
     }
