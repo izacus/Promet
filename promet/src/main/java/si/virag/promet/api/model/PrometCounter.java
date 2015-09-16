@@ -38,7 +38,7 @@ public class PrometCounter {
     public String locationName;
 
     @SerializedName("stevci_gap")
-    public float gap;
+    public Double gap;
 
     @Override
     public String toString() {

@@ -20,6 +20,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.nispok.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,6 +29,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
+import org.joda.time.DateTime;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -121,7 +124,6 @@ public class MapFragment extends Fragment {
         .subscribe(new Subscriber<Pair<List<PrometEvent>, List<PrometCounter>>>() {
             @Override
             public void onCompleted() {
-                EventBus.getDefault().post(new Events.RefreshCompleted());
                 loadSubscription = null;
             }
 
@@ -142,6 +144,19 @@ public class MapFragment extends Fragment {
             @Override
             public void onNext(Pair<List<PrometEvent>, List<PrometCounter>> eventPair) {
                 Log.d(LOG_TAG, eventPair.first.toString());
+
+                DateTime lastUpdateTime = null;
+/*                if (eventPair.second.size() > 0) {
+                    int mostRecentIdx = eventPair.second.indexOf(Collections.min(eventPair.second, new Comparator<PrometCounter>() {
+                        @Override
+                        public int compare(PrometCounter lhs, PrometCounter rhs) {
+                            return -lhs.updated.compareTo(rhs.updated);
+                        }
+                    }));
+                     lastUpdateTime = eventPair.second.get(mostRecentIdx).updated;
+                } */
+
+                EventBus.getDefault().post(new Events.RefreshCompleted(lastUpdateTime));
                 prometMaps.showEvents(getActivity(), eventPair.first, eventPair.second);
             }
         });

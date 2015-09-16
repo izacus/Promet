@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -28,9 +29,14 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
+import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.gcm.ClearNotificationsService;
@@ -66,12 +72,13 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         application.component().inject(this);
 
-        Crashlytics.start(this);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         // Fix actionbar name for other locales
         ActionBar ab = getSupportActionBar();
-        if (ab != null)
+        if (ab != null) {
             ab.setTitle(R.string.app_name);
+        }
 
         // Set titlebar tint
         tintManager = new SystemBarTintManager(this);
@@ -285,12 +292,29 @@ public class MainActivity extends ActionBarActivity
         return true;
     }
 
+    private void showUpdateTimeInActionBar(@NonNull final DateTime updateTime) {
+        final ActionBar ab = getSupportActionBar();
+        if (ab == null) return;
+
+        // Check if today
+        if (updateTime.toLocalDate().equals(new LocalDate())) {
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
+            ab.setSubtitle("Podatki z " + updateTime.toString(formatter) + ".");
+        } else {
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("dd. MM. HH:mm");
+            ab.setSubtitle("Podatki z " + updateTime.toString(formatter) + ".");
+        }
+    }
+
     public void onEventMainThread(Events.RefreshStarted e) {
         setSupportProgressBarIndeterminateVisibility(true);
     }
 
     public void onEventMainThread(Events.RefreshCompleted e) {
         setSupportProgressBarIndeterminateVisibility(false);
+        if (e.lastUpdateTime != null) {
+            showUpdateTimeInActionBar(e.lastUpdateTime);
+        }
     }
 
     public void onEventMainThread(Events.ShowPointOnMap e) {
