@@ -1,35 +1,35 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url 'http://download.crashlytics.com/maven' }
+        maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
-        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
+        classpath 'com.android.tools.build:gradle:1.3.0'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'crashlytics'
+apply plugin: 'io.fabric'
 apply plugin: 'com.neenbedankt.android-apt'
 
 repositories {
     jcenter()
-    maven { url 'http://download.crashlytics.com/maven' }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 android {
 
-    compileSdkVersion 21
-    buildToolsVersion '22.0.1'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.0'
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 21
-        versionCode 10
-        versionName "1.3"
+        targetSdkVersion 23
+        versionCode 11
+        versionName "1.4"
         resConfigs "en", "sl"
     }
     compileOptions {
@@ -62,19 +62,19 @@ dependencies {
     compile 'io.reactivex:rxandroid:0.25.0'
     compile 'com.squareup.retrofit:retrofit:1.8.0'
     compile 'com.jakewharton:butterknife:6.1.0'
-    compile 'com.google.android.gms:play-services-base:7.5.+'
-    compile 'com.google.android.gms:play-services-maps:7.5.+'
-    compile 'com.google.android.gms:play-services-location:7.5.+'
-    compile 'com.google.android.gms:play-services-gcm:7.5.+'
+    compile 'com.google.android.gms:play-services-base:7.8.+'
+    compile 'com.google.android.gms:play-services-maps:7.8.+'
+    compile 'com.google.android.gms:play-services-location:7.8.+'
+    compile 'com.google.android.gms:play-services-gcm:7.8.+'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
-    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:support-v4:23.0.0'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:cardview-v7:22.2.0'
+    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.android.support:cardview-v7:23.0.0'
     compile 'com.nispok:snackbar:2.10.+'
     compile 'se.emilsjolander:stickylistheaders:2.5.0'
-    compile 'com.afollestad:material-dialogs:0.7.4.2'
+    compile 'com.afollestad:material-dialogs:0.7.9.1'
     compile 'com.readystatesoftware.systembartint:systembartint:1.0.4'
     compile 'de.greenrobot:eventbus:2.2.1'
     compile 'io.realm:realm-android:0.81.1'
@@ -82,6 +82,8 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.0'
     provided 'javax.annotation:jsr250-api:1.0'
     compile project(':fuzzydatetimeformatter')
-    compile 'com.crashlytics.android:crashlytics:1.+'
     compile 'net.danlew:android.joda:2.8.1'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
+        transitive = true;
+    }
 }
