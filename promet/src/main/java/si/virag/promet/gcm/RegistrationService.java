@@ -101,12 +101,15 @@ public class RegistrationService extends IntentService {
             String registrationId = gcm.register(GCM_ID);
             if (!currentGcmId.equals(registrationId)) {
                 prefs.edit().putBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, true)
-                            .apply();
+                        .apply();
             }
 
             if (prefs.getBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, true)) {
                 registerGCMOnServer(prefs, registrationId);
             }
+        } catch (SecurityException e) {
+            Log.e(LOG_TAG, "Cannot register for notifications.");
+            return;
         } catch (IOException e) {
             Log.d(LOG_TAG, "Failed to retrieve GCM ID.");
 
