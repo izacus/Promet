@@ -18,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 
 import java.io.IOException;
 
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 
 import retrofit.RetrofitError;
 import si.virag.promet.PrometApplication;
+import si.virag.promet.R;
 import si.virag.promet.api.push.PushApi;
 import si.virag.promet.utils.PrometSettings;
 
@@ -92,24 +94,19 @@ public class RegistrationService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(LOG_TAG, "Starting GCM registration check...");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
-        if (gcm == null) return;
-
-        String currentGcmId = getCurrentRegistrationId(prefs);
+        InstanceID instanceID = InstanceID.getInstance(this);
 
         try {
-            String registrationId = gcm.register(GCM_ID);
-            if (!currentGcmId.equals(registrationId)) {
-                prefs.edit().putBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, true)
-                        .apply();
+            String gcmToken = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            String currentGcmId = getCurrentRegistrationId(prefs);
+            if (!currentGcmId.equals(gcmToken)) {
+                prefs.edit().putBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
             }
 
             if (prefs.getBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, true)) {
-                registerGCMOnServer(prefs, registrationId);
+                registerGCMOnServer(prefs, gcmToken);
             }
-        } catch (SecurityException e) {
-            Log.e(LOG_TAG, "Cannot register for notifications.");
-            return;
+
         } catch (IOException e) {
             Log.d(LOG_TAG, "Failed to retrieve GCM ID.");
 

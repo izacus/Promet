@@ -37,6 +37,9 @@
 
 # Retrofit
 -dontwarn retrofit.appengine.**
+-dontwarn org.apache.**
+-dontwarn android.net.http.**
+-dontwarn retrofit.client.**
 -keep class retrofit.** { *; }
 -keepclasseswithmembers class * {
     @retrofit.http.* <methods>;
