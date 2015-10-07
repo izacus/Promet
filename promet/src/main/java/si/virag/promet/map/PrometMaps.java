@@ -77,7 +77,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         this.isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
 
         // Center on Slovenia initially
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(MAP_CENTER, 7.0f));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(MAP_CENTER, 10.0f));
         map.setTrafficEnabled(false);
         map.setIndoorEnabled(false);
         map.setBuildingsEnabled(false);

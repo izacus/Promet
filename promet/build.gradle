@@ -85,6 +85,8 @@ dependencies {
     provided 'javax.annotation:jsr250-api:1.0'
     compile project(':fuzzydatetimeformatter')
     compile 'net.danlew:android.joda:2.8.1'
+    // Android 6 permissions
+    compile 'com.tbruyelle.rxpermissions:rxpermissions:0.2.0@aar'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
     }

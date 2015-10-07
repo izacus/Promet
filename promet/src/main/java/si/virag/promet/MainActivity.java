@@ -1,5 +1,7 @@
 package si.virag.promet;
 
+import android.*;
+import android.Manifest;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,6 +30,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
@@ -37,6 +40,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import rx.Subscriber;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.gcm.ClearNotificationsService;
@@ -111,7 +116,28 @@ public class MainActivity extends ActionBarActivity
         }
 
         clearPendingNotifications();
-        checkShowNotificationsDialog();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RxPermissions.getInstance(this).request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+                        checkShowNotificationsDialog();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+
+                    }
+                });
     }
 
     private void clearPendingNotifications() {
