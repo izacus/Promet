@@ -8,7 +8,6 @@ import com.google.gson.stream.JsonWriter;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
-import java.util.Date;
 
 public class EpochDateTypeAdapter extends TypeAdapter<DateTime> {
     @Override

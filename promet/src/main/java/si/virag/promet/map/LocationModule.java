@@ -17,7 +17,6 @@ import com.google.android.gms.location.LocationServices;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;

@@ -1,7 +1,9 @@
 package si.virag.promet;
 
 import android.support.annotation.Nullable;
+
 import com.google.android.gms.maps.model.LatLng;
+
 import org.joda.time.DateTime;
 
 public class Events {

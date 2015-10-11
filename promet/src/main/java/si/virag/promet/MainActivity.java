@@ -1,6 +1,5 @@
 package si.virag.promet;
 
-import android.*;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.content.Intent;
@@ -16,9 +15,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,15 +32,15 @@ import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
-import io.fabric.sdk.android.Fabric;
-import javax.inject.Inject;
-
-import de.greenrobot.event.EventBus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import javax.inject.Inject;
+
+import de.greenrobot.event.EventBus;
+import io.fabric.sdk.android.Fabric;
 import rx.Subscriber;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
@@ -49,7 +49,7 @@ import si.virag.promet.gcm.RegistrationService;
 import si.virag.promet.preferences.PrometPreferences;
 import si.virag.promet.utils.PrometSettings;
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends AppCompatActivity
 {
     public static final String PARAM_SHOW_LIST = "ShowList";
     public static final String PARAM_SHOW_ITEM_ID = "ShowListItemId";
@@ -88,7 +88,7 @@ public class MainActivity extends ActionBarActivity
         // Set titlebar tint
         tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintColor(getResources().getColor(R.color.theme_color));
+        tintManager.setStatusBarTintColor(ContextCompat.getColor(this, R.color.theme_color));
 
         pager = (ViewPager)findViewById(R.id.main_pager);
         tabs = (PagerSlidingTabStrip) findViewById(R.id.main_tabs);
@@ -106,7 +106,7 @@ public class MainActivity extends ActionBarActivity
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_car);
-            ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(getString(R.string.app_name), icon, getResources().getColor(R.color.theme_color));
+            ActivityManager.TaskDescription description = new ActivityManager.TaskDescription(getString(R.string.app_name), icon, ContextCompat.getColor(this,R.color.theme_color));
             setTaskDescription(description);
         }
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">Promet</string>
     <string name="tab_map">Zemljevid</string>
@@ -30,6 +30,7 @@
     <string name="altert_notifications_no">Ne</string>
     <string name="load_error">Podatkov ni bilo mogoče naložiti.</string>
     <string name="map_traffic_detail">Povpr. hitrost %1$d km/h, razmak %2$.1f s</string>
+    <string name="loading">Nalagam…</string>
 
     <string-array name="road_type_strings">
         <item>@string/freeways</item>
@@ -54,21 +55,21 @@
     </string-array>
 
     <plurals name="notifications_multiple_title">
-        <item quantity="one">En nov dogodek</item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">En nov dogodek</item>
         <item quantity="two">%d nova dogodka</item>
         <item quantity="few">%d novi dogodki</item>
         <item quantity="other">%d novih dogodkov</item>
     </plurals>
 
     <plurals name="notifications_multiple_ticker">
-        <item quantity="one">En nov prometen dogodek</item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">En nov prometen dogodek</item>
         <item quantity="two">%d nova prometna dogodka</item>
         <item quantity="few">%d novi prometni dogodki</item>
         <item quantity="other">%d novih prometnih dogodkov</item>
     </plurals>
 
     <plurals name="notifications_multiple_summary">
-        <item quantity="one">… in še en.</item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">… in še en.</item>
         <item quantity="two">… in še %d.</item>
         <item quantity="few">… in še %d.</item>
         <item quantity="other">… in še %d.</item>

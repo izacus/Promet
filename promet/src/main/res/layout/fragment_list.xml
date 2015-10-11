@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:layout_marginRight="36dp"
         android:layout_marginLeft="36dp"
-        android:text="Nalagam..."
+        android:text="@string/loading"
         android:textColor="@android:color/tertiary_text_light"
         style="?android:attr/textAppearanceMedium"
         />

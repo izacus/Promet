@@ -12,7 +12,6 @@ import si.virag.promet.gcm.PushIntentService;
 import si.virag.promet.gcm.RegistrationService;
 import si.virag.promet.map.LocationModule;
 import si.virag.promet.map.MapModule;
-import si.virag.promet.preferences.PrometPreferences;
 import si.virag.promet.preferences.PrometPreferencesFragment;
 
 @Singleton

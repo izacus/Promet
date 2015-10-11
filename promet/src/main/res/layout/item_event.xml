@@ -3,6 +3,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -55,8 +56,7 @@
                     android:gravity="top|right"
                     android:textColor="@android:color/tertiary_text_light"
                     android:fontFamily="sans-serif-light"
-
-                    />
+                    tools:ignore="UnusedAttribute" />
 
                 <TextView
                     android:id="@+id/item_event_location"
@@ -80,7 +80,7 @@
                     android:fontFamily="sans-serif-light"
                     android:textSize="14sp"
                     style="?android:textAppearanceListItemSmall"
-                    />
+                    tools:ignore="UnusedAttribute" />
 
             </RelativeLayout>
 

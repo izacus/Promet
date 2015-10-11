@@ -1,11 +1,6 @@
 package si.virag.promet.api.push;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Build;
-
-import com.crashlytics.android.Crashlytics;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

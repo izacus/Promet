@@ -3,14 +3,14 @@ package si.virag.promet.preferences;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 
-public class PrometPreferences extends ActionBarActivity {
+public class PrometPreferences extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -2,6 +2,7 @@ package si.virag.promet.fragments.ui;
 
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -24,8 +25,8 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import si.virag.fuzzydatetime.FuzzyDateTimeFormatter;
 import si.virag.promet.Events;
 import si.virag.promet.R;
-import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.EventGroup;
+import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.utils.LocaleUtil;
 
 public class EventListAdaper extends BaseAdapter implements StickyListHeadersAdapter {
@@ -75,7 +76,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         SpannableString titleText = new SpannableString(slovenianLocale ? event.cause : event.causeEn);
         SpannableString locationText = new SpannableString(event.roadName);
         if (event.isHighPriority()) {
-            int color = ctx.getResources().getColor(android.R.color.holo_red_dark);
+            int color = ContextCompat.getColor(ctx, android.R.color.holo_red_dark);
             titleText.setSpan(new ForegroundColorSpan(color), 0, titleText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             locationText.setSpan(new ForegroundColorSpan(color), 0, locationText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }

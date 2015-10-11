@@ -8,7 +8,6 @@ import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
 
-import java.util.Date;
 import java.util.List;
 
 import retrofit.RequestInterceptor;
@@ -17,11 +16,11 @@ import retrofit.converter.GsonConverter;
 import rx.Observable;
 import rx.functions.Func1;
 import si.virag.promet.api.PrometApi;
+import si.virag.promet.api.model.EventGroup;
 import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometCounters;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.PrometEvents;
-import si.virag.promet.api.model.EventGroup;
 import si.virag.promet.api.model.TrafficStatus;
 import si.virag.promet.fragments.ui.EventListSorter;
 import si.virag.promet.utils.DataUtils;

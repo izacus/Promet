@@ -19,9 +19,9 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.nispok.snackbar.Snackbar;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
-import org.joda.time.DateTime;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
