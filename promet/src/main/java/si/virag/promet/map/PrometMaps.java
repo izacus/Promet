@@ -185,12 +185,18 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                   .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<Pair<Long, MarkerOptions>>() {
-                    @Override
-                    public void call(Pair<Long, MarkerOptions> idMarkerPair) {
-                        Marker m = map.addMarker(idMarkerPair.second);
-                          markerIdMap.put(m, idMarkerPair.first);
-                      }
-                  });
+                               @Override
+                               public void call(Pair<Long, MarkerOptions> idMarkerPair) {
+                                   Marker m = map.addMarker(idMarkerPair.second);
+                                   markerIdMap.put(m, idMarkerPair.first);
+                               }
+                           },
+                        new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+                                Log.e(LOG_TAG, "Could not load data.", throwable);
+                            }
+                        });
 
 
         Observable.from(prometCounters)

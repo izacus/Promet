@@ -118,28 +118,6 @@ public class MainActivity extends ActionBarActivity
         clearPendingNotifications();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        RxPermissions.getInstance(this).request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
-                .subscribe(new Subscriber<Boolean>() {
-                    @Override
-                    public void onCompleted() {
-                        checkShowNotificationsDialog();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Boolean aBoolean) {
-
-                    }
-                });
-    }
-
     private void clearPendingNotifications() {
         Intent i = new Intent(this, ClearNotificationsService.class);
         startService(i);
@@ -258,6 +236,24 @@ public class MainActivity extends ActionBarActivity
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+
+        RxPermissions.getInstance(this).request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+                        checkShowNotificationsDialog();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+
+                    }
+                });
     }
 
     @Override
