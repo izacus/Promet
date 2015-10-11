@@ -49,6 +49,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
         }
     }
+    lintOptions {
+        disable 'MissingTranslation'
+    }
     dexOptions {
         incremental false
     }
