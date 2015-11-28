@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.exceptions.RealmMigrationNeededException;
 import si.virag.promet.MainActivity;
@@ -56,14 +57,11 @@ public class PushIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Realm realm = null;
         try {
-
-            try {
-                realm = Realm.getInstance(this);
-            } catch (RealmMigrationNeededException e) {
-                if (realm != null) realm.close();
-                Realm.deleteRealmFile(this);
-                realm = Realm.getInstance(this);
-            }
+            RealmConfiguration configuration = new RealmConfiguration.Builder(this)
+                                                                     .name("default.realm")
+                                                                     .deleteRealmIfMigrationNeeded()
+                                                                     .build();
+            realm = Realm.getInstance(configuration);
 
             GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
             String messageType = gcm.getMessageType(intent);
