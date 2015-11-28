@@ -99,7 +99,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         map.setOnInfoWindowClickListener(this);
 
         map.setMyLocationEnabled(true);
-
+        map.setTrafficEnabled(true);
     }
 
     private void initializeMarkers(Context ctx) {
