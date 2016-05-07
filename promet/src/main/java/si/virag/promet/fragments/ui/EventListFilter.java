@@ -1,6 +1,7 @@
 package si.virag.promet.fragments.ui;
 
-import org.joda.time.DateTime;
+
+import org.threeten.bp.LocalDateTime;
 
 import rx.functions.Func1;
 import si.virag.promet.api.model.PrometEvent;
@@ -19,7 +20,7 @@ public class EventListFilter implements Func1<PrometEvent, Boolean> {
         if (prometEvent.eventGroup == null)
             return true;
 
-        if (prometEvent.validTo != null && prometEvent.validTo.isBefore(DateTime.now())) {
+        if (prometEvent.validTo != null && prometEvent.validTo.isBefore(LocalDateTime.now())) {
             return false;
         }
 

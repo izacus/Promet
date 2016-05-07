@@ -6,7 +6,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.LocalDateTime;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class OpenDataPrometApi extends PrometApi {
         Gson gson = new GsonBuilder()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(EventGroup.class, new EventGroupAdapter())
-                    .registerTypeAdapter(DateTime.class, new EpochDateTypeAdapter())
+                    .registerTypeAdapter(LocalDateTime.class, new EpochDateTypeAdapter())
                     .registerTypeAdapter(TrafficStatus.class, new TrafficStatusAdapter())
                     .registerTypeAdapter(Double.class, new FunnyDoubleAdapter())
                     .create();

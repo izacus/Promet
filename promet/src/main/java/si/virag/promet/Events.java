@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.LocalDateTime;
 
 public class Events {
 
@@ -12,9 +12,9 @@ public class Events {
 
     public static class RefreshCompleted {
         @Nullable
-        public final DateTime lastUpdateTime;
+        public final LocalDateTime lastUpdateTime;
 
-        public RefreshCompleted(@Nullable DateTime lastUpdateTime) {
+        public RefreshCompleted(@Nullable LocalDateTime lastUpdateTime) {
             this.lastUpdateTime = lastUpdateTime;
         }
 

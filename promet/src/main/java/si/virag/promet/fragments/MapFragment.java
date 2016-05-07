@@ -19,7 +19,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.nispok.snackbar.Snackbar;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +144,7 @@ public class MapFragment extends Fragment {
             public void onNext(Pair<List<PrometEvent>, List<PrometCounter>> eventPair) {
                 Log.d(LOG_TAG, eventPair.first.toString());
 
-                DateTime lastUpdateTime = null;
+                LocalDateTime lastUpdateTime = null;
 /*                if (eventPair.second.size() > 0) {
                     int mostRecentIdx = eventPair.second.indexOf(Collections.min(eventPair.second, new Comparator<PrometCounter>() {
                         @Override

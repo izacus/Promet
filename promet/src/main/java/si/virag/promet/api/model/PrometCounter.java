@@ -2,7 +2,8 @@ package si.virag.promet.api.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.LocalDateTime;
+
 
 public class PrometCounter {
 
@@ -16,7 +17,7 @@ public class PrometCounter {
     public double lng;
 
     @SerializedName("updated")
-    public DateTime updated;
+    public LocalDateTime updated;
 
     @SerializedName("stevci_occ")
     // Occupancy in % * 100 (e.g. 84 = 8.4%)

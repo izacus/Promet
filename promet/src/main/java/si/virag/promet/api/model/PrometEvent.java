@@ -2,7 +2,9 @@ package si.virag.promet.api.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
+
 
 public class PrometEvent implements Comparable {
 
@@ -34,13 +36,13 @@ public class PrometEvent implements Comparable {
     public EventGroup eventGroup;
 
     @SerializedName("vneseno")
-    public DateTime entered;
+    public LocalDateTime entered;
 
     @SerializedName("veljavnostOd")
-    public DateTime validFrom;
+    public LocalDateTime validFrom;
 
     @SerializedName("veljavnostDo")
-    public DateTime validTo;
+    public LocalDateTime validTo;
 
     @SerializedName("prioriteta")
     public int priority;
@@ -86,6 +88,6 @@ public class PrometEvent implements Comparable {
         PrometEvent other = (PrometEvent)another;
         if (other.validFrom == null) return 1;
         if (validFrom == null) return -1;
-        return (int)(other.validFrom.getMillis() - validFrom.getMillis());
+        return (int)other.validFrom.until(validFrom, ChronoUnit.MILLIS);
     }
 }

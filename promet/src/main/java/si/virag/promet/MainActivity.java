@@ -32,10 +32,10 @@ import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import javax.inject.Inject;
 
@@ -314,17 +314,17 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void showUpdateTimeInActionBar(@NonNull final DateTime updateTime) {
+    private void showUpdateTimeInActionBar(@NonNull final LocalDateTime updateTime) {
         final ActionBar ab = getSupportActionBar();
         if (ab == null) return;
 
         // Check if today
-        if (updateTime.toLocalDate().equals(new LocalDate())) {
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
-            ab.setSubtitle("Podatki z " + updateTime.toString(formatter) + ".");
+        if (updateTime.toLocalDate().equals(LocalDate.now())) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            ab.setSubtitle("Podatki z " + formatter.format(updateTime) + ".");
         } else {
-            DateTimeFormatter formatter = DateTimeFormat.forPattern("dd. MM. HH:mm");
-            ab.setSubtitle("Podatki z " + updateTime.toString(formatter) + ".");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd. MM. HH:mm");
+            ab.setSubtitle("Podatki z " + formatter.format(updateTime) + ".");
         }
     }
 

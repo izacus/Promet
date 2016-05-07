@@ -3,8 +3,8 @@ package si.virag.fuzzydatetime;
 import android.content.Context;
 import android.content.res.Resources;
 
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 public class FuzzyDateTimeFormatter {
 
@@ -16,14 +16,8 @@ public class FuzzyDateTimeFormatter {
     private final static int MONTHS  =  4 * WEEKS;
     private final static int YEARS   = 12 * MONTHS;
 
-    public static String getTimeAgo(Context context, DateTime date) {
-        int timeDifference = 0;
-        try {
-            Interval interval = new Interval(date, DateTime.now());
-            timeDifference = (int)(interval.toDurationMillis() / 1000);
-        } catch (IllegalArgumentException e) {
-            timeDifference = 0;
-        }
+    public static String getTimeAgo(Context context, LocalDateTime date) {
+        int timeDifference = (int)date.until(LocalDateTime.now(), ChronoUnit.SECONDS);
 
         Resources res = context.getResources();
         if (timeDifference < MINUTES) {
