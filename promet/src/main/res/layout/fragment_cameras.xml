@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/cameras_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginRight="36dp"
+        android:layout_marginLeft="36dp"
+        android:text="@string/loading"
+        android:textColor="@android:color/tertiary_text_light"
+        style="?android:attr/textAppearanceMedium"
+        />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/cameras_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cameras_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</FrameLayout>
