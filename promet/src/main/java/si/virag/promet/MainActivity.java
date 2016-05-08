@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,6 +20,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,7 +29,6 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.astuetz.PagerSlidingTabStrip;
 import com.crashlytics.android.Crashlytics;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -54,8 +55,13 @@ public class MainActivity extends AppCompatActivity
     public static final String PARAM_SHOW_LIST = "ShowList";
     public static final String PARAM_SHOW_ITEM_ID = "ShowListItemId";
 
+    @NonNull
+    private Toolbar toolbar;
+    @NonNull
     private ViewPager pager;
-    private PagerSlidingTabStrip tabs;
+    @NonNull
+    private TabLayout tabs;
+    @NonNull
     private SystemBarTintManager tintManager;
 
     @Inject PrometSettings prometSettings;
@@ -80,10 +86,9 @@ public class MainActivity extends AppCompatActivity
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         // Fix actionbar name for other locales
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setTitle(R.string.app_name);
-        }
+        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar.setTitle(R.string.app_name);
+        setSupportActionBar(toolbar);
 
         // Set titlebar tint
         tintManager = new SystemBarTintManager(this);
@@ -91,18 +96,7 @@ public class MainActivity extends AppCompatActivity
         tintManager.setStatusBarTintColor(ContextCompat.getColor(this, R.color.theme_color));
 
         pager = (ViewPager)findViewById(R.id.main_pager);
-        tabs = (PagerSlidingTabStrip) findViewById(R.id.main_tabs);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) tabs.getLayoutParams();
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                params.setMargins(0, tintManager.getConfig().getPixelInsetTop(true), tintManager.getConfig().getPixelInsetRight(), 0);
-            }
-            else {
-                params.setMargins(0, tintManager.getConfig().getPixelInsetTop(true), 0, 0);
-            }
-            tabs.setLayoutParams(params);
-        }
+        tabs = (TabLayout) findViewById(R.id.main_tabs);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_car);
@@ -170,8 +164,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setupPages(boolean showList) {
         pager.setAdapter(new MainPagesAdapter(getResources(), getSupportFragmentManager()));
-        tabs.setShouldExpand(true);
-        tabs.setViewPager(pager);
+        tabs.setupWithViewPager(pager);
 
         if (showList) {
             pager.setCurrentItem(1);

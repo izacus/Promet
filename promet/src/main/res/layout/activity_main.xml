@@ -2,22 +2,41 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-    >
+    tools:context=".MainActivity">
 
-    <com.astuetz.PagerSlidingTabStrip
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/main_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        android:background="?attr/colorPrimary"
+        android:fitsSystemWindows="false"
+        android:elevation="8dp"
+        app:titleTextColor="@android:color/white"
+        app:subtitleTextColor="@android:color/white"
+        />
+
+    <android.support.design.widget.TabLayout
         android:id="@+id/main_tabs"
         android:layout_width="match_parent"
-        android:layout_height="54dp"
-        app:pstsIndicatorColor="@color/theme_color"
+        android:layout_height="48dp"
+        android:background="?attr/colorPrimary"
+        app:tabTextColor="#AAFFFFFF"
+        app:tabIndicatorColor="#F44336"
+        app:tabSelectedTextColor="@android:color/white"
+        app:tabGravity="fill"
+        android:elevation="8dp"
         />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/main_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:clipToPadding="false"
         >
 
