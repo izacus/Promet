@@ -17,6 +17,8 @@ import rx.Observable;
 import rx.functions.Func1;
 import si.virag.promet.api.PrometApi;
 import si.virag.promet.api.model.EventGroup;
+import si.virag.promet.api.model.PrometCamera;
+import si.virag.promet.api.model.PrometCameras;
 import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometCounters;
 import si.virag.promet.api.model.PrometEvent;
@@ -81,6 +83,17 @@ public class OpenDataPrometApi extends PrometApi {
                        return Observable.just(prometCounters.counters.counters);
                    }
                });
+    }
+
+    @Override
+    public Observable<List<PrometCamera>> getPrometCameras() {
+        return openDataApi.getCameras()
+                .flatMap(new Func1<PrometCameras, Observable<List<PrometCamera>>>() {
+                    @Override
+                    public Observable<List<PrometCamera>> call(PrometCameras prometCameras) {
+                        return Observable.just(prometCameras.feed.cameras);
+                    }
+                });
     }
 
     private void createPrometEventsObserver() {

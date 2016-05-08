@@ -4,6 +4,7 @@
     <string name="app_name">Promet</string>
     <string name="tab_map">Zemljevid</string>
     <string name="tab_list">Seznam</string>
+    <string name="tab_cameras">Kamere</string>
     <string name="settings">Nastavitve</string>
 
     <string name="freeways">Avtoceste</string>

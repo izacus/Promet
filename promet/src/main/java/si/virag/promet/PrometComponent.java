@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 import si.virag.promet.api.opendata.OpenDataApiModule;
 import si.virag.promet.api.push.PushDataPrometApi;
+import si.virag.promet.fragments.CamerasFragment;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.gcm.NotificationStorageModule;
@@ -24,4 +25,5 @@ public interface PrometComponent {
     public void inject(RegistrationService registrationService);
     public void inject(PushIntentService pushIntentService);
     public void inject(PrometPreferencesFragment prometPreferencesFragment);
+    public void inject(CamerasFragment camerasFragment);
 }

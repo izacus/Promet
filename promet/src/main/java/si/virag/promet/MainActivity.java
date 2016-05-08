@@ -43,6 +43,7 @@ import javax.inject.Inject;
 import de.greenrobot.event.EventBus;
 import io.fabric.sdk.android.Fabric;
 import rx.Subscriber;
+import si.virag.promet.fragments.CamerasFragment;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.gcm.ClearNotificationsService;
@@ -196,6 +197,9 @@ public class MainActivity extends AppCompatActivity
                 case 1:
                     fragment = new EventListFragment();
                     break;
+                case 2:
+                    fragment = new CamerasFragment();
+                    break;
             }
 
             return fragment;
@@ -203,7 +207,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -214,7 +218,8 @@ public class MainActivity extends AppCompatActivity
                     return res.getString(R.string.tab_map);
                 case 1:
                     return res.getString(R.string.tab_list);
-
+                case 2:
+                    return res.getString(R.string.tab_cameras);
             }
 
             return super.getPageTitle(position);
