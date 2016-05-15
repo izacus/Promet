@@ -1,4 +1,9 @@
 package si.virag.promet.model
 
-class TrafficData {
+import android.content.Context
+
+class TrafficData(val context: Context) {
+
+
+
 }

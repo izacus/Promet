@@ -1,6 +1,7 @@
 package si.virag.promet
 
 import android.app.Application
+import com.jakewharton.threetenabp.AndroidThreeTen
 
 class PrometApplication : Application() {
 
@@ -10,6 +11,7 @@ class PrometApplication : Application() {
 
     override fun onCreate() {
         super.onCreate();
+        AndroidThreeTen.init(this);
 
         // Prepare Dagger graph
         graph = DaggerApplicationComponent.builder().prometModule(PrometModule(this)).build()
