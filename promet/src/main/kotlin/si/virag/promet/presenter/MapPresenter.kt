@@ -19,10 +19,7 @@ class MapPresenter(val view : MapView) {
     }
 
     fun onResume() {
-        trafficDataSubscription = trafficData.getTrafficEvents()
-                                             .toList()
-                                             .observeOn(AndroidSchedulers.mainThread())
-                                             .subscribe { view.showMarkers(it) }
+        trafficDataSubscription = view.showMarkers(trafficData.getTrafficEvents())
     }
 
     fun onPause() {

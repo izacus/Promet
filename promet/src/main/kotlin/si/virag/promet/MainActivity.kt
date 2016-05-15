@@ -7,8 +7,13 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.sdoward.rxgooglemap.MapObservableProvider
 import kotlinx.android.synthetic.main.activity_main.*
+import rx.Observable
+import rx.Subscription
+import rx.android.schedulers.AndroidSchedulers
+import rx.functions.Func2
 import si.virag.promet.model.data.TrafficEvent
 import si.virag.promet.presenter.MapPresenter
+import si.virag.promet.view.MapMarkerManager
 import si.virag.promet.view.MapView
 
 class MainActivity : AppCompatActivity(), MapView {
@@ -17,6 +22,8 @@ class MainActivity : AppCompatActivity(), MapView {
     val MAP_CENTER : LatLng = LatLng(46.055556, 14.508333);
 
     val presenter = MapPresenter(this)
+    val markerManager = MapMarkerManager(this)
+
     lateinit var mapObservable : MapObservableProvider
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +62,11 @@ class MainActivity : AppCompatActivity(), MapView {
         main_maps.onDestroy()
     }
 
-    override fun showMarkers(events: List<TrafficEvent>) {
-
+    override fun showMarkers(events: Observable<TrafficEvent>) : Subscription {
+        val markerStream = markerManager.getEventMarkers(events)
+        return markerStream.withLatestFrom(mapObservable.mapReadyObservable, { marker, map -> Pair(marker, map) })
+                           .observeOn(AndroidSchedulers.mainThread())
+                           .subscribe { it.second.addMarker(it.first.second) }
     }
 
 
