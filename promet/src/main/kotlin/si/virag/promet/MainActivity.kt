@@ -1,6 +1,7 @@
 package si.virag.promet
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
@@ -21,11 +22,13 @@ class MainActivity : AppCompatActivity(), MapView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mapObservable = MapObservableProvider(main_maps as SupportMapFragment)
+        main_maps.onCreate(savedInstanceState)
+        mapObservable = MapObservableProvider(main_maps)
     }
 
     override fun onResume() {
         super.onResume()
+        main_maps.onResume()
         presenter.onResume()
         mapObservable.mapReadyObservable
                      .subscribe { configureMap(it) }
@@ -33,7 +36,23 @@ class MainActivity : AppCompatActivity(), MapView {
 
     override fun onPause() {
         super.onPause()
+        main_maps.onPause()
         presenter.onPause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        main_maps.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        main_maps.onLowMemory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        main_maps.onDestroy()
     }
 
     override fun showMarkers(events: List<TrafficEvent>) {
