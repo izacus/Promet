@@ -10,7 +10,8 @@ import si.virag.promet.settings.PrometSettings
 import si.virag.promet.view.MapView
 import javax.inject.Inject
 
-class MapPresenter(val view : MapView) {
+class MapPresenter(val view : MapView) : PrometSettings.OnSettingsChangedListener {
+
     val LOG_TAG = "Promet.Map"
 
     var trafficDataSubscription : Subscription? = null
@@ -26,15 +27,25 @@ class MapPresenter(val view : MapView) {
     }
 
     fun onResume() {
-        val trafficEvents = trafficData.getTrafficEvents()
-                            .filter { filterEventsAccordingToSettings(settings, it) }
-        val trafficCounters = trafficData.getTrafficCounters()
-                            .filter { filterCounters(it) }
-        trafficDataSubscription = view.showMarkers(trafficEvents, trafficCounters)
+        updateDisplayedData()
+        settings.registerChangeListener(this)
     }
 
     fun onPause() {
+        settings.unregisterChangeListener(this)
         trafficDataSubscription?.unsubscribe()
+    }
+
+    override fun onSettingsChanged() {
+        updateDisplayedData()
+    }
+
+    fun updateDisplayedData() {
+        val trafficEvents = trafficData.getTrafficEvents()
+                                       .filter { filterEventsAccordingToSettings(settings, it) }
+        val trafficCounters = trafficData.getTrafficCounters()
+                                         .filter { filterCounters(it) }
+        trafficDataSubscription = view.showMarkers(trafficEvents, trafficCounters)
     }
 
 }
