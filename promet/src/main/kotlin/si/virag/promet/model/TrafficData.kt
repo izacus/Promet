@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.threeten.bp.LocalDateTime
@@ -32,7 +33,12 @@ class TrafficData(val context: Context) {
 
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        val client = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
+
+        val cache = Cache(context.cacheDir, 2 * 1024 * 1024)
+        val client = OkHttpClient.Builder()
+                                 .addInterceptor(loggingInterceptor)
+                                 .cache(cache)
+                                 .build()
 
         val retrofit = Retrofit.Builder()
                         .baseUrl("http://www.opendata.si")
