@@ -11,6 +11,8 @@ import rx.Observable
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.functions.Func2
+import rx.subscriptions.CompositeSubscription
+import si.virag.promet.model.data.TrafficCounter
 import si.virag.promet.model.data.TrafficEvent
 import si.virag.promet.presenter.MapPresenter
 import si.virag.promet.view.MapMarkerManager
@@ -62,11 +64,21 @@ class MainActivity : AppCompatActivity(), MapView {
         main_maps.onDestroy()
     }
 
-    override fun showMarkers(events: Observable<TrafficEvent>) : Subscription {
+    override fun showMarkers(events: Observable<TrafficEvent>, counters: Observable<TrafficCounter>) : Subscription {
         val markerStream = markerManager.getEventMarkers(events)
-        return markerStream.withLatestFrom(mapObservable.mapReadyObservable, { marker, map -> Pair(marker, map) })
-                           .observeOn(AndroidSchedulers.mainThread())
-                           .subscribe { it.second.addMarker(it.first.second) }
+        val counterStream = markerManager.getCounterMarkers(counters)
+
+        val compositeSubscription = CompositeSubscription()
+        compositeSubscription.add(markerStream.withLatestFrom(mapObservable.mapReadyObservable, { marker, map -> Pair(marker, map) })
+                                              .onBackpressureBuffer()
+                                              .observeOn(AndroidSchedulers.mainThread())
+                                              .subscribe { it.second.addMarker(it.first.second) })
+
+        compositeSubscription.add(counterStream.withLatestFrom(mapObservable.mapReadyObservable, { marker, map -> Pair(marker, map) })
+                                               .onBackpressureBuffer()
+                                               .observeOn(AndroidSchedulers.mainThread())
+                                               .subscribe { it.second.addMarker(it.first) })
+        return compositeSubscription
     }
 
 
@@ -75,7 +87,7 @@ class MainActivity : AppCompatActivity(), MapView {
         map.isTrafficEnabled = true
         map.isIndoorEnabled = false
         map.isBuildingsEnabled = false
-        map.isMyLocationEnabled = true
+        map.isMyLocationEnabled = false
 
         val uiSettings = map.uiSettings
         uiSettings.isZoomControlsEnabled = true

@@ -25,13 +25,13 @@ class TrafficEvent {
     var descriptionEn: String = ""
 
     @SerializedName("x_wgs")
-    var lng: Double = 0.0
+    var lng: FunnyDouble = FunnyDouble(0.0)
 
     @SerializedName("y_wgs")
-    var lat: Double = 0.0
+    var lat: FunnyDouble = FunnyDouble(0.0)
 
     @SerializedName("kategorija")
-    var eventGroup: EventGroup = EventGroup.LOKALNA_CESTA
+    var eventGroup: EventGroup? = EventGroup.LOKALNA_CESTA
 
     @SerializedName("vneseno")
     var entered: LocalDateTime? = null

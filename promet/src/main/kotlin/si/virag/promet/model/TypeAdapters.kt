@@ -7,6 +7,7 @@ import com.google.gson.stream.JsonWriter
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneOffset
 import si.virag.promet.model.data.EventGroup
+import si.virag.promet.model.data.FunnyDouble
 import si.virag.promet.model.data.TrafficStatus
 import java.text.NumberFormat
 import java.text.ParseException
@@ -98,12 +99,12 @@ class EpochDateTypeAdapter : TypeAdapter<LocalDateTime>() {
     }
 }
 
-class FunnyDoubleAdapter : TypeAdapter<Double>() {
+class FunnyDoubleAdapter : TypeAdapter<FunnyDouble>() {
 
     val commaFormat = NumberFormat.getInstance(Locale.FRANCE)
     val dotFormat = NumberFormat.getInstance(Locale.US)
 
-    override fun read(reader: JsonReader?): Double? {
+    override fun read(reader: JsonReader?): FunnyDouble? {
         if (reader == null) return null
         if (reader.peek() == JsonToken.NULL) {
             reader.nextNull()
@@ -114,19 +115,19 @@ class FunnyDoubleAdapter : TypeAdapter<Double>() {
         val doubleString = reader.nextString()
         try {
             if (doubleString.contains(",")) {
-                return commaFormat.parse(doubleString).toDouble()
+                return FunnyDouble(commaFormat.parse(doubleString).toDouble())
             } else {
-                return dotFormat.parse(doubleString).toDouble()
+                return FunnyDouble(dotFormat.parse(doubleString).toDouble())
             }
         } catch (e : ParseException) {
-            return 0.0
+            return FunnyDouble(0.0)
         }
     }
 
-    override fun write(out: JsonWriter?, value: Double?) {
+    override fun write(out: JsonWriter?, value: FunnyDouble?) {
         if (out == null) return
         if (value == null) out.nullValue()
-        out.value(value)
+        out.value(if (value == null) 0.0 else value.toDouble() )
     }
 
 }

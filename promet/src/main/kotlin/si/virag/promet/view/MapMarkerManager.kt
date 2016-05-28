@@ -60,7 +60,7 @@ class MapMarkerManager(val context : Context) {
     fun getEventMarkers(events : Observable<TrafficEvent>) : Observable<Pair<Int, MarkerOptions>> {
         return events.map {
             val opts = MarkerOptions()
-            opts.position(LatLng(it.lat, it.lng))
+            opts.position(LatLng(it.lat.toDouble(), it.lng.toDouble()))
             val icon : BitmapDescriptor
 
             if (it.isHighPriority) {
@@ -69,11 +69,15 @@ class MapMarkerManager(val context : Context) {
                 icon = CONE_MARKER
                 opts.anchor(0.5f, 0.5f)
             } else {
-                when (it.eventGroup) {
-                    EventGroup.AVTOCESTA -> icon = GREEN_MARKER
-                    EventGroup.HITRA_CESTA -> icon = AZURE_MARKER
-                    EventGroup.MEJNI_PREHOD -> icon = ORANGE_MARKER
-                    else -> icon = YELLOW_MARKER
+                if (it.eventGroup == null) {
+                    icon = YELLOW_MARKER
+                } else {
+                    when (it.eventGroup) {
+                        EventGroup.AVTOCESTA -> icon = GREEN_MARKER
+                        EventGroup.HITRA_CESTA -> icon = AZURE_MARKER
+                        EventGroup.MEJNI_PREHOD -> icon = ORANGE_MARKER
+                        else -> icon = YELLOW_MARKER
+                    }
                 }
             }
 
@@ -89,7 +93,7 @@ class MapMarkerManager(val context : Context) {
             .filter { it.status != TrafficStatus.NO_DATA }
             .map {
                 MarkerOptions()
-                    .position(LatLng(it.lat, it.lng))
+                    .position(LatLng(it.lat.toDouble(), it.lng.toDouble()))
                     .anchor(0.5f, 0.5f)
                     .flat(true)
                     .draggable(false)

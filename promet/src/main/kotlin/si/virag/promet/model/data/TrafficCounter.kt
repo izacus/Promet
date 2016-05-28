@@ -9,9 +9,9 @@ class TrafficCounter {
     var id : String = ""
 
     @SerializedName("stevci_geoY_wgs")
-    var lat : Double = 0.0
+    var lat : FunnyDouble = FunnyDouble(0.0)
     @SerializedName("stevci_geoX_wgs")
-    var lng : Double = 0.0
+    var lng : FunnyDouble = FunnyDouble(0.0)
     @SerializedName("updated")
     var updated : LocalDateTime? = null
     @SerializedName("stevci_occ")
@@ -25,7 +25,7 @@ class TrafficCounter {
     @SerializedName("stevci_lokacijaOpis")
     var locationName : String = ""
     @SerializedName("stevci_gap")
-    var gap : Double = 0.0
+    var gap : FunnyDouble = FunnyDouble(0.0)
 
     override fun equals(other: Any?): Boolean{
         if (this === other) return true

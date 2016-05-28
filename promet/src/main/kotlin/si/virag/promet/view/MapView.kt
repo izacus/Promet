@@ -2,6 +2,7 @@ package si.virag.promet.view
 
 import rx.Observable
 import rx.Subscription
+import si.virag.promet.model.data.TrafficCounter
 import si.virag.promet.model.data.TrafficEvent
 
 /**
@@ -9,6 +10,6 @@ import si.virag.promet.model.data.TrafficEvent
  */
 interface MapView {
 
-    fun showMarkers(events: Observable<TrafficEvent>) : Subscription
+    fun showMarkers(events: Observable<TrafficEvent>, counters: Observable<TrafficCounter>) : Subscription
 
 }

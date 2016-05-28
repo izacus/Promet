@@ -12,9 +12,7 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import rx.Observable
 import rx.schedulers.Schedulers
-import si.virag.promet.model.data.EventGroup
-import si.virag.promet.model.data.TrafficEvent
-import si.virag.promet.model.data.TrafficStatus
+import si.virag.promet.model.data.*
 
 class TrafficData(val context: Context) {
 
@@ -28,7 +26,7 @@ class TrafficData(val context: Context) {
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(genericType<EventGroup>(), EventGroupTypeAdapter())
                     .registerTypeAdapter(genericType<LocalDateTime>(), EpochDateTypeAdapter())
-                    .registerTypeAdapter(genericType<Double>(), FunnyDoubleAdapter())
+                    .registerTypeAdapter(genericType<FunnyDouble>(), FunnyDoubleAdapter())
                     .registerTypeAdapter(genericType<TrafficStatus>(), TrafficStatusTypeAdapter())
                     .create()
 
@@ -50,6 +48,10 @@ class TrafficData(val context: Context) {
 
     fun getTrafficEvents() : Observable<TrafficEvent> {
         return trafficApi.getTrafficEvents().flatMap { Observable.from(it.events()) }
+    }
+
+    fun getTrafficCounters() : Observable<TrafficCounter> {
+        return trafficApi.getTrafficCounters().flatMap { Observable.from(it.counters()) }
     }
 
 }
