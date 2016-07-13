@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity
     private void showPreferences() {
         Intent preferenceIntent = new Intent(this, PrometPreferences.class);
         startActivity(preferenceIntent);
+        overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
     }
 
     private static class MainPagesAdapter extends FragmentPagerAdapter {
