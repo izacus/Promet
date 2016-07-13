@@ -32,6 +32,8 @@ import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -145,6 +147,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void checkShowNotificationsDialog() {
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
+            return;
+        }
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (!prefs.contains(PrometSettings.PREF_NOTIFICATIONS)) {
             new MaterialDialog.Builder(this)
