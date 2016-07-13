@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.location.Location;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
@@ -31,6 +33,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
+import si.virag.promet.Manifest;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
@@ -98,7 +101,12 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
         map.setOnInfoWindowClickListener(this);
 
-        map.setMyLocationEnabled(true);
+        int fineLocationPermission = ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.ACCESS_FINE_LOCATION);
+        int coarseLocationPermission = ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+        if (fineLocationPermission == PermissionChecker.PERMISSION_GRANTED || coarseLocationPermission == PermissionChecker.PERMISSION_GRANTED) {
+            map.setMyLocationEnabled(true);
+        }
+
         map.setTrafficEnabled(true);
     }
 
