@@ -25,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -101,6 +102,11 @@ public class MainActivity extends AppCompatActivity
         tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintColor(ContextCompat.getColor(this, R.color.theme_color));
+
+        // Setup top margin for toolbar when its transparent
+        LinearLayout.LayoutParams toolbarLayoutParams = (LinearLayout.LayoutParams) toolbar.getLayoutParams();
+        toolbarLayoutParams.topMargin = tintManager.getConfig().getPixelInsetTop(false);
+        toolbar.setLayoutParams(toolbarLayoutParams);
 
         pager = (ViewPager)findViewById(R.id.main_pager);
         tabs = (TabLayout) findViewById(R.id.main_tabs);
