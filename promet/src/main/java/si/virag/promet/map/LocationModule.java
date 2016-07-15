@@ -43,6 +43,7 @@ public class LocationModule implements GoogleApiClient.ConnectionCallbacks, Loca
                               .build();
     }
 
+    @Nullable
     public synchronized Location getLocationWithTimeout(int timeoutMs) {
         if (!googleApiClient.isConnected()) {
             ConnectionResult result = googleApiClient.blockingConnect(timeoutMs, TimeUnit.MILLISECONDS);
@@ -59,20 +60,29 @@ public class LocationModule implements GoogleApiClient.ConnectionCallbacks, Loca
         lr.setNumUpdates(1);
         lr.setExpirationDuration(1000);
         lr.setPriority(LocationRequest.PRIORITY_NO_POWER);
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, lr, this);
-        waitForTimeout.block(timeoutMs);
 
-        if (currentLocation == null || timeDifference(currentLocation.getTime(), currentTime) > CURRENT_LOCATION_MAX_AGE_MS) {
+        try {
+            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, lr, this);
+            waitForTimeout.block(timeoutMs);
+
+            if (currentLocation == null || timeDifference(currentLocation.getTime(), currentTime) > CURRENT_LOCATION_MAX_AGE_MS) {
+                return null;
+            }
+
+            return currentLocation;
+        } catch (SecurityException e) {
             return null;
         }
-
-        return currentLocation;
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-        currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        Log.d(LOG_TAG, "Current location: " + currentLocation);
+        try {
+            currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+            Log.d(LOG_TAG, "Current location: " + currentLocation);
+        } catch (SecurityException e) {
+            // Nothing TBD
+        }
     }
 
     @Override

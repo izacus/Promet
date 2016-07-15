@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -24,12 +25,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -73,7 +77,13 @@ public class MainActivity extends AppCompatActivity
         // Transluscent navigation
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = getWindow(); // in Activity's onCreate() for instance
-            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+
+            if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
+                w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            } else {
+                w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            }
+
             w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
 
@@ -95,6 +105,11 @@ public class MainActivity extends AppCompatActivity
         tintManager = new SystemBarTintManager(this);
         tintManager.setStatusBarTintEnabled(true);
         tintManager.setStatusBarTintColor(ContextCompat.getColor(this, R.color.theme_color));
+
+        // Setup top margin for toolbar when its transparent
+        LinearLayout.LayoutParams toolbarLayoutParams = (LinearLayout.LayoutParams) toolbar.getLayoutParams();
+        toolbarLayoutParams.topMargin = tintManager.getConfig().getPixelInsetTop(false);
+        toolbar.setLayoutParams(toolbarLayoutParams);
 
         pager = (ViewPager)findViewById(R.id.main_pager);
         tabs = (TabLayout) findViewById(R.id.main_tabs);
@@ -133,6 +148,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void checkShowNotificationsDialog() {
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
+            return;
+        }
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (!prefs.contains(PrometSettings.PREF_NOTIFICATIONS)) {
             new MaterialDialog.Builder(this)
@@ -175,6 +194,7 @@ public class MainActivity extends AppCompatActivity
     private void showPreferences() {
         Intent preferenceIntent = new Intent(this, PrometPreferences.class);
         startActivity(preferenceIntent);
+        overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
     }
 
     private static class MainPagesAdapter extends FragmentPagerAdapter {

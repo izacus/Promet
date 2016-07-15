@@ -84,7 +84,6 @@ public class RegistrationService extends IntentService {
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
-     * @param name Used to name the worker thread, important only for debugging.
      */
     public RegistrationService() {
         super("GCM Registration Service");
@@ -116,6 +115,8 @@ public class RegistrationService extends IntentService {
             } else {
                 Log.w(LOG_TAG, "GCM registration delay limit reached, giving up.");
             }
+        } catch (SecurityException e) {
+            Log.e(LOG_TAG, "GCM services not available!");
         } finally {
             PushBroadcastReceiver.completeWakefulIntent(intent);
         }

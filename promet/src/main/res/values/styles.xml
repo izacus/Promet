@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/theme_color_highlight</item>
     </style>
 
+    <style name="PrometTheme.ActionBar" parent="PrometTheme">
+        <item name="colorControlNormal">@android:color/white</item>
+    </style>
+
 </resources>

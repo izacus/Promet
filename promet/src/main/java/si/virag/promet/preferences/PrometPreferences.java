@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import si.virag.promet.MainActivity;
@@ -12,18 +13,22 @@ import si.virag.promet.R;
 
 public class PrometPreferences extends AppCompatActivity {
 
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         PrometApplication application = (PrometApplication) getApplication();
         application.checkUpdateLocale(this);
         super.onCreate(savedInstanceState);
-
-        ActionBar bar = getSupportActionBar();
-        bar.setDisplayHomeAsUpEnabled(true);
-        bar.setDisplayShowHomeEnabled(true);
-        bar.setTitle(R.string.app_name);
-
         setContentView(R.layout.activity_preferences);
+
+        // Fix actionbar name for other locales
+        toolbar = (Toolbar) findViewById(R.id.preferences_toolbar);
+        toolbar.setTitle(R.string.app_name);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         getFragmentManager().beginTransaction().replace(R.id.preferences_content, new PrometPreferencesFragment()).commit();
     }
 
@@ -34,10 +39,16 @@ public class PrometPreferences extends AppCompatActivity {
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
             finish();
-
+            overridePendingTransition(R.anim.stay, R.anim.slide_out_down);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.stay, R.anim.slide_out_down);
     }
 }
