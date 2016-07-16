@@ -110,6 +110,33 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         map.setTrafficEnabled(true);
     }
 
+    public void setMapInstanceForDetailView(Context ctx, GoogleMap gMap) {
+        if (gMap == null)
+            return;
+
+        if (!markersInitialized)
+            initializeMarkers(ctx);
+
+        this.map = gMap;
+        this.isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
+
+        // Center on Slovenia initially
+        map.setTrafficEnabled(true);
+        map.setIndoorEnabled(false);
+        map.setBuildingsEnabled(false);
+
+        UiSettings uiSettings = map.getUiSettings();
+        uiSettings.setZoomControlsEnabled(false);
+        uiSettings.setZoomGesturesEnabled(true);
+        uiSettings.setCompassEnabled(false);
+        uiSettings.setMyLocationButtonEnabled(false);
+        uiSettings.setMapToolbarEnabled(false);
+
+        try {
+            map.setMyLocationEnabled(false);
+        } catch (SecurityException e) {}
+    }
+
     private void initializeMarkers(Context ctx) {
         MapsInitializer.initialize(ctx.getApplicationContext());
         // Marker creation is really slow, so do it only once

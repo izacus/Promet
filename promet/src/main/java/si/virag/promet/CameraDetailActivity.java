@@ -23,7 +23,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import si.virag.promet.api.PrometApi;
 import si.virag.promet.api.model.PrometCamera;
+import si.virag.promet.api.model.PrometCounter;
+import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.map.PrometMaps;
 import si.virag.promet.utils.ActivityUtilities;
 
@@ -48,11 +58,20 @@ public class CameraDetailActivity extends AppCompatActivity implements OnMapRead
     @NonNull
     private MapView mapView;
 
+    @Inject PrometMaps prometMaps;
+
+    @Inject PrometApi prometApi;
+
+    private GoogleMap map;
+    private List<PrometEvent> events;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         ActivityUtilities.setupTransluscentNavigation(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_detail);
+        PrometApplication application = (PrometApplication) getApplication();
+        application.component().inject(this);
 
         // Camera is required!
         camera = getIntent().getParcelableExtra("camera");
@@ -91,6 +110,22 @@ public class CameraDetailActivity extends AppCompatActivity implements OnMapRead
                 .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(cameraImage);
+
+        prometApi.getPrometEvents()
+                 .observeOn(AndroidSchedulers.mainThread())
+                 .subscribe(new Subscriber<List<PrometEvent>>() {
+                     @Override
+                     public void onCompleted() {}
+
+                     @Override
+                     public void onError(Throwable e) {}
+
+                     @Override
+                     public void onNext(List<PrometEvent> prometEvents) {
+                         events = prometEvents;
+                         displayMapMarkers();
+                     }
+                 });
     }
 
     @Override
@@ -105,17 +140,23 @@ public class CameraDetailActivity extends AppCompatActivity implements OnMapRead
         mapView.onLowMemory();
     }
 
-    @Override
-    public void onMapReady(GoogleMap map) {
-        map.getUiSettings().setMapToolbarEnabled(false);
-        map.getUiSettings().setIndoorLevelPickerEnabled(false);
-        map.setIndoorEnabled(false);
-        map.setTrafficEnabled(true);
-        map.setBuildingsEnabled(true);
+    private void displayMapMarkers() {
+        if (map == null) return;
 
         map.clear();
+        if (events != null) {
+            prometMaps.showEvents(this, events, Collections.<PrometCounter>emptyList());
+        }
+
         LatLng location = new LatLng(camera.lat, camera.lng);
         map.addMarker(new MarkerOptions().position(location));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f));
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        this.map = map;
+        prometMaps.setMapInstanceForDetailView(this, map);
+        displayMapMarkers();
     }
 }

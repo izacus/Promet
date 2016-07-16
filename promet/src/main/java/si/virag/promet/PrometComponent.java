@@ -20,6 +20,7 @@ import si.virag.promet.preferences.PrometPreferencesFragment;
 public interface PrometComponent {
 
     public void inject(MainActivity mainActivity);
+    public void inject(CameraDetailActivity cameraDetailActivity);
     public void inject(EventListFragment eventListFragment);
     public void inject(MapFragment mapFragment);
     public void inject(RegistrationService registrationService);
