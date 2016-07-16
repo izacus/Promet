@@ -96,11 +96,12 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
             map.setBuildingsEnabled(false);
             map.setIndoorEnabled(false);
             map.setMyLocationEnabled(false);
+            map.setTrafficEnabled(false);
+            map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             map.getUiSettings().setAllGesturesEnabled(false);
             map.getUiSettings().setCompassEnabled(false);
             map.getUiSettings().setIndoorLevelPickerEnabled(false);
             map.getUiSettings().setMapToolbarEnabled(false);
-            map.setTrafficEnabled(true);
 
             if (location != null) {
                 showPointOnMap();
@@ -114,11 +115,10 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
                               .fillColor(Color.argb(160, 255, 0, 0))
                               .strokeColor(Color.RED)
                               .strokeWidth(1.0f)
-                              .radius(500));
+                              .radius(650));
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 9f));
-            map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         }
 
-        
+
     }
 }

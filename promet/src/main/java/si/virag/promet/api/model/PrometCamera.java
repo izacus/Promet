@@ -1,8 +1,11 @@
 package si.virag.promet.api.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class PrometCamera {
+public class PrometCamera implements Parcelable {
 
     @SerializedName("id")
     public int id;
@@ -77,4 +80,44 @@ public class PrometCamera {
                 ", lat=" + lat +
                 '}';
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeString(this.title);
+        dest.writeString(this.summary);
+        dest.writeString(this.region);
+        dest.writeString(this.group);
+        dest.writeString(this.imageLink);
+        dest.writeDouble(this.lng);
+        dest.writeDouble(this.lat);
+    }
+
+    protected PrometCamera(Parcel in) {
+        this.id = in.readInt();
+        this.title = in.readString();
+        this.summary = in.readString();
+        this.region = in.readString();
+        this.group = in.readString();
+        this.imageLink = in.readString();
+        this.lng = in.readDouble();
+        this.lat = in.readDouble();
+    }
+
+    public static final Parcelable.Creator<PrometCamera> CREATOR = new Parcelable.Creator<PrometCamera>() {
+        @Override
+        public PrometCamera createFromParcel(Parcel source) {
+            return new PrometCamera(source);
+        }
+
+        @Override
+        public PrometCamera[] newArray(int size) {
+            return new PrometCamera[size];
+        }
+    };
 }
