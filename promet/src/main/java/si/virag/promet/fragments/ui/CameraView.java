@@ -50,6 +50,7 @@ public class CameraView extends ImageView {
             Log.d(LOG_TAG, "Loading camera " + camera.title + " from " + camera.imageLink);
             Glide.with(getContext())
                  .load(camera.imageLink)
+                 .centerCrop()
                  .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                  .into(this);
         }
