@@ -24,6 +24,7 @@ import si.virag.promet.api.model.PrometCounters;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.PrometEvents;
 import si.virag.promet.api.model.TrafficStatus;
+import si.virag.promet.fragments.ui.CameraListSorter;
 import si.virag.promet.fragments.ui.EventListSorter;
 import si.virag.promet.utils.DataUtils;
 
@@ -88,12 +89,13 @@ public class OpenDataPrometApi extends PrometApi {
     @Override
     public Observable<List<PrometCamera>> getPrometCameras() {
         return openDataApi.getCameras()
-                .flatMap(new Func1<PrometCameras, Observable<List<PrometCamera>>>() {
+                .flatMap(new Func1<PrometCameras, Observable<PrometCamera>>() {
                     @Override
-                    public Observable<List<PrometCamera>> call(PrometCameras prometCameras) {
-                        return Observable.just(prometCameras.feed.cameras);
+                    public Observable<PrometCamera> call(PrometCameras prometCameras) {
+                        return Observable.from(prometCameras.feed.cameras);
                     }
-                });
+                })
+                .toSortedList(new CameraListSorter());
     }
 
     private void createPrometEventsObserver() {

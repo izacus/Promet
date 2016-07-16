@@ -1,73 +1,67 @@
 package si.virag.promet.fragments.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
-import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
-import com.bignerdranch.expandablerecyclerview.ViewHolder.ChildViewHolder;
-import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
 
 import java.util.List;
 
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometCamera;
 
-public class CamerasAdapter extends ExpandableRecyclerAdapter<CamerasAdapter.CameraCategoryViewHolder, CamerasAdapter.CameraViewHolder> {
+public class CamerasAdapter extends RecyclerView.Adapter<CamerasAdapter.CameraViewHolder> {
 
     @NonNull
-    private final LayoutInflater inflater;
+    private List<PrometCamera> cameras;
 
-    public CamerasAdapter(@NonNull Context context, @NonNull List<CameraCategory> cameraList) {
-        super(cameraList);
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public CamerasAdapter(@NonNull List<PrometCamera> cameraList) {
+        this.cameras = cameraList;
+        setHasStableIds(true);
     }
 
     @Override
-    public CameraCategoryViewHolder onCreateParentViewHolder(ViewGroup parentViewGroup) {
-        View view = inflater.inflate(R.layout.item_camera_header, parentViewGroup, false);
-        return new CameraCategoryViewHolder(view);
-    }
-
-    @Override
-    public CameraViewHolder onCreateChildViewHolder(ViewGroup childViewGroup) {
-        View view = inflater.inflate(R.layout.item_camera, childViewGroup, false);
+    public CameraViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_camera, parent, false);
         return new CameraViewHolder(view);
     }
 
     @Override
-    public void onBindParentViewHolder(CameraCategoryViewHolder parentViewHolder, int position, ParentListItem parentListItem) {
-        CameraCategory category = (CameraCategory)parentListItem;
-        parentViewHolder.title.setText(category.title);
+    @SuppressLint("SetTextI18n")
+    public void onBindViewHolder(CameraViewHolder holder, int position) {
+        PrometCamera camera = cameras.get(position);
+        holder.title.setText(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1));
+        holder.location.setText(camera.summary);
     }
 
     @Override
-    public void onBindChildViewHolder(CameraViewHolder childViewHolder, int position, Object childListItem) {
-        PrometCamera camera = (PrometCamera) childListItem;
-        childViewHolder.title.setText(camera.title);
+    public int getItemCount() {
+        return cameras.size();
     }
 
-    public static class CameraCategoryViewHolder extends ParentViewHolder {
-
-        final TextView title;
-
-        public CameraCategoryViewHolder(View itemView) {
-            super(itemView);
-            title = (TextView) itemView.findViewById(R.id.item_camera_header_title);
-        }
+    @Override
+    public long getItemId(int position) {
+        return cameras.get(position).id;
     }
 
-    public static class CameraViewHolder extends ChildViewHolder {
+    public void setData(@NonNull List<PrometCamera> cameraList) {
+        this.cameras = cameraList;
+        notifyDataSetChanged();
+    }
+
+    static class CameraViewHolder extends RecyclerView.ViewHolder {
 
         final TextView title;
+        final TextView location;
 
-        public CameraViewHolder(View itemView) {
+        CameraViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.item_camera_title);
+            location = (TextView) itemView.findViewById(R.id.item_camera_location);
         }
     }
 }
