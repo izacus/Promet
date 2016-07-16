@@ -23,11 +23,8 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof CameraHeaderItem) {
-            return ((CameraHeaderItem) o).title.equalsIgnoreCase(title);
-        }
+        return o instanceof CameraHeaderItem && ((CameraHeaderItem) o).title.equalsIgnoreCase(title);
 
-        return false;
     }
 
     @Override
@@ -50,8 +47,13 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
         final TextView title;
 
         CameraHeaderItemHolder(View view, FlexibleAdapter adapter, boolean stickyHeader) {
-            super(view, adapter, stickyHeader);
+            super(view, adapter, true);
             title = (TextView) view.findViewById(R.id.item_camera_header_title);
+        }
+
+        @Override
+        protected boolean isViewExpandableOnClick() {
+            return true;
         }
     }
 }

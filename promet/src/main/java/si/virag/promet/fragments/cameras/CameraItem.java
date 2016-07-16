@@ -47,7 +47,10 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
     public void bindViewHolder(FlexibleAdapter adapter, CameraItemHolder holder, int position, List payloads) {
         holder.title.setText(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1));
         holder.location.setText(camera.summary);
-        holder.cameraView.setCamera(camera);
+
+        if (!isHidden()) {
+            holder.cameraView.setCamera(camera);
+        }
     }
 
     static class CameraItemHolder extends FlexibleViewHolder {
@@ -62,5 +65,7 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
             location = (TextView) view.findViewById(R.id.item_camera_location);
             cameraView = (CameraView) view.findViewById(R.id.item_camera_view);
         }
+
+
     }
 }

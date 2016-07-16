@@ -5,6 +5,7 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -14,6 +15,7 @@ import si.virag.promet.api.model.PrometCamera;
 
 public class CameraView extends ImageView {
 
+    private static final String LOG_TAG = "Promet.CameraView";
     /** Actual camera **/
     @Nullable
     private PrometCamera camera;
@@ -45,6 +47,7 @@ public class CameraView extends ImageView {
     public void setCamera(@Nullable PrometCamera camera) {
         this.camera = camera;
         if (camera != null) {
+            Log.d(LOG_TAG, "Loading camera " + camera.title + " from " + camera.imageLink);
             Glide.with(getContext())
                  .load(camera.imageLink)
                  .diskCacheStrategy(DiskCacheStrategy.SOURCE)

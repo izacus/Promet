@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -31,6 +32,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.flexibleadapter.common.DividerItemDecoration;
 import eu.davidea.flexibleadapter.items.AbstractExpandableHeaderItem;
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
 import eu.davidea.flexibleadapter.items.AbstractHeaderItem;
@@ -52,13 +54,12 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Inject PrometApi prometApi;
 
-    @InjectView(R.id.cameras_empty) public View emptyView;
+    @InjectView(R.id.cameras_empty) public TextView emptyView;
     @InjectView(R.id.cameras_refresh) public SwipeRefreshLayout refreshLayout;
     @InjectView(R.id.cameras_list) public RecyclerView list;
 
     @Nullable
     private Subscription loadSubscription;
-    private CamerasAdapter adapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +75,7 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
         ButterKnife.inject(this, v);
 
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        list.addItemDecoration(new DividerItemDecoration(getActivity()));
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
         return v;
@@ -100,6 +102,7 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     private void loadCameras() {
+        emptyView.setText(R.string.loading);
         prometApi.getPrometCameras()
                  .observeOn(AndroidSchedulers.mainThread())
                  .subscribe(new Subscriber<List<PrometCamera>>() {
@@ -110,6 +113,9 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
                      @Override
                      public void onError(Throwable e) {
+                         emptyView.setText(R.string.load_error);
+                         emptyView.setVisibility(View.VISIBLE);
+                         list.setVisibility(View.INVISIBLE);
                          Activity activity = getActivity();
                          if (activity != null) {
                              Snackbar.with(getActivity().getApplicationContext())
@@ -122,6 +128,8 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
                      @Override
                      public void onNext(List<PrometCamera> prometCameras) {
+                         emptyView.setVisibility(View.INVISIBLE);
+                         list.setVisibility(View.VISIBLE);
                          showCameras(prometCameras);
                      }
                  });
@@ -140,17 +148,12 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 items.add(header);
             }
 
-            CameraItem item = new CameraItem(header, camera);
-            items.add(item);
+            header.addSubItem(new CameraItem(header, camera));
         }
 
-        list.setAdapter(new FlexibleAdapter(items));
-    }
-
-    private void preloadCameras(List<PrometCamera> cameras) {
-        for (PrometCamera camera : cameras) {
-            Glide.with(getContext()).load(camera.imageLink).diskCacheStrategy(DiskCacheStrategy.SOURCE).preload();
-        }
+        FlexibleAdapter<AbstractFlexibleItem> adapter = new FlexibleAdapter<>(items);
+        list.setAdapter(adapter);
+        adapter.collapseAll();
     }
 
     @Override
