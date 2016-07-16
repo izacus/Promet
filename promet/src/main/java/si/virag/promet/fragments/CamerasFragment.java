@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nispok.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -112,9 +114,17 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
                      @Override
                      public void onNext(List<PrometCamera> prometCameras) {
-                        adapter.setData(prometCameras);
+                         adapter.setData(prometCameras);
+                         // Start preload of images
+                         preloadCameras(prometCameras);
                      }
                  });
+    }
+
+    private void preloadCameras(List<PrometCamera> cameras) {
+        for (PrometCamera camera : cameras) {
+            Glide.with(getContext()).load(camera.imageLink).diskCacheStrategy(DiskCacheStrategy.SOURCE).preload();
+        }
     }
 
     @Override

@@ -36,6 +36,7 @@ public class CamerasAdapter extends RecyclerView.Adapter<CamerasAdapter.CameraVi
         PrometCamera camera = cameras.get(position);
         holder.title.setText(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1));
         holder.location.setText(camera.summary);
+        holder.cameraView.setCamera(camera);
     }
 
     @Override
@@ -57,11 +58,13 @@ public class CamerasAdapter extends RecyclerView.Adapter<CamerasAdapter.CameraVi
 
         final TextView title;
         final TextView location;
+        final CameraView cameraView;
 
         CameraViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.item_camera_title);
             location = (TextView) itemView.findViewById(R.id.item_camera_location);
+            cameraView = (CameraView) itemView.findViewById(R.id.item_camera_view);
         }
     }
 }
