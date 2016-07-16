@@ -72,6 +72,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:9.2.1'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.5.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
+    compile 'com.github.bumptech.glide:okhttp-integration:1.4.0@aar'
     compile 'com.android.support:support-v4:24.0.0'
     compile 'com.android.support:design:24.0.0'
     compile 'com.android.support:appcompat-v7:24.0.0'
