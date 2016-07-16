@@ -1,63 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:padding="16dp"  >
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/item_event_card"
+    <TextView
+        android:id="@+id/item_camera_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textColor="@color/theme_color"
+        />
+
+    <TextView
+        android:id="@+id/item_camera_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/theme_color"
+
+        android:layout_below="@id/item_camera_title"
+        android:layout_alignLeft="@id/item_camera_title"
+
+        />
+
+    <si.virag.promet.fragments.ui.CameraView
+        android:id="@+id/item_camera_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:layout_margin="4dp"
-        android:clickable="true"
-        android:clipChildren="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        app:cardElevation="2dp"
-        >
+        android:layout_below="@+id/item_camera_location"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentLeft="true"
+        />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            >
-
-            <TextView
-                android:id="@+id/item_camera_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:singleLine="true"
-                android:ellipsize="end"
-                android:textColor="@color/theme_color"
-                />
-
-            <TextView
-                android:id="@+id/item_camera_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/theme_color"
-
-                android:layout_below="@id/item_camera_title"
-                android:layout_alignLeft="@id/item_camera_title"
-
-                />
-
-            <si.virag.promet.fragments.ui.CameraView
-                android:id="@+id/item_camera_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/item_camera_location"
-                android:scaleType="centerCrop"
-                android:layout_marginTop="8dp"
-                android:layout_alignParentLeft="true"
-                />
-
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
-
-</FrameLayout>
+</RelativeLayout>

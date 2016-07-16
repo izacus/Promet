@@ -20,12 +20,20 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nispok.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import eu.davidea.flexibleadapter.FlexibleAdapter;
+import eu.davidea.flexibleadapter.items.AbstractExpandableHeaderItem;
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
+import eu.davidea.flexibleadapter.items.AbstractHeaderItem;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -34,6 +42,8 @@ import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.PrometApi;
 import si.virag.promet.api.model.PrometCamera;
+import si.virag.promet.fragments.cameras.CameraHeaderItem;
+import si.virag.promet.fragments.cameras.CameraItem;
 import si.virag.promet.fragments.ui.CamerasAdapter;
 
 public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -55,7 +65,6 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
         super.onCreate(savedInstanceState);
         PrometApplication application = (PrometApplication)getActivity().getApplication();
         application.component().inject(this);
-        adapter = new CamerasAdapter(new ArrayList<PrometCamera>());
     }
 
     @Nullable
@@ -65,7 +74,6 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
         ButterKnife.inject(this, v);
 
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        list.setAdapter(adapter);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
         return v;
@@ -114,11 +122,29 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
                      @Override
                      public void onNext(List<PrometCamera> prometCameras) {
-                         adapter.setData(prometCameras);
-                         // Start preload of images
-                         preloadCameras(prometCameras);
+                         showCameras(prometCameras);
                      }
                  });
+    }
+
+    private void showCameras(List<PrometCamera> cameras) {
+        List<AbstractFlexibleItem> items = new ArrayList<>();
+        Map<String, CameraHeaderItem> headers = new HashMap<>();
+
+        // Generate sectioned items
+        for (PrometCamera camera : cameras) {
+            CameraHeaderItem header = headers.get(camera.region);
+            if (header == null) {
+                header = new CameraHeaderItem(camera.region);
+                headers.put(camera.region, header);
+                items.add(header);
+            }
+
+            CameraItem item = new CameraItem(header, camera);
+            items.add(item);
+        }
+
+        list.setAdapter(new FlexibleAdapter(items));
     }
 
     private void preloadCameras(List<PrometCamera> cameras) {
