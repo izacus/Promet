@@ -79,6 +79,7 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
             locationText = (TextView) view.findViewById(R.id.item_camera_location);
             cameraView = (CameraView) view.findViewById(R.id.item_camera_view);
             mapView = (MapView) view.findViewById(R.id.item_camera_map);
+
             mapView.onCreate(null);
             mapView.getMapAsync(this);
         }
@@ -95,7 +96,11 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
             this.map = googleMap;
             map.setBuildingsEnabled(false);
             map.setIndoorEnabled(false);
-            map.setMyLocationEnabled(false);
+
+            try {
+                map.setMyLocationEnabled(false);
+            } catch (SecurityException ignored) {}
+
             map.setTrafficEnabled(false);
             map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             map.getUiSettings().setAllGesturesEnabled(false);

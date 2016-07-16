@@ -10,22 +10,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nispok.snackbar.Snackbar;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -33,20 +30,15 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.DividerItemDecoration;
-import eu.davidea.flexibleadapter.items.AbstractExpandableHeaderItem;
-import eu.davidea.flexibleadapter.items.AbstractFlexibleItem;
-import eu.davidea.flexibleadapter.items.AbstractHeaderItem;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.PrometApi;
 import si.virag.promet.api.model.PrometCamera;
 import si.virag.promet.fragments.cameras.CameraHeaderItem;
 import si.virag.promet.fragments.cameras.CameraItem;
-import si.virag.promet.fragments.ui.CamerasAdapter;
 
 public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -136,7 +128,7 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     private void showCameras(List<PrometCamera> cameras) {
-        List<AbstractFlexibleItem> items = new ArrayList<>();
+        List<CameraHeaderItem> items = new ArrayList<>();
         Map<String, CameraHeaderItem> headers = new HashMap<>();
 
         // Generate sectioned items
@@ -151,7 +143,14 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
             header.addSubItem(new CameraItem(header, camera));
         }
 
-        FlexibleAdapter<AbstractFlexibleItem> adapter = new FlexibleAdapter<>(items);
+        Collections.sort(items, new Comparator<CameraHeaderItem>() {
+            @Override
+            public int compare(CameraHeaderItem item1, CameraHeaderItem item2) {
+                return item1.title.compareTo(item2.title);
+            }
+        });
+
+        FlexibleAdapter<CameraHeaderItem> adapter = new FlexibleAdapter<>(items);
         list.setAdapter(adapter);
         adapter.collapseAll();
     }
