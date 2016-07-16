@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/item_camera_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/item_camera_location"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:textColor="@color/theme_color"
@@ -36,9 +36,19 @@
         android:id="@+id/item_camera_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/item_camera_location"
         android:layout_marginTop="8dp"
         android:layout_alignParentLeft="true"
+        android:layout_below="@id/item_camera_location"
+        />
+
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/item_camera_map"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/item_camera_view"
+        map:liteMode="true"
         />
 
 </RelativeLayout>
