@@ -1,11 +1,14 @@
 package si.virag.promet;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,14 +21,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 import si.virag.promet.api.model.PrometCamera;
+import si.virag.promet.map.PrometMaps;
 import si.virag.promet.utils.ActivityUtilities;
 
 /**
  * This activity shows a larger view of the camera.
  */
 public class CameraDetailActivity extends AppCompatActivity implements OnMapReadyCallback {
+
 
     @NonNull
     private Toolbar toolbar;
@@ -58,11 +64,17 @@ public class CameraDetailActivity extends AppCompatActivity implements OnMapRead
         toolbar = (Toolbar) findViewById(R.id.camera_detail_toolbar);
         setSupportActionBar(toolbar);
         ActivityUtilities.setupSystembarTint(this, toolbar);
-        getSupportActionBar().setTitle(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1));
 
         cameraImage = (ImageView)findViewById(R.id.camera_detail_image);
         summaryText = (TextView)findViewById(R.id.camera_detail_summary);
-        summaryText.setText(camera.summary);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            getSupportActionBar().hide();
+            summaryText.setText(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1) + " - " + camera.summary);
+        } else {
+            getSupportActionBar().setTitle(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1));
+            summaryText.setText(camera.summary);
+        }
 
         mapView = (MapView)findViewById(R.id.camera_detail_map);
         mapView.onCreate(savedInstanceState);
