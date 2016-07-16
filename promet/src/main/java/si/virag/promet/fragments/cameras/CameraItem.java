@@ -1,6 +1,7 @@
 package si.virag.promet.fragments.cameras;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import java.util.List;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractSectionableItem;
 import eu.davidea.viewholders.FlexibleViewHolder;
+import si.virag.promet.CameraDetailActivity;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometCamera;
 import si.virag.promet.fragments.ui.CameraView;
@@ -51,7 +53,7 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void bindViewHolder(FlexibleAdapter adapter, CameraItemHolder holder, int position, List payloads) {
+    public void bindViewHolder(FlexibleAdapter adapter, final CameraItemHolder holder, int position, List payloads) {
         holder.titleText.setText(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1));
         holder.locationText.setText(camera.summary);
 
@@ -59,12 +61,20 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
             holder.cameraView.setCamera(camera);
             holder.setMapLocation(new LatLng(camera.lat, camera.lng));
         }
+
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(holder.container.getContext(), CameraDetailActivity.class);
+                i.putExtra("camera", camera);
+                holder.container.getContext().startActivity(i);
+            }
+        });
     }
-
-
 
     static class CameraItemHolder extends FlexibleViewHolder implements OnMapReadyCallback {
 
+        final View container;
         final TextView titleText;
         final TextView locationText;
         final CameraView cameraView;
@@ -75,11 +85,11 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
 
         CameraItemHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
+            container = view;
             titleText = (TextView) view.findViewById(R.id.item_camera_title);
             locationText = (TextView) view.findViewById(R.id.item_camera_location);
             cameraView = (CameraView) view.findViewById(R.id.item_camera_view);
             mapView = (MapView) view.findViewById(R.id.item_camera_map);
-
             mapView.onCreate(null);
             mapView.getMapAsync(this);
         }

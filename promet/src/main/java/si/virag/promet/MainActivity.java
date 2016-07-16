@@ -53,6 +53,7 @@ import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.gcm.ClearNotificationsService;
 import si.virag.promet.gcm.RegistrationService;
 import si.virag.promet.preferences.PrometPreferences;
+import si.virag.promet.utils.ActivityUtilities;
 import si.virag.promet.utils.PrometSettings;
 
 public class MainActivity extends AppCompatActivity
@@ -74,19 +75,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Transluscent navigation
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window w = getWindow(); // in Activity's onCreate() for instance
-
-            if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
-                w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            } else {
-                w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            }
-
-            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
+        ActivityUtilities.setupTransluscentNavigation(this);
         PrometApplication application = (PrometApplication) getApplication();
         application.checkUpdateLocale(this);
 
@@ -101,16 +90,7 @@ public class MainActivity extends AppCompatActivity
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
 
-        // Set titlebar tint
-        tintManager = new SystemBarTintManager(this);
-        tintManager.setStatusBarTintEnabled(true);
-        tintManager.setStatusBarTintColor(ContextCompat.getColor(this, R.color.theme_color));
-
-        // Setup top margin for toolbar when its transparent
-        LinearLayout.LayoutParams toolbarLayoutParams = (LinearLayout.LayoutParams) toolbar.getLayoutParams();
-        toolbarLayoutParams.topMargin = tintManager.getConfig().getPixelInsetTop(false);
-        toolbar.setLayoutParams(toolbarLayoutParams);
-
+        tintManager = ActivityUtilities.setupSystembarTint(this, toolbar);
         pager = (ViewPager)findViewById(R.id.main_pager);
         tabs = (TabLayout) findViewById(R.id.main_tabs);
 

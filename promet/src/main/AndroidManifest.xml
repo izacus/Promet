@@ -48,6 +48,10 @@
                   android:theme="@style/PrometTheme"
             />
 
+        <activity android:name=".CameraDetailActivity"
+                  android:logo="@drawable/logo"
+                  android:theme="@style/PrometTheme" />
+
         <receiver
             android:name=".gcm.PushBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
