@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,8 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.nispok.snackbar.Snackbar;
 
-import org.threeten.bp.LocalDateTime;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,12 +32,13 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
-import rx.functions.Func2;
+import rx.functions.FuncN;
 import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.PrometApi;
+import si.virag.promet.api.model.PrometCamera;
 import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.TrafficStatus;
@@ -113,14 +112,23 @@ public class MapFragment extends Fragment {
                                                        }
                                                    }).toList();
 
-        loadSubscription = events.zipWith(counters, new Func2<List<PrometEvent>, List<PrometCounter>, Pair<List<PrometEvent>, List<PrometCounter>>>() {
+        Observable<List<PrometCamera>> cameras = prometApi.getPrometCameras()
+                                                           .onErrorReturn(new Func1<Throwable, List<PrometCamera>>() {
+                                                                @Override
+                                                                public List<PrometCamera> call(Throwable throwable) {
+                                                                Log.e(LOG_TAG, "Failed to load traffic cameras!", throwable);
+                                                                return new ArrayList<>();
+                                                               }
+                                                            });
+
+        loadSubscription = Observable.combineLatest(Arrays.asList(events, counters, cameras), new FuncN<DataTriple>() {
             @Override
-            public Pair<List<PrometEvent>, List<PrometCounter>> call(List<PrometEvent> prometEvents, List<PrometCounter> prometCounters) {
-                return new Pair<>(prometEvents, prometCounters);
+            public DataTriple call(Object... args) {
+                return new DataTriple((List<PrometEvent>)args[0], (List<PrometCounter>)args[1], (List<PrometCamera>)args[2]);
             }
         })
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Subscriber<Pair<List<PrometEvent>, List<PrometCounter>>>() {
+        .subscribe(new Subscriber<DataTriple>() {
             @Override
             public void onCompleted() {
                 loadSubscription = null;
@@ -141,22 +149,10 @@ public class MapFragment extends Fragment {
             }
 
             @Override
-            public void onNext(Pair<List<PrometEvent>, List<PrometCounter>> eventPair) {
-                Log.d(LOG_TAG, eventPair.first.toString());
-
-                LocalDateTime lastUpdateTime = null;
-/*                if (eventPair.second.size() > 0) {
-                    int mostRecentIdx = eventPair.second.indexOf(Collections.min(eventPair.second, new Comparator<PrometCounter>() {
-                        @Override
-                        public int compare(PrometCounter lhs, PrometCounter rhs) {
-                            return -lhs.updated.compareTo(rhs.updated);
-                        }
-                    }));
-                     lastUpdateTime = eventPair.second.get(mostRecentIdx).updated;
-                } */
-
-                EventBus.getDefault().post(new Events.RefreshCompleted(lastUpdateTime));
-                prometMaps.showEvents(getActivity(), eventPair.first, eventPair.second);
+            public void onNext(DataTriple data) {
+                Log.d(LOG_TAG, data.toString());
+                EventBus.getDefault().post(new Events.RefreshCompleted(null));
+                prometMaps.showData(getActivity(), data.events, data.counters, data.cameras);
             }
         });
     }
@@ -235,4 +231,25 @@ public class MapFragment extends Fragment {
         displayTrafficData();
     }
 
+
+    private static class DataTriple {
+        public final List<PrometEvent> events;
+        public final List<PrometCounter> counters;
+        public final List<PrometCamera> cameras;
+
+        public DataTriple(List<PrometEvent> events, List<PrometCounter> counters, List<PrometCamera> cameras) {
+            this.cameras = cameras;
+            this.counters = counters;
+            this.events = events;
+        }
+
+        @Override
+        public String toString() {
+            return "DataTriple{" +
+                    "events=" + events +
+                    ", counters=" + counters +
+                    ", cameras=" + cameras +
+                    '}';
+        }
+    }
 }

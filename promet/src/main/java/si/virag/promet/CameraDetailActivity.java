@@ -1,14 +1,11 @@
 package si.virag.promet;
 
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,11 +15,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -145,11 +141,10 @@ public class CameraDetailActivity extends AppCompatActivity implements OnMapRead
 
         map.clear();
         if (events != null) {
-            prometMaps.showEvents(this, events, Collections.<PrometCounter>emptyList());
+            prometMaps.showData(this, events, Collections.<PrometCounter>emptyList(), Collections.singletonList(camera));
         }
 
         LatLng location = new LatLng(camera.lat, camera.lng);
-        map.addMarker(new MarkerOptions().position(location));
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10f));
     }
 

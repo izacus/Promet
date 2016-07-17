@@ -33,10 +33,11 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
-import si.virag.promet.Manifest;
 import si.virag.promet.R;
+import si.virag.promet.api.model.PrometCamera;
 import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
+import si.virag.promet.utils.DataUtils;
 import si.virag.promet.utils.LocaleUtil;
 
 public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
@@ -51,6 +52,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
     private static BitmapDescriptor YELLOW_MARKER;
     private static BitmapDescriptor AZURE_MARKER;
     private static BitmapDescriptor CONE_MARKER;
+
+    private static BitmapDescriptor CAMERA_MARKER;
 
     private static final int[][] TRAFFIC_DENSITY_COLORS = {
             { Color.TRANSPARENT, Color.TRANSPARENT },  // NO DATA
@@ -165,10 +168,11 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
             TRAFFIC_DENSITY_MARKER_BITMAPS[i] = BitmapDescriptorFactory.fromBitmap(bmp);
         }
 
+        CAMERA_MARKER = BitmapDescriptorFactory.fromBitmap(DataUtils.getBitmapFromVectorDrawable(ctx, R.drawable.ic_camera));
         markersInitialized = true;
     }
 
-    public void showEvents(final Context context, final List<PrometEvent> prometEvents, final List<PrometCounter> prometCounters) {
+    public void showData(final Context context, final List<PrometEvent> prometEvents, final List<PrometCounter> prometCounters, List<PrometCamera> prometCameras) {
         if (map == null)
             return;
 
@@ -259,6 +263,33 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
                         Log.e(LOG_TAG, "Failed to load traffic counters!", throwable);
                     }
                 });
+
+        Observable.from(prometCameras)
+                  .map(new Func1<PrometCamera, MarkerOptions>() {
+                      @Override
+                      public MarkerOptions call(PrometCamera prometCamera) {
+                          return new MarkerOptions()
+                                     .position(new LatLng(prometCamera.lat, prometCamera.lng))
+                                     .draggable(false)
+                                     .anchor(0.5f, 0.5f)
+                                     .title(prometCamera.title)
+                                     .snippet(prometCamera.summary)
+                                     .icon(CAMERA_MARKER);
+                      }
+                  })
+                  .subscribeOn(Schedulers.computation())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .subscribe(new Action1<MarkerOptions>() {
+                      @Override
+                      public void call(MarkerOptions markerOptions) {
+                          map.addMarker(markerOptions);
+                      }
+                  }, new Action1<Throwable>() {
+                      @Override
+                      public void call(Throwable throwable) {
+                          Log.e(LOG_TAG, "Failed to load cameras!", throwable);
+                      }
+                  });
     }
 
     public void showPoint(LatLng point) {

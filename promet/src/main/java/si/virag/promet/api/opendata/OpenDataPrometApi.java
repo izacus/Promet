@@ -34,6 +34,7 @@ public class OpenDataPrometApi extends PrometApi {
     private final OpenDataApi openDataApi;
 
     private Observable<List<PrometEvent>> prometEventsObserver;
+    private Observable<List<PrometCamera>> prometCameras;
 
     public OpenDataPrometApi(Context context) {
 
@@ -62,6 +63,7 @@ public class OpenDataPrometApi extends PrometApi {
 
         openDataApi = adapter.create(OpenDataApi.class);
         createPrometEventsObserver();
+        createPrometCamerasObserver();
     }
 
     @Override
@@ -88,14 +90,7 @@ public class OpenDataPrometApi extends PrometApi {
 
     @Override
     public Observable<List<PrometCamera>> getPrometCameras() {
-        return openDataApi.getCameras()
-                .flatMap(new Func1<PrometCameras, Observable<PrometCamera>>() {
-                    @Override
-                    public Observable<PrometCamera> call(PrometCameras prometCameras) {
-                        return Observable.from(prometCameras.feed.cameras);
-                    }
-                })
-                .toSortedList(new CameraListSorter());
+        return prometCameras;
     }
 
     private void createPrometEventsObserver() {
@@ -119,5 +114,17 @@ public class OpenDataPrometApi extends PrometApi {
                 })
                 .toSortedList(new EventListSorter())
                 .cache();
+    }
+
+    private void createPrometCamerasObserver() {
+        prometCameras = openDataApi.getCameras()
+                                   .flatMap(new Func1<PrometCameras, Observable<PrometCamera>>() {
+                                       @Override
+                                       public Observable<PrometCamera> call(PrometCameras prometCameras) {
+                                           return Observable.from(prometCameras.feed.cameras);
+                                       }
+                                   })
+                                   .toSortedList(new CameraListSorter())
+                                   .cache();
     }
 }
