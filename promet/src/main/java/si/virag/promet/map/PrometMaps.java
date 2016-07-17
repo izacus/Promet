@@ -67,7 +67,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
     private static BitmapDescriptor[] TRAFFIC_DENSITY_MARKER_BITMAPS;
 
     private GoogleMap map;
-    private Map<Marker, Long> markerIdMap;
+    private Map<Marker, String> markerIdMap;
     private boolean isSlovenianLocale;
 
     public void setMapInstance(Context ctx, GoogleMap gMap) {
@@ -179,115 +179,90 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         map.clear();
         markerIdMap = new HashMap<>();
 
-        Observable.from(prometEvents)
-                  .map(new Func1<PrometEvent, Pair<Long, MarkerOptions>>() {
-                      @Override
-                      public Pair<Long, MarkerOptions> call(PrometEvent event) {
-                          MarkerOptions opts = new MarkerOptions();
-                          opts.position(new LatLng(event.lat, event.lng))
-                              .title(isSlovenianLocale ? event.cause : event.causeEn)
-                              .snippet(event.roadName);
+        Observable<Pair<String, MarkerOptions>> eventsObservable =  Observable.from(prometEvents)
+            .map(new Func1<PrometEvent, Pair<String, MarkerOptions>>() {
+              @Override
+              public Pair<String, MarkerOptions> call(PrometEvent event) {
+                  MarkerOptions opts = new MarkerOptions();
+                  opts.position(new LatLng(event.lat, event.lng))
+                      .title(isSlovenianLocale ? event.cause : event.causeEn)
+                      .snippet(event.roadName);
 
-                          BitmapDescriptor icon = null;
-                          if (event.isHighPriority()) {
-                              icon = RED_MARKER;
-                          } else if (event.isRoadworks()) {
-                              icon = CONE_MARKER;
-                              opts.anchor(0.5f, 0.9f);
-                          } else if (event.eventGroup == null) {
+                  BitmapDescriptor icon = null;
+                  if (event.isHighPriority()) {
+                      icon = RED_MARKER;
+                  } else if (event.isRoadworks()) {
+                      icon = CONE_MARKER;
+                      opts.anchor(0.5f, 0.9f);
+                  } else if (event.eventGroup == null) {
+                      icon = ORANGE_MARKER;
+                  } else {
+                      switch (event.eventGroup) {
+                          case AVTOCESTA:
+                              icon = GREEN_MARKER;
+                              break;
+                          case HITRA_CESTA:
+                              icon = AZURE_MARKER;
+                              break;
+                          case MEJNI_PREHOD:
                               icon = ORANGE_MARKER;
-                          } else {
-                              switch (event.eventGroup) {
-                                  case AVTOCESTA:
-                                      icon = GREEN_MARKER;
-                                      break;
-                                  case HITRA_CESTA:
-                                      icon = AZURE_MARKER;
-                                      break;
-                                  case MEJNI_PREHOD:
-                                      icon = ORANGE_MARKER;
-                                      break;
-                                  case REGIONALNA_CESTA:
-                                  case LOKALNA_CESTA:
-                                      icon = YELLOW_MARKER;
-                                      break;
-                              }
-                          }
-
-                          opts.icon(icon);
-                          opts.draggable(false);
-                          return new Pair<>(event.id, opts);
+                              break;
+                          case REGIONALNA_CESTA:
+                          case LOKALNA_CESTA:
+                              icon = YELLOW_MARKER;
+                              break;
                       }
-                  })
-                  .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Pair<Long, MarkerOptions>>() {
-                               @Override
-                               public void call(Pair<Long, MarkerOptions> idMarkerPair) {
-                                   Marker m = map.addMarker(idMarkerPair.second);
-                                   markerIdMap.put(m, idMarkerPair.first);
-                               }
-                           },
-                        new Action1<Throwable>() {
-                            @Override
-                            public void call(Throwable throwable) {
-                                Log.e(LOG_TAG, "Could not load data.", throwable);
-                            }
-                        });
+                  }
+
+                  opts.icon(icon);
+                  opts.draggable(false);
+                  opts.zIndex(15.0f);
+                  return new Pair<>("e" + event.id, opts);
+              }
+            });
+
+        Observable<Pair<String, MarkerOptions>> countersObservable = Observable.from(prometCounters)
+            .map(new Func1<PrometCounter, Pair<String, MarkerOptions>>() {
+                @Override
+                public Pair<String, MarkerOptions> call(PrometCounter event) {
+                    MarkerOptions options = new MarkerOptions()
+                            .position(new LatLng(event.lat, event.lng))
+                            .anchor(0.5f, 0.5f)
+                            .flat(true)
+                            .draggable(false)
+                            .title(context.getResources().getStringArray(R.array.traffic_status_strings)[event.status.ordinal()] + " - " + event.locationName)
+                            .snippet(context.getResources().getString(R.string.map_traffic_detail, event.avgSpeed, event.gap))
+                            .icon(TRAFFIC_DENSITY_MARKER_BITMAPS[event.status.ordinal()]);
+                    return new Pair<>("t" + event.id, options);
+                }
+            });
+
+        Observable<Pair<String, MarkerOptions>> camerasObservable = Observable.from(prometCameras)
+            .map(new Func1<PrometCamera, Pair<String, MarkerOptions>>() {
+              @Override
+              public Pair<String, MarkerOptions> call(PrometCamera prometCamera) {
+                  MarkerOptions options = new MarkerOptions()
+                             .position(new LatLng(prometCamera.lat, prometCamera.lng))
+                             .draggable(false)
+                             .anchor(0.5f, 0.5f)
+                             .zIndex(5.0f)
+                             .title(prometCamera.title)
+                             .snippet(prometCamera.summary)
+                             .icon(CAMERA_MARKER);
+                  return new Pair<>("c" + prometCamera.id, options);
+              }
+            });
 
 
-        Observable.from(prometCounters)
-                .map(new Func1<PrometCounter, MarkerOptions>() {
-                    @Override
-                    public MarkerOptions call(PrometCounter event) {
-                        return new MarkerOptions()
-                                .position(new LatLng(event.lat, event.lng))
-                                .anchor(0.5f, 0.5f)
-                                .flat(true)
-                                .draggable(false)
-                                .title(context.getResources().getStringArray(R.array.traffic_status_strings)[event.status.ordinal()] + " - " + event.locationName)
-                                .snippet(context.getResources().getString(R.string.map_traffic_detail, event.avgSpeed, event.gap))
-                                .icon(TRAFFIC_DENSITY_MARKER_BITMAPS[event.status.ordinal()]);
-                    }
-                })
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<MarkerOptions>() {
-                    @Override
-                    public void call(MarkerOptions marker) {
-                        map.addMarker(marker);
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Log.e(LOG_TAG, "Failed to load traffic counters!", throwable);
-                    }
-                });
-
-        Observable.from(prometCameras)
-                  .map(new Func1<PrometCamera, MarkerOptions>() {
-                      @Override
-                      public MarkerOptions call(PrometCamera prometCamera) {
-                          return new MarkerOptions()
-                                     .position(new LatLng(prometCamera.lat, prometCamera.lng))
-                                     .draggable(false)
-                                     .anchor(0.5f, 0.5f)
-                                     .title(prometCamera.title)
-                                     .snippet(prometCamera.summary)
-                                     .icon(CAMERA_MARKER);
-                      }
-                  })
+        // The order here is important because we don't want markers covering each other in wrong order
+        Observable.concat(eventsObservable, camerasObservable, countersObservable)
                   .subscribeOn(Schedulers.computation())
                   .observeOn(AndroidSchedulers.mainThread())
-                  .subscribe(new Action1<MarkerOptions>() {
+                  .subscribe(new Action1<Pair<String, MarkerOptions>>() {
                       @Override
-                      public void call(MarkerOptions markerOptions) {
-                          map.addMarker(markerOptions);
-                      }
-                  }, new Action1<Throwable>() {
-                      @Override
-                      public void call(Throwable throwable) {
-                          Log.e(LOG_TAG, "Failed to load cameras!", throwable);
+                      public void call(Pair<String, MarkerOptions> stringMarkerOptionsPair) {
+                          Marker marker = map.addMarker(stringMarkerOptionsPair.second);
+                          markerIdMap.put(marker, stringMarkerOptionsPair.first);
                       }
                   });
     }
@@ -301,9 +276,12 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Long id = markerIdMap.get(marker);
+        String id = markerIdMap.get(marker);
         if (id == null) return;
 
-        EventBus.getDefault().post(new Events.ShowEventInList(id));
+        // Resolve to types
+        if (id.startsWith("e")) {
+            EventBus.getDefault().post(new Events.ShowEventInList(Long.valueOf(id.substring(1))));
+        }
     }
 }
