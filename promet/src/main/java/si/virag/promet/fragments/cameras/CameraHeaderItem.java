@@ -19,6 +19,7 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
     public CameraHeaderItem(String title) {
         super();
         this.title = title;
+        setExpanded(false);
     }
 
     @Override

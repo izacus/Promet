@@ -150,9 +150,18 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
             }
         });
 
-        final FlexibleAdapter<CameraHeaderItem> adapter = new FlexibleAdapter<>(items);
-        adapter.collapseAll();
-        list.setAdapter(adapter);
+        if (list.getAdapter() == null) {
+            final FlexibleAdapter<CameraHeaderItem> adapter = new FlexibleAdapter<>(items);
+            list.setAdapter(adapter);
+        } else {
+            final FlexibleAdapter<CameraHeaderItem> adapter = (FlexibleAdapter<CameraHeaderItem>) list.getAdapter();
+            for (CameraHeaderItem header : adapter.getExpandedItems()) {
+                CameraHeaderItem item = headers.get(header.title);
+                if (item != null) item.setExpanded(true);
+            }
+
+            adapter.updateDataSet(items);
+        }
     }
 
     @Override

@@ -200,7 +200,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+        if (mapView != null) mapView.onPause();
 
         if (loadSubscription != null) {
             loadSubscription.unsubscribe();
@@ -211,19 +211,21 @@ public class MapFragment extends Fragment {
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        if (mapView != null) mapView.onLowMemory();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+        if (mapView != null) {
+            mapView.onSaveInstanceState(outState);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
+        if (mapView != null) mapView.onDestroy();
     }
 
     public void onEventMainThread(Events.ShowPointOnMap e) {

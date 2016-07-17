@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +70,8 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
             public void onClick(View view) {
                 Intent i = new Intent(holder.container.getContext(), CameraDetailActivity.class);
                 i.putExtra("camera", camera);
+                ViewCompat.setTransitionName(holder.cameraView, "cameraView");
+                ViewCompat.setTransitionName(holder.mapView, "mapView");
                 holder.container.getContext().startActivity(i);
             }
         });
