@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import si.virag.promet.api.model.PrometCamera;
+import si.virag.promet.utils.DataUtils;
 
 public class CameraView extends ImageView {
 
@@ -48,11 +49,8 @@ public class CameraView extends ImageView {
         this.camera = camera;
         if (camera != null) {
             Log.d(LOG_TAG, "Loading camera " + camera.title + " from " + camera.imageLink);
-            Glide.with(getContext())
-                 .load(camera.imageLink)
-                 .centerCrop()
-                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                 .into(this);
+            DataUtils.getCameraImageLoader(getContext(), camera.imageLink)
+                     .into(this);
         }
     }
 }

@@ -336,16 +336,14 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
         View loadingView = infoView.findViewById(R.id.info_loading);
 
         if (cameraBitmapMap.get(id) == null) {
-            Glide.with(context)
-                 .load(cameraMap.get(id).imageLink)
-                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                 .into(new SimpleTarget<GlideDrawable>() {
-                     @Override
-                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                         cameraBitmapMap.put(id, resource);
-                         marker.showInfoWindow();
-                     }
-                 });
+            DataUtils.getCameraImageLoader(context, cameraMap.get(id).imageLink)
+                     .into(new SimpleTarget<GlideDrawable>() {
+                         @Override
+                         public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                             cameraBitmapMap.put(id, resource);
+                             marker.showInfoWindow();
+                         }
+                     });
 
             imageView.setVisibility(View.INVISIBLE);
         } else {

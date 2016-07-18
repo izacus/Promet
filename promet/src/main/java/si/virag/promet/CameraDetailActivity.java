@@ -32,6 +32,7 @@ import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.map.PrometMaps;
 import si.virag.promet.utils.ActivityUtilities;
+import si.virag.promet.utils.DataUtils;
 
 /**
  * This activity shows a larger view of the camera.
@@ -101,11 +102,8 @@ public class CameraDetailActivity extends AppCompatActivity implements OnMapRead
         super.onResume();
         mapView.onResume();
 
-        Glide.with(this)
-                .load(camera.imageLink)
-                .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(cameraImage);
+        DataUtils.getCameraImageLoader(this, camera.imageLink)
+                 .into(cameraImage);
 
         prometApi.getPrometEvents()
                  .observeOn(AndroidSchedulers.mainThread())

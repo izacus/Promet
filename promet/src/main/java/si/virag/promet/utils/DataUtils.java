@@ -10,12 +10,23 @@ import android.os.Build;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.AppCompatDrawableManager;
 
+import com.bumptech.glide.DrawableRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.signature.StringSignature;
 import com.crashlytics.android.Crashlytics;
+
+import org.threeten.bp.ZonedDateTime;
+
+import java.util.Calendar;
 
 import si.virag.promet.api.model.EventGroup;
 
 public class DataUtils {
-    
+
+    static GlideBuilder PrometGlideBuilder = null;
+
     public static EventGroup roadPriorityToRoadType(int priority, boolean isCrossing) {
         if (isCrossing) {
             return EventGroup.MEJNI_PREHOD;
@@ -63,5 +74,16 @@ public class DataUtils {
         drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         drawable.draw(canvas);
         return bitmap;
+    }
+
+    public static DrawableRequestBuilder<String> getCameraImageLoader(Context context, String url) {
+        // We mix in time rounded down to 5 minute segments to timeout cache after 5 mins
+        ZonedDateTime time = ZonedDateTime.now();
+        String key = String.valueOf(time.getHour()) + String.valueOf((time.getMinute() / 5) * 5);
+
+        return Glide.with(context)
+                    .load(url)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .signature(new StringSignature(String.valueOf(key)));
     }
 }
