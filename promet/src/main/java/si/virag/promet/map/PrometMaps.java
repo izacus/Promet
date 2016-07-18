@@ -1,6 +1,7 @@
 package si.virag.promet.map;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,12 +10,10 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
-import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,6 +43,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import si.virag.promet.CameraDetailActivity;
 import si.virag.promet.Events;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometCamera;
@@ -83,7 +83,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
     private Map<Marker, String> markerIdMap;
     private boolean isSlovenianLocale;
 
-    private Map<String, String> cameraUrlMap;
+    private Map<String, PrometCamera> cameraMap;
     private LinkedHashMap<String, Drawable> cameraBitmapMap = new LinkedHashMap<String, Drawable>() {
         @Override
         protected boolean removeEldestEntry(Entry eldest) {
@@ -201,7 +201,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
 
         map.clear();
         markerIdMap = new HashMap<>();
-        cameraUrlMap = new HashMap<>();
+        cameraMap = new HashMap<>();
         cameraBitmapMap.clear();
 
         Observable<Pair<String, MarkerOptions>> eventsObservable =  Observable.from(prometEvents)
@@ -266,7 +266,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
             .map(new Func1<PrometCamera, Pair<String, MarkerOptions>>() {
               @Override
               public Pair<String, MarkerOptions> call(PrometCamera prometCamera) {
-                  cameraUrlMap.put("c" + prometCamera.id, prometCamera.imageLink);
+                  cameraMap.put("c" + prometCamera.id, prometCamera);
                   MarkerOptions options = new MarkerOptions()
                              .position(new LatLng(prometCamera.lat, prometCamera.lng))
                              .draggable(false)
@@ -308,6 +308,12 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
         // Resolve to types
         if (id.startsWith("e")) {
             EventBus.getDefault().post(new Events.ShowEventInList(Long.valueOf(id.substring(1))));
+        } else if (id.startsWith("c")) {
+            PrometCamera camera = cameraMap.get(id);
+            if (camera == null) return;
+            Intent intent = new Intent(context, CameraDetailActivity.class);
+            intent.putExtra("camera", camera);
+            context.startActivity(intent);
         }
     }
 
@@ -331,7 +337,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
 
         if (cameraBitmapMap.get(id) == null) {
             Glide.with(context)
-                 .load(cameraUrlMap.get(id))
+                 .load(cameraMap.get(id).imageLink)
                  .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                  .into(new SimpleTarget<GlideDrawable>() {
                      @Override
