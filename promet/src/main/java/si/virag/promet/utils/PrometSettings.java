@@ -14,6 +14,8 @@ public class PrometSettings {
     private static final String PREF_REGIONALNE_CESTE = "show.regionalne.ceste";
     private static final String PREF_LOKALNE_CESTE = "show.lokalne.ceste";
 
+    private static final String PREF_CAMERAS = "show.cameras";
+
     public static final String PREF_NOTIFICATIONS = "gcm_enabled";
     public static final String PREF_NOTIFICATIONS_CROSSINGS = "gcm_crossings";
     public static final String PREF_NOTIFICATIONS_HIGHWAYS = "gcm_highways";
@@ -29,6 +31,8 @@ public class PrometSettings {
     private boolean showRegionalneCeste;
     private boolean showBorderCrossings;
 
+    private boolean showCameras;
+
     public PrometSettings(Context context) {
         this.context = context.getApplicationContext();
         reload();
@@ -40,6 +44,7 @@ public class PrometSettings {
         showBorderCrossings = preferences.getBoolean(PREF_BORDER_CROSSINGS, true);
         showRegionalneCeste = preferences.getBoolean(PREF_REGIONALNE_CESTE, true);
         showLokalneCeste = preferences.getBoolean(PREF_LOKALNE_CESTE, true);
+        showCameras = preferences.getBoolean(PREF_CAMERAS, false);
     }
 
     public boolean getShowAvtoceste() {
@@ -98,5 +103,14 @@ public class PrometSettings {
         }
 
         return true;
+    }
+
+    public boolean getShowCameras() {
+        return showCameras;
+    }
+
+    public void setShowCameras(boolean showCameras) {
+        this.showCameras = showCameras;
+        preferences.edit().putBoolean(PREF_CAMERAS, showCameras).apply();
     }
 }

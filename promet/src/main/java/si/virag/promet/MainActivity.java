@@ -269,6 +269,7 @@ public class MainActivity extends AppCompatActivity
         menu.findItem(R.id.menu_map_crossings).setChecked(prometSettings.getShowBorderCrossings());
         menu.findItem(R.id.menu_map_lokalne_ceste).setChecked(prometSettings.getShowLokalneCeste());
         menu.findItem(R.id.menu_map_regionalne_ceste).setChecked(prometSettings.getShowRegionalneCeste());
+        menu.findItem(R.id.menu_map_cameras).setChecked(prometSettings.getShowCameras());
         return true;
     }
 
@@ -301,6 +302,10 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.menu_map_lokalne_ceste:
                 prometSettings.setShowLokalneCeste(enabled);
+                break;
+
+            case R.id.menu_map_cameras:
+                prometSettings.setShowCameras(enabled);
                 break;
 
             default:

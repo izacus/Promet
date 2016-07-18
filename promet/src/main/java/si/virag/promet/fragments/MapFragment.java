@@ -20,6 +20,7 @@ import com.nispok.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -112,14 +113,20 @@ public class MapFragment extends Fragment {
                                                        }
                                                    }).toList();
 
-        Observable<List<PrometCamera>> cameras = prometApi.getPrometCameras()
-                                                           .onErrorReturn(new Func1<Throwable, List<PrometCamera>>() {
-                                                                @Override
-                                                                public List<PrometCamera> call(Throwable throwable) {
-                                                                Log.e(LOG_TAG, "Failed to load traffic cameras!", throwable);
-                                                                return new ArrayList<>();
-                                                               }
-                                                            });
+
+        Observable<List<PrometCamera>> cameras;
+        if (prometSettings.getShowCameras()) {
+            cameras = prometApi.getPrometCameras()
+                    .onErrorReturn(new Func1<Throwable, List<PrometCamera>>() {
+                        @Override
+                        public List<PrometCamera> call(Throwable throwable) {
+                            Log.e(LOG_TAG, "Failed to load traffic cameras!", throwable);
+                            return new ArrayList<>();
+                        }
+                    });
+        } else {
+            cameras = Observable.just(Collections.<PrometCamera>emptyList());
+        }
 
         loadSubscription = Observable.combineLatest(Arrays.asList(events, counters, cameras), new FuncN<DataTriple>() {
             @Override
