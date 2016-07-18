@@ -5,13 +5,24 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
@@ -23,6 +34,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +52,7 @@ import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.utils.DataUtils;
 import si.virag.promet.utils.LocaleUtil;
 
-public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
+public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMap.InfoWindowAdapter {
 
     public static final LatLng MAP_CENTER = new LatLng(46.055556, 14.508333);
     private static final String LOG_TAG = "Promet.Maps";
@@ -66,9 +78,18 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
     private static BitmapDescriptor[] TRAFFIC_DENSITY_MARKER_BITMAPS;
 
+    private Context context;
     private GoogleMap map;
     private Map<Marker, String> markerIdMap;
     private boolean isSlovenianLocale;
+
+    private Map<String, String> cameraUrlMap;
+    private LinkedHashMap<String, Drawable> cameraBitmapMap = new LinkedHashMap<String, Drawable>() {
+        @Override
+        protected boolean removeEldestEntry(Entry eldest) {
+            return this.size() > 10;
+        }
+    };
 
     public void setMapInstance(Context ctx, GoogleMap gMap) {
         if (gMap == null)
@@ -77,6 +98,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         if (!markersInitialized)
             initializeMarkers(ctx);
 
+        this.context = ctx;
         this.map = gMap;
         this.isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
 
@@ -103,6 +125,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         });
 
         map.setOnInfoWindowClickListener(this);
+        map.setInfoWindowAdapter(this);
 
         int fineLocationPermission = ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.ACCESS_FINE_LOCATION);
         int coarseLocationPermission = ContextCompat.checkSelfPermission(ctx, android.Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -178,6 +201,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
 
         map.clear();
         markerIdMap = new HashMap<>();
+        cameraUrlMap = new HashMap<>();
+        cameraBitmapMap.clear();
 
         Observable<Pair<String, MarkerOptions>> eventsObservable =  Observable.from(prometEvents)
             .map(new Func1<PrometEvent, Pair<String, MarkerOptions>>() {
@@ -241,6 +266,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
             .map(new Func1<PrometCamera, Pair<String, MarkerOptions>>() {
               @Override
               public Pair<String, MarkerOptions> call(PrometCamera prometCamera) {
+                  cameraUrlMap.put("c" + prometCamera.id, prometCamera.imageLink);
                   MarkerOptions options = new MarkerOptions()
                              .position(new LatLng(prometCamera.lat, prometCamera.lng))
                              .draggable(false)
@@ -283,5 +309,44 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener {
         if (id.startsWith("e")) {
             EventBus.getDefault().post(new Events.ShowEventInList(Long.valueOf(id.substring(1))));
         }
+    }
+
+    @Override
+    public View getInfoWindow(Marker marker) {
+        return null;
+    }
+
+    @Override
+    public View getInfoContents(final Marker marker) {
+        if (markerIdMap == null || map == null || context == null) return null;
+        final String id = markerIdMap.get(marker);
+        if (id == null || !id.startsWith("c")) return null;
+
+        View infoView = LayoutInflater.from(context).inflate(R.layout.info_camera_view, null);
+        TextView title = (TextView)infoView.findViewById(R.id.info_title);
+        title.setText(marker.getTitle());
+
+        ImageView imageView = (ImageView) infoView.findViewById(R.id.info_image);
+        View loadingView = infoView.findViewById(R.id.info_loading);
+
+        if (cameraBitmapMap.get(id) == null) {
+            Glide.with(context)
+                 .load(cameraUrlMap.get(id))
+                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                 .into(new SimpleTarget<GlideDrawable>() {
+                     @Override
+                     public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                         cameraBitmapMap.put(id, resource);
+                         marker.showInfoWindow();
+                     }
+                 });
+
+            imageView.setVisibility(View.INVISIBLE);
+        } else {
+            loadingView.setVisibility(View.INVISIBLE);
+            imageView.setImageDrawable(cameraBitmapMap.get(id));
+        }
+
+        return infoView;
     }
 }
