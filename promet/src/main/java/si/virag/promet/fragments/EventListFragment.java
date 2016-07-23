@@ -163,19 +163,17 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
                                       @Override
                                       public void onNext(List<PrometEvent> prometEvents) {
                                           prepareAndApplyData(prometEvents);
-                                          /*updateHeaderView();
-                                          adapter.setData(prometEvents);
+                                          /*updateHeaderView(); */
 
                                           // We might have a scroll event pending, execute it now.
                                           Events.ShowEventInList eventInList = EventBus.getDefault().getStickyEvent(Events.ShowEventInList.class);
                                           if (eventInList != null) {
-                                              int position = adapter.getItemPosition(eventInList.id);
-                                              list.smoothScrollToPosition(position + 1);
+                                              scrollToEvent(eventInList.id);
                                               EventBus.getDefault().removeStickyEvent(eventInList);
                                           }
 
                                           if (force)
-                                              EventBus.getDefault().post(new Events.UpdateMap()); */
+                                              EventBus.getDefault().post(new Events.UpdateMap());
                                       }
 
                                       @Override
@@ -281,8 +279,8 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         EventBus.getDefault().unregister(this);
     }
 
-    public void onEventMainThread(final Events.ShowEventInList e) {
-        if (adapterItems == null || adapter == null) return;
+    private boolean scrollToEvent(long eventId) {
+        if (adapterItems == null || adapter == null) return false;
 
         // Find item and then scroll to it.
         int position = -1;
@@ -290,16 +288,22 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
             //noinspection ConstantConditions
             if (!(adapterItems.get(i) instanceof EventItem)) continue;
             EventItem item = adapterItems.get(i);
-            if (item.getEvent().id == e.id) {
+            if (item.getEvent().id == eventId) {
                 position = i;
                 break;
             }
         }
 
-        if (position < 0) return;
+        if (position < 0) return false;
         LinearLayoutManager manager = (LinearLayoutManager) list.getLayoutManager();
         manager.scrollToPositionWithOffset(position, 0);
-        EventBus.getDefault().removeStickyEvent(e);
+        return true;
+    }
+
+    public void onEventMainThread(final Events.ShowEventInList e) {
+        if (scrollToEvent(e.id)) {
+            EventBus.getDefault().removeStickyEvent(e);
+        }
     }
 
     public void onEventMainThread(Events.UpdateEventList e) {

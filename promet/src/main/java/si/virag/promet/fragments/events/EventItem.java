@@ -2,7 +2,6 @@ package si.virag.promet.fragments.events;
 
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -30,7 +29,6 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
 
     @NonNull
     private final PrometEvent event;
-    private boolean slovenianLocale;
 
     public EventItem(@NonNull EventHeaderItem header, @NonNull PrometEvent event) {
         super(header);
@@ -50,12 +48,12 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
 
     @Override
     public EventItemHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        slovenianLocale = LocaleUtil.isSlovenianLocale(inflater.getContext());
         return new EventItemHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
     }
 
     @Override
     public void bindViewHolder(FlexibleAdapter adapter, EventItemHolder holder, int position, List payloads) {
+        boolean slovenianLocale = LocaleUtil.isSlovenianLocale(holder.view.getContext());
         SpannableString titleText = new SpannableString(slovenianLocale ? event.cause : event.causeEn);
         SpannableString locationText = new SpannableString(event.roadName);
         if (event.isHighPriority()) {
