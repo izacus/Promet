@@ -174,6 +174,9 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
 
                                           if (force)
                                               EventBus.getDefault().post(new Events.UpdateMap());
+
+                                          list.setVisibility(View.VISIBLE);
+                                          emptyView.setVisibility(View.INVISIBLE);
                                       }
 
                                       @Override
@@ -186,6 +189,8 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
                                       public void onError(Throwable throwable) {
                                           Log.e(LOG_TAG, "Error!", throwable);
                                           refreshLayout.setRefreshing(false);
+                                          list.setVisibility(View.INVISIBLE);
+                                          emptyView.setVisibility(View.VISIBLE);
                                           emptyView.setText(R.string.load_error);
                                           Activity activity = getActivity();
                                           if (activity != null) {
