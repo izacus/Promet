@@ -33,6 +33,7 @@ import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.DividerItemDecoration;
+import eu.davidea.flexibleadapter.items.IFlexible;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -57,7 +58,6 @@ import si.virag.promet.utils.PrometSettings;
 public class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = "Promet.EventList";
-    private FlexibleAdapter<EventItem> adapter;
 
     @Inject protected PrometApi prometApi;
     @Inject protected PrometSettings prometSettings;
@@ -70,6 +70,13 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Nullable
     private Subscription loadSubscription;
+
+    @Nullable
+    private FlexibleAdapter<EventItem> adapter;
+
+    @Nullable
+    private List<EventItem> adapterItems;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -225,10 +232,13 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
 
         if (adapter == null) {
             adapter = new FlexibleAdapter<>(itemList);
+            adapter.setDisplayHeadersAtStartUp(true);
             list.setAdapter(adapter);
         } else {
             adapter.updateDataSet(itemList);
         }
+
+        adapterItems = itemList;
     }
 
     private void updateHeaderView() {
@@ -272,12 +282,24 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     public void onEventMainThread(final Events.ShowEventInList e) {
-        // TODO
-        /*int position = adapter.getItemPosition(e.id);
-        list.smoothScrollToPosition(position + 1);
+        if (adapterItems == null || adapter == null) return;
 
-        if (adapter.getCount() > 0)
-            EventBus.getDefault().removeStickyEvent(e); */
+        // Find item and then scroll to it.
+        int position = -1;
+        for (int i = 0; i < adapterItems.size(); i++) {
+            //noinspection ConstantConditions
+            if (!(adapterItems.get(i) instanceof EventItem)) continue;
+            EventItem item = adapterItems.get(i);
+            if (item.getEvent().id == e.id) {
+                position = i;
+                break;
+            }
+        }
+
+        if (position < 0) return;
+        LinearLayoutManager manager = (LinearLayoutManager) list.getLayoutManager();
+        manager.scrollToPositionWithOffset(position, 0);
+        EventBus.getDefault().removeStickyEvent(e);
     }
 
     public void onEventMainThread(Events.UpdateEventList e) {

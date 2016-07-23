@@ -77,6 +77,11 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
         });
     }
 
+    @NonNull
+    public PrometEvent getEvent() {
+        return event;
+    }
+
     public static class EventItemHolder extends FlexibleViewHolder {
 
         public View view;
