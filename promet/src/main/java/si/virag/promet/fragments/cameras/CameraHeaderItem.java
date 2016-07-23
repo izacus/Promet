@@ -30,7 +30,7 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
 
     @Override
     public int getLayoutRes() {
-        return R.layout.item_camera_header;
+        return R.layout.item_header;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
 
         CameraHeaderItemHolder(View view, FlexibleAdapter adapter, boolean stickyHeader) {
             super(view, adapter, true);
-            title = (TextView) view.findViewById(R.id.item_camera_header_title);
+            title = (TextView) view.findViewById(R.id.item_header_title);
         }
 
         @Override

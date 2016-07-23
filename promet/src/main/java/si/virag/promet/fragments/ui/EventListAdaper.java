@@ -168,7 +168,6 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         public TextView locationView;
 
         public EventItemHolder(View view) {
-            this.card = (CardView) view.findViewById(R.id.item_event_card);
             this.titleView = (TextView) view.findViewById(R.id.item_event_title);
             this.descriptionView = (TextView) view.findViewById(R.id.item_event_description);
             this.timeView = (TextView)view.findViewById(R.id.item_event_time);
