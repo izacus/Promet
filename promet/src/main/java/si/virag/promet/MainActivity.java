@@ -25,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -252,6 +253,8 @@ public class MainActivity extends AppCompatActivity
 
                     }
                 });
+
+        updateHeaderView();
     }
 
     @Override
@@ -331,6 +334,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void updateHeaderView() {
+        if (prometSettings.getShowAvtoceste() &&
+                prometSettings.getShowLokalneCeste() &&
+                prometSettings.getShowBorderCrossings() &&
+                prometSettings.getShowRegionalneCeste()) {
+
+            toolbar.setSubtitle(null);
+            return;
+        }
+
+        String check = "\u2713";
+        String cross = "\u2717";
+
+        String text = getString(R.string.list_hint,
+                prometSettings.getShowAvtoceste() ? check : cross,
+                prometSettings.getShowBorderCrossings() ? check : cross,
+                prometSettings.getShowRegionalneCeste() ? check : cross,
+                prometSettings.getShowLokalneCeste() ? check : cross);
+        toolbar.setSubtitle(text);
+    }
+
     public void onEventMainThread(Events.RefreshStarted e) {
         setSupportProgressBarIndeterminateVisibility(true);
     }
@@ -349,4 +373,6 @@ public class MainActivity extends AppCompatActivity
     public void onEventMainThread(Events.ShowEventInList e) {
         pager.setCurrentItem(1, true);
     }
+
+    public void onEventMainThread(Events.UpdateActivityHeader e) { updateHeaderView(); }
 }

@@ -163,7 +163,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
                                       @Override
                                       public void onNext(List<PrometEvent> prometEvents) {
                                           prepareAndApplyData(prometEvents);
-                                          /*updateHeaderView(); */
+                                          EventBus.getDefault().post(new Events.UpdateActivityHeader());
 
                                           // We might have a scroll event pending, execute it now.
                                           Events.ShowEventInList eventInList = EventBus.getDefault().getStickyEvent(Events.ShowEventInList.class);
@@ -233,6 +233,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
             itemList.add(item);
         }
 
+
         if (adapter == null) {
             adapter = new FlexibleAdapter<>(itemList);
             adapter.setDisplayHeadersAtStartUp(true);
@@ -242,28 +243,6 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         }
 
         adapterItems = itemList;
-    }
-
-    private void updateHeaderView() {
-        if (prometSettings.getShowAvtoceste() &&
-            prometSettings.getShowLokalneCeste() &&
-            prometSettings.getShowBorderCrossings() &&
-            prometSettings.getShowRegionalneCeste()) {
-
-            headerView.setVisibility(View.GONE);
-            return;
-        }
-
-        headerView.setVisibility(View.VISIBLE);
-        String check = "\u2713";
-        String cross = "\u2717";
-
-        String text = getString(R.string.list_hint,
-                                prometSettings.getShowAvtoceste() ? check : cross,
-                                prometSettings.getShowBorderCrossings() ? check : cross,
-                                prometSettings.getShowRegionalneCeste() ? check : cross,
-                                prometSettings.getShowLokalneCeste() ? check : cross);
-        headerView.setText(text);
     }
 
     @Override

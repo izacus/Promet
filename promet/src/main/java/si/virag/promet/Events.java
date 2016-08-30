@@ -43,4 +43,6 @@ public class Events {
 
     public static class UpdateEventList {
     }
+
+    public static class UpdateActivityHeader {}
 }

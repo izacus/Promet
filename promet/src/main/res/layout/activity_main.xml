@@ -17,6 +17,7 @@
         android:elevation="8dp"
         app:titleTextColor="@android:color/white"
         app:subtitleTextColor="@android:color/white"
+        app:subtitleTextAppearance="@style/PrometTheme.Toolbar.Subtitle"
         app:theme="@style/PrometTheme.ActionBar"
         app:popupTheme="@style/PrometTheme"
         />

@@ -13,4 +13,8 @@
         <item name="colorControlNormal">@android:color/white</item>
     </style>
 
+    <style name="PrometTheme.Toolbar.Subtitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">8sp</item>
+    </style>
+
 </resources>
