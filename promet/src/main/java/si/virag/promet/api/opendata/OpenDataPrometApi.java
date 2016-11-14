@@ -82,14 +82,14 @@ public class OpenDataPrometApi extends PrometApi {
 
     @Override
     public Observable<List<PrometCounter>> getPrometCounters() {
-        return openDataApi.getCounters()
+        return Observable.just((List<PrometCounter>)new ArrayList<PrometCounter>());
+        /*return openDataApi.getCounters()
                .flatMap(new Func1<PrometCounters, Observable<List<PrometCounter>>>() {
                    @Override
                    public Observable<List<PrometCounter>> call(PrometCounters prometCounters) {
-                       return Observable.just((List<PrometCounter>)new ArrayList<PrometCounter>());
-//                       return Observable.just(prometCounters.counters.counters);
+                       return Observable.just(prometCounters.counters.get(0).data.counters);
                    }
-               });
+               });*/
     }
 
     @Override

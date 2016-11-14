@@ -7,17 +7,14 @@ import org.threeten.bp.LocalDateTime;
 
 public class PrometCounter {
 
-    @SerializedName("id")
+    @SerializedName("Id")
     public String id;
 
-    @SerializedName("stevci_geoY_wgs")
+    @SerializedName("y_wgs")
     public double lat;
 
-    @SerializedName("stevci_geoX_wgs")
+    @SerializedName("x_wgs")
     public double lng;
-
-    @SerializedName("updated")
-    public LocalDateTime updated;
 
     @SerializedName("stevci_occ")
     // Occupancy in % * 100 (e.g. 84 = 8.4%)
@@ -46,7 +43,6 @@ public class PrometCounter {
                 ", id='" + id + '\'' +
                 ", lat=" + lat +
                 ", lng=" + lng +
-                ", updated=" + updated +
                 ", occupancy=" + occupancy +
                 ", numVehicles=" + numVehicles +
                 ", status=" + status +

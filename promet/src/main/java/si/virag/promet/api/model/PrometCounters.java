@@ -6,14 +6,16 @@ import java.util.List;
 
 public class PrometCounters {
 
-    @SerializedName("feed")
-    public PrometCountersInternal counters;
+    @SerializedName("Contents")
+    public List<PrometCountersInternal> counters;
 
     public static class PrometCountersInternal {
-        @SerializedName("updated")
-        public long lastUpdate;
+        @SerializedName("Data")
+        public PrometCountersData data;
+    }
 
-        @SerializedName("entry")
+    public static class PrometCountersData {
+        @SerializedName("Items")
         public List<PrometCounter> counters;
     }
 }
