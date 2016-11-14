@@ -48,8 +48,8 @@ public class CameraView extends ImageView {
     public void setCamera(@Nullable PrometCamera camera) {
         this.camera = camera;
         if (camera != null) {
-            Log.d(LOG_TAG, "Loading camera " + camera.title + " from " + camera.imageLink);
-            DataUtils.getCameraImageLoader(getContext(), camera.imageLink)
+            Log.d(LOG_TAG, "Loading camera " + camera.title + " from " + camera.getImageLink());
+            DataUtils.getCameraImageLoader(getContext(), camera.getImageLink())
                      .into(this);
         }
     }

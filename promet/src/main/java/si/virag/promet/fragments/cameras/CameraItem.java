@@ -58,7 +58,7 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
     @Override
     public void bindViewHolder(FlexibleAdapter adapter, final CameraItemHolder holder, int position, List payloads) {
         holder.titleText.setText(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1));
-        holder.locationText.setText(camera.summary);
+        holder.locationText.setText(camera.getText());
 
         if (!isHidden()) {
             holder.cameraView.setCamera(camera);

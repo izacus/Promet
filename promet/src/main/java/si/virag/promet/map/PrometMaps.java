@@ -273,7 +273,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
                              .anchor(0.5f, 0.5f)
                              .zIndex(5.0f)
                              .title(prometCamera.title)
-                             .snippet(prometCamera.summary)
+                             .snippet(prometCamera.cameras.get(0).text)
                              .icon(CAMERA_MARKER);
                   return new Pair<>("c" + prometCamera.id, options);
               }
@@ -336,7 +336,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
         View loadingView = infoView.findViewById(R.id.info_loading);
 
         if (cameraBitmapMap.get(id) == null) {
-            DataUtils.getCameraImageLoader(context, cameraMap.get(id).imageLink)
+            DataUtils.getCameraImageLoader(context, cameraMap.get(id).getImageLink())
                      .into(new SimpleTarget<GlideDrawable>() {
                          @Override
                          public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {

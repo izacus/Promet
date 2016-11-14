@@ -86,10 +86,10 @@ public class CameraDetailActivity extends AppCompatActivity implements OnMapRead
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             getSupportActionBar().hide();
-            summaryText.setText(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1) + " - " + camera.summary);
+            summaryText.setText(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1) + " - " + camera.cameras.get(0).text);
         } else {
             getSupportActionBar().setTitle(camera.title.substring(0, 1).toUpperCase() + camera.title.substring(1));
-            summaryText.setText(camera.summary);
+            summaryText.setText(camera.cameras.get(0).text);
         }
 
         mapView = (MapView)findViewById(R.id.camera_detail_map);
@@ -102,7 +102,7 @@ public class CameraDetailActivity extends AppCompatActivity implements OnMapRead
         super.onResume();
         mapView.onResume();
 
-        DataUtils.getCameraImageLoader(this, camera.imageLink)
+        DataUtils.getCameraImageLoader(this, camera.cameras.get(0).imageLink)
                  .into(cameraImage);
 
         prometApi.getPrometEvents()

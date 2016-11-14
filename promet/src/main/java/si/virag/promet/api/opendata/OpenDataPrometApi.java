@@ -125,10 +125,17 @@ public class OpenDataPrometApi extends PrometApi {
                                    .flatMap(new Func1<PrometCameras, Observable<PrometCamera>>() {
                                        @Override
                                        public Observable<PrometCamera> call(PrometCameras prometCameras) {
-                                           return Observable.from(prometCameras.feed.cameras);
+                                           return Observable.from(prometCameras.feed.get(0).data.cameras);
+                                       }
+                                   })
+                                   .filter(new Func1<PrometCamera, Boolean>() {
+                                       @Override
+                                       public Boolean call(PrometCamera prometCamera) {
+                                           return prometCamera.cameras != null && prometCamera.cameras.size() > 0;
                                        }
                                    })
                                    .toSortedList(new CameraListSorter())
+
                                    .cache();
     }
 }

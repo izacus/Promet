@@ -7,12 +7,9 @@ public class CameraListSorter implements Func2<PrometCamera, PrometCamera, Integ
 
     @Override
     public Integer call(PrometCamera lhs, PrometCamera rhs) {
-        if (!lhs.group.equalsIgnoreCase(rhs.group)) {
-            return lhs.group.compareTo(rhs.group);
-        }
 
-        if (!lhs.region.equalsIgnoreCase(rhs.region)) {
-            return lhs.region.compareTo(rhs.region);
+        if (!lhs.getRegion().equalsIgnoreCase(rhs.getRegion())) {
+            return lhs.getRegion().compareTo(rhs.getRegion());
         }
 
         return lhs.title.compareTo(rhs.title);

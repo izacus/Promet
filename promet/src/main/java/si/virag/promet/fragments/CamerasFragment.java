@@ -133,10 +133,10 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         // Generate sectioned items
         for (PrometCamera camera : cameras) {
-            CameraHeaderItem header = headers.get(camera.region);
+            CameraHeaderItem header = headers.get(camera.getRegion());
             if (header == null) {
-                header = new CameraHeaderItem(camera.region);
-                headers.put(camera.region, header);
+                header = new CameraHeaderItem(camera.getRegion());
+                headers.put(camera.getRegion(), header);
                 items.add(header);
             }
 

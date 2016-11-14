@@ -6,12 +6,17 @@ import java.util.List;
 
 public class PrometCameras {
 
-    @SerializedName("feed")
-    public CamerasFeed feed;
+    @SerializedName("Contents")
+    public List<CamerasFeed> feed;
 
     public static class CamerasFeed {
 
-        @SerializedName("entry")
+        @SerializedName("Data")
+        public CameraData data;
+    }
+
+    public static class CameraData {
+        @SerializedName("Items")
         public List<PrometCamera> cameras;
     }
 }
