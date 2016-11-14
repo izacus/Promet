@@ -6,17 +6,18 @@ import java.util.List;
 
 public class PrometEvents {
 
-    @SerializedName("dogodki")
-    public PrometEventsInternal events;
+    @SerializedName("Contents")
+    public List<PrometEventsInternal> events;
 
     public static class PrometEventsInternal
     {
-        //@SerializedName("lastUpdate")
-        //public Date lastUpdate;
+        @SerializedName("Data")
+        public PrometEventsData data;
+    }
 
-        @SerializedName("dogodek")
+    public static class PrometEventsData
+    {
+        @SerializedName("Items")
         public List<PrometEvent> events;
-
-        // TODO more
     }
 }

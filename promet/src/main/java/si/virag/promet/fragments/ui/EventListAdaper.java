@@ -73,7 +73,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         EventItemHolder holder = (EventItemHolder) v.getTag();
         final PrometEvent event = data.get(position);
 
-        SpannableString titleText = new SpannableString(slovenianLocale ? event.cause : event.causeEn);
+        SpannableString titleText = new SpannableString(event.cause);
         SpannableString locationText = new SpannableString(event.roadName);
         if (event.isHighPriority()) {
             int color = ContextCompat.getColor(ctx, android.R.color.holo_red_dark);
@@ -82,10 +82,10 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         }
 
         holder.titleView.setText(titleText);
-        holder.descriptionView.setText(slovenianLocale ? event.description : event.descriptionEn);
+        holder.descriptionView.setText(event.description);
         holder.locationView.setText(locationText);
-        holder.timeView.setVisibility(event.entered == null ? View.INVISIBLE : View.VISIBLE);
-        holder.timeView.setText(event.entered == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.entered));
+        holder.timeView.setVisibility(event.updated == null ? View.INVISIBLE : View.VISIBLE);
+        holder.timeView.setText(event.updated == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.updated.toLocalDateTime()));
         holder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +110,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
                     return lhs.eventGroup.ordinal() - rhs.eventGroup.ordinal();
                 }
 
-                return rhs.entered.compareTo(lhs.entered);
+                return rhs.updated.compareTo(lhs.updated);
             }
         });
 

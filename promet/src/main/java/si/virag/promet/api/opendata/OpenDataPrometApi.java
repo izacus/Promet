@@ -7,7 +7,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZonedDateTime;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit.RequestInterceptor;
@@ -49,7 +52,7 @@ public class OpenDataPrometApi extends PrometApi {
         Gson gson = new GsonBuilder()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .registerTypeAdapter(EventGroup.class, new EventGroupAdapter())
-                    .registerTypeAdapter(LocalDateTime.class, new EpochDateTypeAdapter())
+                    .registerTypeAdapter(ZonedDateTime.class, new EpochDateTypeAdapter())
                     .registerTypeAdapter(TrafficStatus.class, new TrafficStatusAdapter())
                     .registerTypeAdapter(Double.class, new FunnyDoubleAdapter())
                     .create();
@@ -83,7 +86,8 @@ public class OpenDataPrometApi extends PrometApi {
                .flatMap(new Func1<PrometCounters, Observable<List<PrometCounter>>>() {
                    @Override
                    public Observable<List<PrometCounter>> call(PrometCounters prometCounters) {
-                       return Observable.just(prometCounters.counters.counters);
+                       return Observable.just((List<PrometCounter>)new ArrayList<PrometCounter>());
+//                       return Observable.just(prometCounters.counters.counters);
                    }
                });
     }
@@ -98,7 +102,7 @@ public class OpenDataPrometApi extends PrometApi {
                 .flatMap(new Func1<PrometEvents, Observable<PrometEvent>>() {
                     @Override
                     public Observable<PrometEvent> call(PrometEvents prometEvents) {
-                        return Observable.from(prometEvents.events.events);
+                        return Observable.from(prometEvents.events.get(0).data.events);
                     }
                 })
                 .map(new Func1<PrometEvent, PrometEvent>() {

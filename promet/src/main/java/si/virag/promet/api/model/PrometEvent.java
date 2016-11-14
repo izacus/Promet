@@ -3,28 +3,23 @@ package si.virag.promet.api.model;
 import com.google.gson.annotations.SerializedName;
 
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 
 
 public class PrometEvent implements Comparable {
 
-    @SerializedName("id")
+    @SerializedName("Id")
     public long id;
 
-    @SerializedName("cesta")
+    @SerializedName("Cesta")
     public String roadName;
 
-    @SerializedName("vzrok")
+    @SerializedName("Title")
     public String cause;
 
-    @SerializedName("vzrokEn")
-    public String causeEn;
-
-    @SerializedName("opis")
+    @SerializedName("Description")
     public String description;
-
-    @SerializedName("opisEn")
-    public String descriptionEn;
 
     @SerializedName("x_wgs")
     public double lng;
@@ -32,22 +27,22 @@ public class PrometEvent implements Comparable {
     @SerializedName("y_wgs")
     public double lat;
 
-    @SerializedName("kategorija")
+    @SerializedName("Kategorija")
     public EventGroup eventGroup;
 
-    @SerializedName("vneseno")
-    public LocalDateTime entered;
+    @SerializedName("Updated")
+    public ZonedDateTime updated;
 
-    @SerializedName("veljavnostOd")
-    public LocalDateTime validFrom;
+    @SerializedName("VeljavnostOd")
+    public ZonedDateTime validFrom;
 
-    @SerializedName("veljavnostDo")
-    public LocalDateTime validTo;
+    @SerializedName("VeljavnostDo")
+    public ZonedDateTime validTo;
 
-    @SerializedName("prioriteta")
+    @SerializedName("Prioriteta")
     public int priority;
 
-    @SerializedName("prioritetaCeste")
+    @SerializedName("PrioritetaCeste")
     public int roadPriority;
 
     @SerializedName("isMejniPrehod")
@@ -58,7 +53,7 @@ public class PrometEvent implements Comparable {
     }
 
     public boolean isRoadworks() {
-        return "Roadworks".equalsIgnoreCase(causeEn) || "Delo na cesti".equalsIgnoreCase(cause);
+        return "Roadworks".equalsIgnoreCase(cause) || "Delo na cesti".equalsIgnoreCase(cause);
     }
 
     @Override
@@ -67,13 +62,11 @@ public class PrometEvent implements Comparable {
                 "cause='" + cause + '\'' +
                 ", id=" + id +
                 ", roadName='" + roadName + '\'' +
-                ", causeEn='" + causeEn + '\'' +
                 ", description='" + description + '\'' +
-                ", descriptionEn='" + descriptionEn + '\'' +
                 ", lng=" + lng +
                 ", lat=" + lat +
                 ", eventGroup=" + eventGroup +
-                ", entered=" + entered +
+                ", updated=" + updated +
                 ", validFrom=" + validFrom +
                 ", validTo=" + validTo +
                 ", priority=" + priority +

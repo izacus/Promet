@@ -2,6 +2,7 @@ package si.virag.promet.fragments.ui;
 
 
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZonedDateTime;
 
 import rx.functions.Func1;
 import si.virag.promet.api.model.PrometEvent;
@@ -20,7 +21,7 @@ public class EventListFilter implements Func1<PrometEvent, Boolean> {
         if (prometEvent.eventGroup == null)
             return true;
 
-        if (prometEvent.validTo != null && prometEvent.validTo.isBefore(LocalDateTime.now())) {
+        if (prometEvent.validTo != null && prometEvent.validTo.isBefore(ZonedDateTime.now())) {
             return false;
         }
 

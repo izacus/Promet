@@ -53,9 +53,8 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
 
     @Override
     public void bindViewHolder(FlexibleAdapter adapter, EventItemHolder holder, int position, List payloads) {
-        boolean slovenianLocale = LocaleUtil.isSlovenianLocale(holder.view.getContext());
-        SpannableString titleText = new SpannableString(slovenianLocale ? event.cause : event.causeEn);
-        SpannableString locationText = new SpannableString(event.roadName);
+        SpannableString titleText = new SpannableString(event.cause);
+        SpannableString locationText = new SpannableString(event.roadName.trim());
         if (event.isHighPriority()) {
             int color = ContextCompat.getColor(holder.view.getContext(), android.R.color.holo_red_dark);
             titleText.setSpan(new ForegroundColorSpan(color), 0, titleText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -63,10 +62,10 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
         }
 
         holder.titleView.setText(titleText);
-        holder.descriptionView.setText(slovenianLocale ? event.description : event.descriptionEn);
+        holder.descriptionView.setText(event.description);
         holder.locationView.setText(locationText);
-        holder.timeView.setVisibility(event.entered == null ? View.INVISIBLE : View.VISIBLE);
-        holder.timeView.setText(event.entered == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(holder.view.getContext(), event.entered));
+        holder.timeView.setVisibility(event.updated == null ? View.INVISIBLE : View.VISIBLE);
+        holder.timeView.setText(event.updated == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(holder.view.getContext(), event.updated.toLocalDateTime()));
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

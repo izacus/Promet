@@ -210,8 +210,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
               public Pair<String, MarkerOptions> call(PrometEvent event) {
                   MarkerOptions opts = new MarkerOptions();
                   opts.position(new LatLng(event.lat, event.lng))
-                      .title(isSlovenianLocale ? event.cause : event.causeEn)
-                      .snippet(event.roadName);
+                      .title(event.cause)
+                      .snippet(event.roadName.trim());
 
                   BitmapDescriptor icon = null;
                   if (event.isHighPriority()) {

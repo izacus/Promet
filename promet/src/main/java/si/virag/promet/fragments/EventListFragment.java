@@ -33,7 +33,6 @@ import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.DividerItemDecoration;
-import eu.davidea.flexibleadapter.items.IFlexible;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -41,7 +40,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
@@ -51,7 +49,6 @@ import si.virag.promet.api.model.EventGroup;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.fragments.events.EventHeaderItem;
 import si.virag.promet.fragments.events.EventItem;
-import si.virag.promet.fragments.ui.EventListAdaper;
 import si.virag.promet.fragments.ui.EventListFilter;
 import si.virag.promet.utils.PrometSettings;
 
@@ -156,7 +153,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
                                               return lhs.eventGroup.ordinal() - rhs.eventGroup.ordinal();
                                           }
 
-                                          return rhs.entered.compareTo(lhs.entered);
+                                          return rhs.updated.compareTo(lhs.updated);
                                       }
                                   })
                                   .subscribe(new Subscriber<List<PrometEvent>>() {
