@@ -30,9 +30,9 @@ android {
         applicationId "si.virag.promet"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 18
-        versionName "1.6.0"
-        resConfigs "en", "sl"
+        versionCode 19
+        versionName "1.7.0"
+        resConfigs "sl"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7

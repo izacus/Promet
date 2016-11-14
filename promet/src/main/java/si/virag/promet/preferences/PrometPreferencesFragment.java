@@ -22,7 +22,6 @@ import si.virag.promet.utils.PrometSettings;
 
 public class PrometPreferencesFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private ListPreference langPreference;
     @Inject PrometSettings settings;
 
 
@@ -35,10 +34,6 @@ public class PrometPreferencesFragment extends PreferenceFragment implements Sha
         } else {
             addPreferencesFromResource(R.xml.preferences);
         }
-
-        langPreference = (ListPreference) findPreference("app_language");
-        langPreference.setSummary(langPreference.getEntry());
-
         PrometApplication application = (PrometApplication) getActivity().getApplication();
         application.component().inject(this);
     }
@@ -47,14 +42,7 @@ public class PrometPreferencesFragment extends PreferenceFragment implements Sha
         Activity activity = getActivity();
         if (activity == null) return;
 
-        if (key.equalsIgnoreCase("app_language")) {
-            langPreference.setSummary(langPreference.getEntry());
-            ((PrometApplication)activity.getApplication()).checkUpdateLocale(activity);
-            activity.finish();
-            Intent i = new Intent(activity, MainActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(i);
-        } else if (key.equalsIgnoreCase("gcm_enabled")) {
+        if (key.equalsIgnoreCase("gcm_enabled")) {
             checkSetEnabledNotificationPreferences();
             sharedPreferences.edit().putBoolean(RegistrationService.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
         }
