@@ -64,8 +64,9 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
         holder.titleView.setText(titleText);
         holder.descriptionView.setText(event.description);
         holder.locationView.setText(locationText);
-        holder.timeView.setVisibility(event.updated == null ? View.INVISIBLE : View.VISIBLE);
-        holder.timeView.setText(event.updated == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(holder.view.getContext(), event.updated.toLocalDateTime()));
+        holder.timeView.setVisibility(View.INVISIBLE);
+        /*holder.timeView.setVisibility(event.validFrom == null ? View.INVISIBLE : View.VISIBLE);
+        holder.timeView.setText(event.validFrom == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(holder.view.getContext(), event.validFrom.toLocalDateTime())); */
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

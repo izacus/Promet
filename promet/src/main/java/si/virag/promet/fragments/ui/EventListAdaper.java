@@ -84,8 +84,9 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         holder.titleView.setText(titleText);
         holder.descriptionView.setText(event.description);
         holder.locationView.setText(locationText);
-        holder.timeView.setVisibility(event.updated == null ? View.INVISIBLE : View.VISIBLE);
-        holder.timeView.setText(event.updated == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.updated.toLocalDateTime()));
+        holder.timeView.setVisibility(View.INVISIBLE);
+        /*holder.timeView.setVisibility(event.updated == null ? View.INVISIBLE : View.VISIBLE);
+        holder.timeView.setText(event.updated == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(ctx, event.updated.toLocalDateTime())); */
         holder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
