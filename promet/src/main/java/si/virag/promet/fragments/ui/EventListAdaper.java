@@ -22,7 +22,6 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
-import si.virag.fuzzydatetime.FuzzyDateTimeFormatter;
 import si.virag.promet.Events;
 import si.virag.promet.R;
 import si.virag.promet.api.model.EventGroup;

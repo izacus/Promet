@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +19,9 @@ import de.greenrobot.event.EventBus;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractSectionableItem;
 import eu.davidea.viewholders.FlexibleViewHolder;
-import si.virag.fuzzydatetime.FuzzyDateTimeFormatter;
 import si.virag.promet.Events;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometEvent;
-import si.virag.promet.utils.LocaleUtil;
 
 
 public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder, EventHeaderItem> {
@@ -64,9 +63,11 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
         holder.titleView.setText(titleText);
         holder.descriptionView.setText(event.description);
         holder.locationView.setText(locationText);
-        holder.timeView.setVisibility(View.INVISIBLE);
-        /*holder.timeView.setVisibility(event.validFrom == null ? View.INVISIBLE : View.VISIBLE);
-        holder.timeView.setText(event.validFrom == null ? "" : FuzzyDateTimeFormatter.getTimeAgo(holder.view.getContext(), event.validFrom.toLocalDateTime())); */
+        holder.timeView.setVisibility(event.updated == null ? View.INVISIBLE : View.VISIBLE);
+        holder.timeView.setText(DateUtils.getRelativeTimeSpanString(event.updated.toInstant().toEpochMilli(),
+                                                                    System.currentTimeMillis(),
+                                                                    DateUtils.MINUTE_IN_MILLIS,
+                                                                    DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_ABBREV_WEEKDAY).toString().toLowerCase());
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

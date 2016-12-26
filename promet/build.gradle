@@ -91,7 +91,6 @@ dependencies {
     compile 'com.google.dagger:dagger:2.0.1'
     apt 'com.google.dagger:dagger-compiler:2.0.1'
     provided 'javax.annotation:jsr250-api:1.0'
-    compile project(':fuzzydatetimeformatter')
     compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
     // Android 6 permissions
     compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar'
