@@ -3,7 +3,8 @@ package si.virag.promet;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import si.virag.promet.api.opendata.OpenDataApiModule;
+import si.virag.promet.api.data.PrometApi;
+import si.virag.promet.api.data.PrometApiModule;
 import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.fragments.CamerasFragment;
 import si.virag.promet.fragments.EventListFragment;
@@ -16,7 +17,7 @@ import si.virag.promet.map.MapModule;
 import si.virag.promet.preferences.PrometPreferencesFragment;
 
 @Singleton
-@Component(modules = { OpenDataApiModule.class, MapModule.class, PrometApplicationModule.class, PushDataPrometApi.class, NotificationStorageModule.class, LocationModule.class })
+@Component(modules = {PrometApiModule.class, MapModule.class, PrometApplicationModule.class, PushDataPrometApi.class, NotificationStorageModule.class, LocationModule.class })
 public interface PrometComponent {
 
     public void inject(MainActivity mainActivity);

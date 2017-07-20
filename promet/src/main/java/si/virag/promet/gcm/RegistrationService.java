@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import retrofit.RetrofitError;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
-import si.virag.promet.api.push.PushApi;
+import si.virag.promet.api.push.PrometPushApi;
 import si.virag.promet.utils.PrometSettings;
 
 public class RegistrationService extends IntentService {
@@ -43,7 +43,8 @@ public class RegistrationService extends IntentService {
     public static final String PREF_GCM_APP_VERSION = "GCM.Registered.Version";
     public static final String PREF_GCM_KEY = "GCM.Key";
 
-    @Inject PushApi pushApi;
+    @Inject
+    PrometPushApi pushApi;
     @Inject PrometSettings settings;
 
     public static void scheduleGcmUpdate(Context context) {

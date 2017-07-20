@@ -47,7 +47,6 @@ import si.virag.promet.CameraDetailActivity;
 import si.virag.promet.Events;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometCamera;
-import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.utils.DataUtils;
 import si.virag.promet.utils.LocaleUtil;
@@ -195,7 +194,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
         markersInitialized = true;
     }
 
-    public void showData(final Context context, final List<PrometEvent> prometEvents, final List<PrometCounter> prometCounters, List<PrometCamera> prometCameras) {
+    public void showData(final Context context, final List<PrometEvent> prometEvents, List<PrometCamera> prometCameras) {
         if (map == null)
             return;
 
@@ -210,8 +209,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
               public Pair<String, MarkerOptions> call(PrometEvent event) {
                   MarkerOptions opts = new MarkerOptions();
                   opts.position(new LatLng(event.lat, event.lng))
-                      .title(event.cause)
-                      .snippet(event.roadName.trim());
+                      .title(LocaleUtil.isSlovenianLocale(context) ? event.causeSl : event.causeEn)
+                      .snippet(LocaleUtil.isSlovenianLocale(context) ? event.roadNameSl.trim() : event.roadNameEn.trim());
 
                   BitmapDescriptor icon = null;
                   if (event.isHighPriority()) {
@@ -246,22 +245,6 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
               }
             });
 
-        Observable<Pair<String, MarkerOptions>> countersObservable = Observable.from(prometCounters)
-            .map(new Func1<PrometCounter, Pair<String, MarkerOptions>>() {
-                @Override
-                public Pair<String, MarkerOptions> call(PrometCounter event) {
-                    MarkerOptions options = new MarkerOptions()
-                            .position(new LatLng(event.lat, event.lng))
-                            .anchor(0.5f, 0.5f)
-                            .flat(true)
-                            .draggable(false)
-                            .title(context.getResources().getStringArray(R.array.traffic_status_strings)[event.status.ordinal()] + " - " + event.locationName)
-                            .snippet(context.getResources().getString(R.string.map_traffic_detail, event.avgSpeed, event.gap))
-                            .icon(TRAFFIC_DENSITY_MARKER_BITMAPS[event.status.ordinal()]);
-                    return new Pair<>("t" + event.id, options);
-                }
-            });
-
         Observable<Pair<String, MarkerOptions>> camerasObservable = Observable.from(prometCameras)
             .map(new Func1<PrometCamera, Pair<String, MarkerOptions>>() {
               @Override
@@ -272,8 +255,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
                              .draggable(false)
                              .anchor(0.5f, 0.5f)
                              .zIndex(5.0f)
-                             .title(prometCamera.title)
-                             .snippet(prometCamera.cameras.get(0).text)
+                             .title(prometCamera.id)
+                             .snippet(prometCamera.getText())
                              .icon(CAMERA_MARKER);
                   return new Pair<>("c" + prometCamera.id, options);
               }
@@ -281,7 +264,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
 
 
         // The order here is important because we don't want markers covering each other in wrong order
-        Observable.concat(eventsObservable, camerasObservable, countersObservable)
+        Observable.concat(eventsObservable, camerasObservable)
                   .subscribeOn(Schedulers.computation())
                   .observeOn(AndroidSchedulers.mainThread())
                   .subscribe(new Action1<Pair<String, MarkerOptions>>() {

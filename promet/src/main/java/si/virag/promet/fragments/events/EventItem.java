@@ -1,5 +1,6 @@
 package si.virag.promet.fragments.events;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
@@ -22,6 +23,7 @@ import eu.davidea.viewholders.FlexibleViewHolder;
 import si.virag.promet.Events;
 import si.virag.promet.R;
 import si.virag.promet.api.model.PrometEvent;
+import si.virag.promet.utils.LocaleUtil;
 
 
 public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder, EventHeaderItem> {
@@ -52,8 +54,11 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
 
     @Override
     public void bindViewHolder(FlexibleAdapter adapter, EventItemHolder holder, int position, List payloads) {
-        SpannableString titleText = new SpannableString(event.cause);
-        SpannableString locationText = new SpannableString(event.roadName.trim());
+        Context ctx = holder.itemView.getContext();
+        boolean isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
+
+        SpannableString titleText = new SpannableString(isSlovenianLocale ? event.causeSl : event.causeEn);
+        SpannableString locationText = new SpannableString(isSlovenianLocale ? event.roadNameSl.trim() : event.roadNameEn);
         if (event.isHighPriority()) {
             int color = ContextCompat.getColor(holder.view.getContext(), android.R.color.holo_red_dark);
             titleText.setSpan(new ForegroundColorSpan(color), 0, titleText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -61,7 +66,7 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
         }
 
         holder.titleView.setText(titleText);
-        holder.descriptionView.setText(event.description);
+        holder.descriptionView.setText(isSlovenianLocale ? event.descriptionSl : event.descriptionEn);
         holder.locationView.setText(locationText);
         holder.timeView.setVisibility(event.updated == null ? View.INVISIBLE : View.VISIBLE);
         holder.timeView.setText(DateUtils.getRelativeTimeSpanString(event.updated.toInstant().toEpochMilli(),

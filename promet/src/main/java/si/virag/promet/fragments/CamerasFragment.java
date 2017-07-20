@@ -35,8 +35,9 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
-import si.virag.promet.api.PrometApi;
+import si.virag.promet.api.data.PrometApi;
 import si.virag.promet.api.model.PrometCamera;
+import si.virag.promet.api.model.TrafficInfo;
 import si.virag.promet.fragments.cameras.CameraHeaderItem;
 import si.virag.promet.fragments.cameras.CameraItem;
 
@@ -44,7 +45,8 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private static final String LOG_TAG = "Promet.CameraList";
 
-    @Inject PrometApi prometApi;
+    @Inject
+    PrometApi prometApi;
 
     @BindView(R.id.cameras_empty) public TextView emptyView;
     @BindView(R.id.cameras_refresh) public SwipeRefreshLayout refreshLayout;
@@ -95,9 +97,9 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private void loadCameras() {
         emptyView.setText(R.string.loading);
-        prometApi.getPrometCameras()
+        prometApi.getTrafficInfo()
                  .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe(new Subscriber<List<PrometCamera>>() {
+                 .subscribe(new Subscriber<TrafficInfo>() {
                      @Override
                      public void onCompleted() {
                         refreshLayout.setRefreshing(false);
@@ -119,10 +121,10 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
                      }
 
                      @Override
-                     public void onNext(List<PrometCamera> prometCameras) {
+                     public void onNext(TrafficInfo trafficInfo) {
                          emptyView.setVisibility(View.INVISIBLE);
                          list.setVisibility(View.VISIBLE);
-                         showCameras(prometCameras);
+                         showCameras(trafficInfo.cameras);
                      }
                  });
     }

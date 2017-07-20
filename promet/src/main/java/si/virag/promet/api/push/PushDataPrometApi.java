@@ -42,8 +42,8 @@ public class PushDataPrometApi implements Converter {
 
     @Singleton
     @Provides
-    public PushApi getPushApi() {
-        return adapter.create(PushApi.class);
+    public PrometPushApi getPushApi() {
+        return adapter.create(PrometPushApi.class);
     }
 
     @Override

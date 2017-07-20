@@ -9,17 +9,26 @@ import org.threeten.bp.temporal.ChronoUnit;
 
 public class PrometEvent implements Comparable {
 
-    @SerializedName("Id")
+    @SerializedName("id")
     public long id;
 
-    @SerializedName("Cesta")
-    public String roadName;
+    @SerializedName("road_sl")
+    public String roadNameSl;
 
-    @SerializedName("Title")
-    public String cause;
+    @SerializedName("road_en")
+    public String roadNameEn;
 
-    @SerializedName("Description")
-    public String description;
+    @SerializedName("cause_sl")
+    public String causeSl;
+
+    @SerializedName("cause_en")
+    public String causeEn;
+
+    @SerializedName("description_sl")
+    public String descriptionSl;
+
+    @SerializedName("description_en")
+    public String descriptionEn;
 
     @SerializedName("x_wgs")
     public double lng;
@@ -27,42 +36,45 @@ public class PrometEvent implements Comparable {
     @SerializedName("y_wgs")
     public double lat;
 
-    @SerializedName("Kategorija")
+    @SerializedName("category")
     public EventGroup eventGroup;
 
-    @SerializedName("Updated")
+    @SerializedName("updated")
     public ZonedDateTime updated;
 
-    @SerializedName("VeljavnostOd")
+    @SerializedName("valid_from")
     public ZonedDateTime validFrom;
 
-    @SerializedName("VeljavnostDo")
+    @SerializedName("valid_to")
     public ZonedDateTime validTo;
 
-    @SerializedName("Prioriteta")
+    @SerializedName("priority")
     public int priority;
 
-    @SerializedName("PrioritetaCeste")
+    @SerializedName("road_priority")
     public int roadPriority;
 
-    @SerializedName("isMejniPrehod")
+    @SerializedName("is_border_crossing")
     public boolean isBorderCrossing;
 
     public boolean isHighPriority() {
-        return "nesreča".equalsIgnoreCase(cause) || "zastoj".equalsIgnoreCase(cause);
+        return "nesreča".equalsIgnoreCase(causeSl) || "zastoj".equalsIgnoreCase(causeSl);
     }
 
     public boolean isRoadworks() {
-        return "Roadworks".equalsIgnoreCase(cause) || "Delo na cesti".equalsIgnoreCase(cause);
+        return "Roadworks".equalsIgnoreCase(causeSl) || "Delo na cesti".equalsIgnoreCase(causeSl);
     }
 
     @Override
     public String toString() {
         return "PrometEvent{" +
-                "cause='" + cause + '\'' +
-                ", id=" + id +
-                ", roadName='" + roadName + '\'' +
-                ", description='" + description + '\'' +
+                "id=" + id +
+                ", roadNameSl='" + roadNameSl + '\'' +
+                ", roadNameEn='" + roadNameEn + '\'' +
+                ", causeSl='" + causeSl + '\'' +
+                ", causeEn='" + causeEn + '\'' +
+                ", descriptionSl='" + descriptionSl + '\'' +
+                ", descriptionEn='" + descriptionEn + '\'' +
                 ", lng=" + lng +
                 ", lat=" + lat +
                 ", eventGroup=" + eventGroup +

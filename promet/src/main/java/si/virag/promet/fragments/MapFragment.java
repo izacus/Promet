@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -38,11 +39,10 @@ import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
-import si.virag.promet.api.PrometApi;
+import si.virag.promet.api.data.PrometApi;
 import si.virag.promet.api.model.PrometCamera;
-import si.virag.promet.api.model.PrometCounter;
 import si.virag.promet.api.model.PrometEvent;
-import si.virag.promet.api.model.TrafficStatus;
+import si.virag.promet.api.model.TrafficInfo;
 import si.virag.promet.fragments.ui.EventListFilter;
 import si.virag.promet.map.PrometMaps;
 import si.virag.promet.utils.PrometSettings;
@@ -55,7 +55,8 @@ public class MapFragment extends Fragment {
     @BindView(R.id.map_map) protected MapView mapView;
 
     // Module dependencies
-    @Inject PrometApi prometApi;
+    @Inject
+    PrometApi prometApi;
     @Inject PrometMaps prometMaps;
     @Inject PrometSettings prometSettings;
 
@@ -79,89 +80,46 @@ public class MapFragment extends Fragment {
         return view;
     }
 
-    private void displayTrafficData() {
+    private void loadTrafficData() {
         EventBus.getDefault().post(new Events.RefreshStarted());
+        loadSubscription = prometApi.getTrafficInfo()
+                 .observeOn(AndroidSchedulers.mainThread())
+                 .subscribe(new Subscriber<TrafficInfo>() {
+                     @Override
+                     public void onCompleted() {
+                         loadSubscription = null;
+                     }
 
-        Observable<List<PrometEvent>> events = prometApi.getPrometEvents()
-                .flatMap(new Func1<List<PrometEvent>, Observable<PrometEvent>>() {
-                    @Override
-                    public Observable<PrometEvent> call(List<PrometEvent> prometEvents) {
-                        return Observable.from(prometEvents);
-                    }
-                })
-                .filter(new EventListFilter(prometSettings))
-                .toList();
+                     @Override
+                     public void onError(Throwable e) {
+                         Log.d(LOG_TAG, "Error when loading!", e);
+                         EventBus.getDefault().post(new Events.RefreshCompleted());
+                         Activity activity = getActivity();
+                         if (activity != null) {
+                             Snackbar.with(getActivity().getApplicationContext())
+                                     .text(R.string.load_error)
+                                     .textTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD))
+                                     .color(Color.RED)
+                                     .show(activity);
+                         }
+                     }
 
-        Observable<List<PrometCounter>> counters = prometApi.getPrometCounters()
-                                                   .onErrorReturn(new Func1<Throwable, List<PrometCounter>>() {
-                                                       @Override
-                                                       public List<PrometCounter> call(Throwable throwable) {
-                                                           Log.e(LOG_TAG, "Failed to load traffic counters!", throwable);
-                                                           return new ArrayList<>();
-                                                       }
-                                                   })
-                                                   .flatMap(new Func1<List<PrometCounter>, Observable<PrometCounter>>() {
-                                                       @Override
-                                                       public Observable<PrometCounter> call(List<PrometCounter> prometCounters) {
-                                                           return Observable.from(prometCounters);
-                                                       }
-                                                   })
-                                                   .filter(new Func1<PrometCounter, Boolean>() {
-                                                       @Override
-                                                       public Boolean call(PrometCounter prometCounter) {
-                                                           return prometCounter.status != TrafficStatus.NORMAL_TRAFFIC && prometCounter.status != TrafficStatus.NO_DATA;
-                                                       }
-                                                   }).toList();
+                     @Override
+                     public void onNext(TrafficInfo trafficInfo) {
+                         EventBus.getDefault().post(new Events.RefreshCompleted(null));
+                         displayTrafficData(trafficInfo);
+                     }
+                 });
+    }
 
+    private void displayTrafficData(@NonNull TrafficInfo info) {
+        List<PrometEvent> prometEvents = Observable.from(info.events)
+                                         .filter(new EventListFilter(prometSettings))
+                                         .toList()
+                                         .toBlocking().single();
 
-        Observable<List<PrometCamera>> cameras;
-        if (prometSettings.getShowCameras()) {
-            cameras = prometApi.getPrometCameras()
-                    .onErrorReturn(new Func1<Throwable, List<PrometCamera>>() {
-                        @Override
-                        public List<PrometCamera> call(Throwable throwable) {
-                            Log.e(LOG_TAG, "Failed to load traffic cameras!", throwable);
-                            return new ArrayList<>();
-                        }
-                    });
-        } else {
-            cameras = Observable.just(Collections.<PrometCamera>emptyList());
-        }
-
-        loadSubscription = Observable.combineLatest(Arrays.asList(events, counters, cameras), new FuncN<DataTriple>() {
-            @Override
-            public DataTriple call(Object... args) {
-                return new DataTriple((List<PrometEvent>)args[0], (List<PrometCounter>)args[1], (List<PrometCamera>)args[2]);
-            }
-        })
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Subscriber<DataTriple>() {
-            @Override
-            public void onCompleted() {
-                loadSubscription = null;
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.d(LOG_TAG, "Error when loading!", e);
-                EventBus.getDefault().post(new Events.RefreshCompleted());
-                Activity activity = getActivity();
-                if (activity != null) {
-                    Snackbar.with(getActivity().getApplicationContext())
-                            .text(R.string.load_error)
-                            .textTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD))
-                            .color(Color.RED)
-                            .show(activity);
-                }
-            }
-
-            @Override
-            public void onNext(DataTriple data) {
-                Log.d(LOG_TAG, data.toString());
-                EventBus.getDefault().post(new Events.RefreshCompleted(null));
-                prometMaps.showData(getActivity(), data.events, data.counters, data.cameras);
-            }
-        });
+        List<PrometCamera> cameras = prometSettings.getShowCameras() ? info.cameras : Collections.<PrometCamera>emptyList();
+        prometMaps.showData(getActivity(), prometEvents, cameras);
     }
 
     @Override
@@ -181,7 +139,7 @@ public class MapFragment extends Fragment {
                 }
 
                 prometMaps.setMapInstance(getActivity(), map);
-                displayTrafficData();
+                loadTrafficData();
             }
         });
 
@@ -235,18 +193,16 @@ public class MapFragment extends Fragment {
         prometMaps.showPoint(e.point);
     }
     public void onEventMainThread(Events.UpdateMap e) {
-        displayTrafficData();
+        loadTrafficData();
     }
 
 
     private static class DataTriple {
         public final List<PrometEvent> events;
-        public final List<PrometCounter> counters;
         public final List<PrometCamera> cameras;
 
-        public DataTriple(List<PrometEvent> events, List<PrometCounter> counters, List<PrometCamera> cameras) {
+        public DataTriple(List<PrometEvent> events, List<PrometCamera> cameras) {
             this.cameras = cameras;
-            this.counters = counters;
             this.events = events;
         }
 
@@ -254,7 +210,6 @@ public class MapFragment extends Fragment {
         public String toString() {
             return "DataTriple{" +
                     "events=" + events +
-                    ", counters=" + counters +
                     ", cameras=" + cameras +
                     '}';
         }

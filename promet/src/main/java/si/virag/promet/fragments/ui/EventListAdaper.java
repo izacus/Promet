@@ -32,14 +32,14 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
 
     private final Context ctx;
     private final LayoutInflater inflater;
-    private final boolean slovenianLocale;
+    private final boolean isSlovenianLocale;
     private List<PrometEvent> data;
 
     public EventListAdaper(Context ctx) {
         inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.ctx = ctx;
 
-        slovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
+        isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
         data = new ArrayList<>();
     }
 
@@ -72,8 +72,8 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         EventItemHolder holder = (EventItemHolder) v.getTag();
         final PrometEvent event = data.get(position);
 
-        SpannableString titleText = new SpannableString(event.cause);
-        SpannableString locationText = new SpannableString(event.roadName);
+        SpannableString titleText = new SpannableString(isSlovenianLocale ? event.causeSl : event.causeEn);
+        SpannableString locationText = new SpannableString(isSlovenianLocale ? event.roadNameSl : event.roadNameEn);
         if (event.isHighPriority()) {
             int color = ContextCompat.getColor(ctx, android.R.color.holo_red_dark);
             titleText.setSpan(new ForegroundColorSpan(color), 0, titleText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -81,7 +81,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         }
 
         holder.titleView.setText(titleText);
-        holder.descriptionView.setText(event.description);
+        holder.descriptionView.setText(isSlovenianLocale ? event.descriptionSl : event.descriptionEn);
         holder.locationView.setText(locationText);
         holder.timeView.setVisibility(View.INVISIBLE);
         /*holder.timeView.setVisibility(event.updated == null ? View.INVISIBLE : View.VISIBLE);

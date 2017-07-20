@@ -13,7 +13,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import java.util.Locale;
 
 import io.realm.Realm;
-import si.virag.promet.api.opendata.OpenDataApiModule;
+import si.virag.promet.api.data.PrometApiModule;
 import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.gcm.RegistrationService;
 import si.virag.promet.map.LocationModule;
@@ -34,8 +34,8 @@ public class PrometApplication extends Application {
         component = DaggerPrometComponent.builder()
                                           .prometApplicationModule(new PrometApplicationModule(this))
                                           .locationModule(new LocationModule(this))
+                                          .prometApiModule(new PrometApiModule(this))
                                           .pushDataPrometApi(new PushDataPrometApi(this))
-                                          .openDataApiModule(new OpenDataApiModule(this))
                                           .build();
         RegistrationService.scheduleGcmUpdate(this);
     }

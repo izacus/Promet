@@ -34,6 +34,7 @@ import de.greenrobot.event.EventBus;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.FlexibleItemDecoration;
 import rx.Observable;
+import rx.Single;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -44,9 +45,10 @@ import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
-import si.virag.promet.api.PrometApi;
+import si.virag.promet.api.data.PrometApi;
 import si.virag.promet.api.model.EventGroup;
 import si.virag.promet.api.model.PrometEvent;
+import si.virag.promet.api.model.TrafficInfo;
 import si.virag.promet.fragments.events.EventHeaderItem;
 import si.virag.promet.fragments.events.EventItem;
 import si.virag.promet.fragments.ui.EventListFilter;
@@ -125,18 +127,19 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     private void loadEvents(final boolean force)
     {
         refreshLayout.setRefreshing(true);
-        Observable<List<PrometEvent>> events;
-        if (force)
-            events = prometApi.getReloadPrometEvents();
-        else
-            events = prometApi.getPrometEvents();
+        Single<TrafficInfo> trafficInfo;
 
-        loadSubscription = events.subscribeOn(Schedulers.io())
+        if (force)
+            trafficInfo = prometApi.getReloadTrafficInfo();
+        else
+            trafficInfo = prometApi.getTrafficInfo();
+
+        loadSubscription = trafficInfo.subscribeOn(Schedulers.io())
                                   .observeOn(AndroidSchedulers.mainThread())
-                                  .flatMap(new Func1<List<PrometEvent>, Observable<PrometEvent>>() {
+                                  .flatMapObservable(new Func1<TrafficInfo, Observable<PrometEvent>>() {
                                       @Override
-                                      public Observable<PrometEvent> call(List<PrometEvent> prometEvents) {
-                                          return Observable.from(prometEvents);
+                                      public Observable<PrometEvent> call(TrafficInfo trafficInfo) {
+                                          return Observable.from(trafficInfo.events);
                                       }
                                   })
                                   .filter(new EventListFilter(prometSettings))

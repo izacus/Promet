@@ -12,6 +12,6 @@ public class CameraListSorter implements Func2<PrometCamera, PrometCamera, Integ
             return lhs.getRegion().compareTo(rhs.getRegion());
         }
 
-        return lhs.title.compareTo(rhs.title);
+        return lhs.id.compareTo(rhs.id);
     }
 }
