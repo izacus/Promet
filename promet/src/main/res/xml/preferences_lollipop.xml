@@ -2,6 +2,20 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
+        android:title="@string/preferences_title">
+
+        <ListPreference
+            android:key="app_language"
+            android:title="@string/preferences_language"
+            android:dialogTitle="@string/preferences_language_dialog"
+            android:entries="@array/languages"
+            android:entryValues="@array/languages_values"
+            android:defaultValue="default"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/preferences_notifications">
 
         <SwitchPreference

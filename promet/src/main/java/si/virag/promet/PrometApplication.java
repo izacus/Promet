@@ -46,11 +46,10 @@ public class PrometApplication extends Application {
 
     public void checkUpdateLocale(Context ctx) {
 
-        /*SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         String language = prefs.getString("app_language", "default");
-        if (language.equalsIgnoreCase("default")) return; */
+        if (language.equalsIgnoreCase("default")) return;
 
-        String language = "sl";
         Configuration c = ctx.getResources().getConfiguration();
         if (!c.locale.equals(locale) || !locale.getLanguage().equalsIgnoreCase(language)) {
             locale = new Locale(language);

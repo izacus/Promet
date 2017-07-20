@@ -33,7 +33,7 @@ android {
         targetSdkVersion 25
         versionCode 21
         versionName "1.8.0"
-        resConfigs "sl"
+        resConfigs "en", "sl"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
