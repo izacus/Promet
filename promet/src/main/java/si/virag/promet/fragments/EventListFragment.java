@@ -28,8 +28,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.DividerItemDecoration;
@@ -59,9 +59,9 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     @Inject protected PrometApi prometApi;
     @Inject protected PrometSettings prometSettings;
 
-    @InjectView(R.id.events_list) protected RecyclerView list;
-    @InjectView(R.id.events_refresh) protected SwipeRefreshLayout refreshLayout;
-    @InjectView(R.id.events_empty) protected TextView emptyView;
+    @BindView(R.id.events_list) protected RecyclerView list;
+    @BindView(R.id.events_refresh) protected SwipeRefreshLayout refreshLayout;
+    @BindView(R.id.events_empty) protected TextView emptyView;
 
     private TextView headerView;
 
@@ -87,7 +87,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_list, container, false);
-        ButterKnife.inject(this, v);
+        ButterKnife.bind(this, v);
 
         LinearLayout headerViewContainer = new LinearLayout(getActivity());
         headerView = new TextView(getActivity());

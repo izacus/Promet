@@ -83,18 +83,18 @@ public class NotificationStorageModule {
         final long currentTime = Calendar.getInstance().getTimeInMillis();
 
         realm.beginTransaction();
-        RealmResults<PushNotification> notifications = realm.allObjects(PushNotification.class);
+        RealmResults<PushNotification> notifications = realm.where(PushNotification.class).findAll();
         for (int i = 0; i < notifications.size(); i++) {
             PushNotification notification = notifications.get(i);
             if (notification.getValidUntil() < currentTime ||
                 !settings.shouldShowNotification(DataUtils.roadPriorityToRoadType(notification.getRoadPriority(), notification.isCrossing())) ||
                 "Roadworks".equalsIgnoreCase(notification.getCauseEn())) {
                 Log.d(LOG_TAG, "Clearing expired/disabled notification " + notification);
-                notification.removeFromRealm();
+                notification.deleteFromRealm();
             }
         }
 
-        if (realm.allObjects(PushNotification.class).size() > 0) {
+        if (realm.where(PushNotification.class).count() > 0) {
             Location currentLocation = location.getLocationWithTimeout(1000);
             if (currentLocation != null) {
                 filterNotificationsByDistance(realm, currentLocation);
@@ -107,7 +107,7 @@ public class NotificationStorageModule {
     private static void filterNotificationsByDistance(@NonNull final Realm realm, @NonNull final Location location) {
         final float[] result = new float[1];
 
-        RealmResults<PushNotification> notifications = realm.allObjects(PushNotification.class);
+        RealmResults<PushNotification> notifications = realm.where(PushNotification.class).findAll();
         for (int i = 0; i < notifications.size(); i++) {
             PushNotification notification = notifications.get(i);
             Location.distanceBetween(location.getLatitude(), location.getLongitude(), notification.getLat(), notification.getLng(), result);
@@ -131,7 +131,7 @@ public class NotificationStorageModule {
 
             if (result[0] > maxDistance) {
                 Log.d(LOG_TAG, "Filtering too far event " + result[0] + "/" + maxDistance + "[" + notification + "]");
-                notification.removeFromRealm();
+                notification.deleteFromRealm();
             }
         }
     }

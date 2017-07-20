@@ -25,8 +25,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
@@ -52,7 +52,7 @@ public class MapFragment extends Fragment {
     private static final String LOG_TAG = "Promet.MapFragment";
 
     // Views
-    @InjectView(R.id.map_map) protected MapView mapView;
+    @BindView(R.id.map_map) protected MapView mapView;
 
     // Module dependencies
     @Inject PrometApi prometApi;
@@ -74,7 +74,7 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         mapView.onCreate(savedInstanceState);
         return view;
     }

@@ -14,14 +14,14 @@ public class ClearNotificationsService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        RealmConfiguration configuration = new RealmConfiguration.Builder(this)
+        RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("default.realm")
                 .deleteRealmIfMigrationNeeded()
                 .build();
 
         Realm realm = Realm.getInstance(configuration);
         realm.beginTransaction();
-        realm.allObjects(PushNotification.class).clear();
+        realm.where(PushNotification.class).findAll().deleteAllFromRealm();
         realm.commitTransaction();
         realm.close();
     }

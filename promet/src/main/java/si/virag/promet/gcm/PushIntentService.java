@@ -57,7 +57,7 @@ public class PushIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Realm realm = null;
         try {
-            RealmConfiguration configuration = new RealmConfiguration.Builder(this)
+            RealmConfiguration configuration = new RealmConfiguration.Builder()
                                                                      .name("default.realm")
                                                                      .deleteRealmIfMigrationNeeded()
                                                                      .build();
@@ -88,7 +88,7 @@ public class PushIntentService extends IntentService {
 
     private void showWaitingNotifications(@NonNull final Realm realm) {
         realm.beginTransaction();
-        RealmResults<PushNotification> notifications = realm.allObjectsSorted(PushNotification.class, "created", false);
+        RealmResults<PushNotification> notifications = realm.where(PushNotification.class).findAllSorted("created");
         if (notifications.size() == 0) return;
         if (notifications.size() == 1) {
             showSingleNotification(notifications.get(0));

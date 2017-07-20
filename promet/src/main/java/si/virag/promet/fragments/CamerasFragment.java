@@ -26,8 +26,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.DividerItemDecoration;
 import rx.Subscriber;
@@ -46,9 +46,9 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Inject PrometApi prometApi;
 
-    @InjectView(R.id.cameras_empty) public TextView emptyView;
-    @InjectView(R.id.cameras_refresh) public SwipeRefreshLayout refreshLayout;
-    @InjectView(R.id.cameras_list) public RecyclerView list;
+    @BindView(R.id.cameras_empty) public TextView emptyView;
+    @BindView(R.id.cameras_refresh) public SwipeRefreshLayout refreshLayout;
+    @BindView(R.id.cameras_list) public RecyclerView list;
 
     @Nullable
     private Subscription loadSubscription;
@@ -64,7 +64,7 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cameras, container, false);
-        ButterKnife.inject(this, v);
+        ButterKnife.bind(this, v);
 
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         list.addItemDecoration(new DividerItemDecoration(getActivity()));

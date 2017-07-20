@@ -12,6 +12,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Locale;
 
+import io.realm.Realm;
 import si.virag.promet.api.opendata.OpenDataApiModule;
 import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.gcm.RegistrationService;
@@ -28,6 +29,7 @@ public class PrometApplication extends Application {
         checkUpdateLocale(this);
         super.onCreate();
         AndroidThreeTen.init(this);
+        Realm.init(this);
 
         component = DaggerPrometComponent.builder()
                                           .prometApplicationModule(new PrometApplicationModule(this))
