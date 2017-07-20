@@ -235,8 +235,8 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-
-        RxPermissions.getInstance(this).request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions.request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
                 .subscribe(new Subscriber<Boolean>() {
                     @Override
                     public void onCompleted() {
