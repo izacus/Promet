@@ -32,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
-import eu.davidea.flexibleadapter.common.DividerItemDecoration;
+import eu.davidea.flexibleadapter.common.FlexibleItemDecoration;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -100,7 +100,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         SystemBarTintManager manager = ((MainActivity)getActivity()).getTintManager();
         list.setPadding(list.getPaddingTop(), list.getPaddingLeft(), list.getPaddingRight(), list.getPaddingBottom() + manager.getConfig().getPixelInsetBottom());
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        list.addItemDecoration(new DividerItemDecoration(getContext()));
+        list.addItemDecoration(new FlexibleItemDecoration(getContext()).withDefaultDivider());
 
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);

@@ -46,8 +46,8 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
     }
 
     @Override
-    public EventItemHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new EventItemHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
+    public EventItemHolder createViewHolder(View view, FlexibleAdapter adapter) {
+        return new EventItemHolder(view, adapter);
     }
 
     @Override

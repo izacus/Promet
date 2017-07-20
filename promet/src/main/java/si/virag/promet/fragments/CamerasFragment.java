@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
-import eu.davidea.flexibleadapter.common.DividerItemDecoration;
+import eu.davidea.flexibleadapter.common.FlexibleItemDecoration;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -67,7 +67,7 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
         ButterKnife.bind(this, v);
 
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        list.addItemDecoration(new DividerItemDecoration(getActivity()));
+        list.addItemDecoration(new FlexibleItemDecoration(getActivity()).withDefaultDivider());
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
         return v;

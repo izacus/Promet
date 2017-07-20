@@ -50,8 +50,8 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
     }
 
     @Override
-    public CameraItemHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new CameraItemHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
+    public CameraItemHolder createViewHolder(View view, FlexibleAdapter adapter) {
+        return new CameraItemHolder(view, adapter);
     }
 
     @SuppressLint("SetTextI18n")

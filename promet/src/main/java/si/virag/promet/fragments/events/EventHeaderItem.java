@@ -33,8 +33,8 @@ public class EventHeaderItem extends AbstractHeaderItem<EventHeaderItem.EventHea
     }
 
     @Override
-    public EventHeaderItemHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new EventHeaderItemHolder(inflater.inflate(getLayoutRes(), parent, false), adapter);
+    public EventHeaderItemHolder createViewHolder(View view, FlexibleAdapter adapter) {
+        return new EventHeaderItemHolder(view, adapter);
     }
 
     @Override

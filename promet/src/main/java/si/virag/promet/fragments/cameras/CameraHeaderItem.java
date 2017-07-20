@@ -34,9 +34,10 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
     }
 
     @Override
-    public CameraHeaderItemHolder createViewHolder(FlexibleAdapter adapter, LayoutInflater inflater, ViewGroup parent) {
-        return new CameraHeaderItemHolder(inflater.inflate(getLayoutRes(), parent, false), adapter, true);
+    public CameraHeaderItemHolder createViewHolder(View view, FlexibleAdapter adapter) {
+        return new CameraHeaderItemHolder(view, adapter, true);
     }
+
 
     @Override
     public void bindViewHolder(FlexibleAdapter adapter, CameraHeaderItemHolder holder, int position, List payloads) {
