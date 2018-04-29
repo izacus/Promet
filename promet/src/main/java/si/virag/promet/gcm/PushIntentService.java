@@ -27,6 +27,8 @@ import si.virag.promet.utils.PrometSettings;
 
 public class PushIntentService extends FirebaseMessagingService {
 
+    public static final String DEFAULT_CHANNEL_ID = "default_channel";
+
     @Inject NotificationStorageModule storage;
     @Inject PrometSettings settings;
 
@@ -88,7 +90,7 @@ public class PushIntentService extends FirebaseMessagingService {
     }
 
     private void showSingleNotification(PushNotification pushNotification) {
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, DEFAULT_CHANNEL_ID);
         notification.setContentTitle(getNotificationCause(pushNotification));
         notification.setContentText(getNotificationRoad(pushNotification));
         notification.setTicker(getNotificationCause(pushNotification) + " - " + getNotificationRoad(pushNotification));
@@ -123,7 +125,7 @@ public class PushIntentService extends FirebaseMessagingService {
     }
 
     private void showCompoundNotification(RealmResults<PushNotification> pushNotifications) {
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(this, DEFAULT_CHANNEL_ID);
 
         notification.setContentTitle(getResources().getQuantityString(R.plurals.notifications_multiple_title, pushNotifications.size(), pushNotifications.size()));
         notification.setTicker(getResources().getQuantityString(R.plurals.notifications_multiple_ticker, pushNotifications.size(), pushNotifications.size()));

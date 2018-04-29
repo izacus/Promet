@@ -26,6 +26,8 @@
     <string name="preferences_notifications_highways">Freeways</string>
     <string name="preferences_notifications_regional">Regional roads</string>
     <string name="preferences_notifications_local">Local roads</string>
+    <string name="notification_channel_name">Traffic notifications</string>
+    <string name="notification_channel_description">Notifications about new traffic events.</string>
     <string name="alert_notifications_title">Notifications</string>
     <string name="alert_notifications_content">Do you want to be notified about new events on the road?</string>
     <string name="alert_notifications_yes">Yes, notify me</string>
