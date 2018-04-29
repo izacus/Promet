@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -80,7 +81,11 @@ public class RegisterFcmTokenJob extends Job {
         return Result.SUCCESS;
     }
 
-    private void registerGCMOnServer(SharedPreferences prefs, String gcmId) throws IOException{
+    private void registerGCMOnServer(SharedPreferences prefs, String gcmId) throws IOException {
+        if (TextUtils.isEmpty(gcmId)) {
+            throw new IOException("GCM ID not yet retrieved.");
+        }
+
         try
         {
             if (settings.getShouldReceiveNotifications()) {
