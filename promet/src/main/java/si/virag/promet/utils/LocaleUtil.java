@@ -2,13 +2,15 @@ package si.virag.promet.utils;
 
 import android.content.Context;
 
+import com.franmontiel.localechanger.LocaleChanger;
+
 import java.util.Locale;
+
+import si.virag.promet.R;
 
 public class LocaleUtil {
 
     public static boolean isSlovenianLocale(Context ctx) {
-        Locale locale = ctx.getApplicationContext().getResources().getConfiguration().locale;
-        return locale.getLanguage().equalsIgnoreCase("sl") ||
-               locale.getLanguage().equalsIgnoreCase("sl-si");
+        return LocaleChanger.getLocale().getLanguage().equals("sl");
     }
 }

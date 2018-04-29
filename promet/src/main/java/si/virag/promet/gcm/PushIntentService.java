@@ -32,7 +32,6 @@ public class PushIntentService extends FirebaseMessagingService {
 
     @Override
     public void onCreate() {
-        ((PrometApplication)getApplication()).checkUpdateLocale(this);
         super.onCreate();
         PrometApplication app = (PrometApplication) getApplication();
         app.component().inject(this);

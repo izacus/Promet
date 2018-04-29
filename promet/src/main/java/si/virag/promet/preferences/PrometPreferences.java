@@ -1,14 +1,17 @@
 package si.virag.promet.preferences;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.franmontiel.localechanger.LocaleChanger;
+
 import si.virag.promet.MainActivity;
-import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 
 public class PrometPreferences extends AppCompatActivity {
@@ -17,8 +20,6 @@ public class PrometPreferences extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        PrometApplication application = (PrometApplication) getApplication();
-        application.checkUpdateLocale(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
@@ -28,8 +29,17 @@ public class PrometPreferences extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
 
-        getFragmentManager().beginTransaction().replace(R.id.preferences_content, new PrometPreferencesFragment()).commit();
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleChanger.configureBaseContext(newBase));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getSupportFragmentManager().beginTransaction().replace(R.id.preferences_content, new PrometPreferencesFragment()).commit();
     }
 
     @Override

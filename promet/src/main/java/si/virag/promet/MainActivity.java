@@ -2,6 +2,7 @@ package si.virag.promet;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -33,6 +34,7 @@ import android.widget.LinearLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.crashlytics.android.Crashlytics;
+import com.franmontiel.localechanger.LocaleChanger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
@@ -78,13 +80,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         ActivityUtilities.setupTransluscentNavigation(this);
         PrometApplication application = (PrometApplication) getApplication();
-        application.checkUpdateLocale(this);
 
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         application.component().inject(this);
 
-        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         // Fix actionbar name for other locales
         toolbar = (Toolbar) findViewById(R.id.main_toolbar);
@@ -107,6 +107,13 @@ public class MainActivity extends AppCompatActivity
         }
 
         clearPendingNotifications();
+    }
+
+
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleChanger.configureBaseContext(newBase));
     }
 
     private void clearPendingNotifications() {

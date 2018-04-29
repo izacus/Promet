@@ -3,14 +3,19 @@ package si.virag.promet.preferences;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.PreferenceFragment;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+
+
+import com.franmontiel.localechanger.LocaleChanger;
+
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -20,7 +25,7 @@ import si.virag.promet.R;
 import si.virag.promet.gcm.RegistrationService;
 import si.virag.promet.utils.PrometSettings;
 
-public class PrometPreferencesFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class PrometPreferencesFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ListPreference langPreference;
     @Inject PrometSettings settings;
@@ -29,17 +34,16 @@ public class PrometPreferencesFragment extends PreferenceFragment implements Sha
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            addPreferencesFromResource(R.xml.preferences_lollipop);
-        } else {
-            addPreferencesFromResource(R.xml.preferences);
-        }
+        PrometApplication application = (PrometApplication) getActivity().getApplication();
+        application.component().inject(this);
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences_lollipop, rootKey);
 
         langPreference = (ListPreference) findPreference("app_language");
         langPreference.setSummary(langPreference.getEntry());
-
-        PrometApplication application = (PrometApplication) getActivity().getApplication();
-        application.component().inject(this);
     }
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -48,7 +52,13 @@ public class PrometPreferencesFragment extends PreferenceFragment implements Sha
 
         if (key.equalsIgnoreCase("app_language")) {
             langPreference.setSummary(langPreference.getEntry());
-            ((PrometApplication)activity.getApplication()).checkUpdateLocale(activity);
+
+            if (langPreference.getValue().equals("default")) {
+                LocaleChanger.resetLocale();
+            } else {
+                LocaleChanger.setLocale(new Locale(langPreference.getValue()));
+            }
+
             activity.finish();
             Intent i = new Intent(activity, MainActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -60,6 +70,8 @@ public class PrometPreferencesFragment extends PreferenceFragment implements Sha
 
         settings.reload();
     }
+
+
 
     @Override
     public void onResume() {

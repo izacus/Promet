@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="lang">en</string>
 
     <string name="app_name">Traffic</string>
     <string name="tab_map">Map</string>

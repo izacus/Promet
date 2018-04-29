@@ -102,6 +102,7 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
         SystemBarTintManager manager = ((MainActivity)getActivity()).getTintManager();
         list.setPadding(list.getPaddingTop(), list.getPaddingLeft(), list.getPaddingRight(), list.getPaddingBottom() + manager.getConfig().getPixelInsetBottom());
         list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
         list.addItemDecoration(new FlexibleItemDecoration(getContext()).withDefaultDivider());
 
         refreshLayout.setOnRefreshListener(this);
