@@ -17,8 +17,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
 
@@ -26,7 +25,6 @@ import javax.inject.Inject;
 
 import retrofit.RetrofitError;
 import si.virag.promet.PrometApplication;
-import si.virag.promet.R;
 import si.virag.promet.api.push.PrometPushApi;
 import si.virag.promet.utils.PrometSettings;
 
@@ -36,7 +34,6 @@ public class RegistrationService extends IntentService {
     private static final int MAX_RETRY_DELAY_SEC = 3600;
 
     private static final String LOG_TAG = "Promet.GCM";
-    private static final String GCM_ID = "857177207353";
     private static final String PARAM_CURRENT_DELAY = "Start.Delay";
 
     public static final String PREF_SHOULD_UPDATE_GCM_REGISTRATION = "GCM.ShouldRegister";
@@ -94,10 +91,9 @@ public class RegistrationService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.d(LOG_TAG, "Starting GCM registration check...");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        InstanceID instanceID = InstanceID.getInstance(this);
 
         try {
-            String gcmToken = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            String gcmToken = FirebaseInstanceId.getInstance().getToken();
             String currentGcmId = getCurrentRegistrationId(prefs);
             if (!currentGcmId.equals(gcmToken)) {
                 prefs.edit().putBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
@@ -118,8 +114,6 @@ public class RegistrationService extends IntentService {
             }
         } catch (SecurityException e) {
             Log.e(LOG_TAG, "GCM services not available!");
-        } finally {
-            PushBroadcastReceiver.completeWakefulIntent(intent);
         }
     }
 

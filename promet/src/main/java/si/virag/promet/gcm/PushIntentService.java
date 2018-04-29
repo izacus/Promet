@@ -1,17 +1,17 @@
 package si.virag.promet.gcm;
 
-import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -19,22 +19,16 @@ import javax.inject.Inject;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
-import io.realm.exceptions.RealmMigrationNeededException;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.utils.LocaleUtil;
 import si.virag.promet.utils.PrometSettings;
 
-public class PushIntentService extends IntentService {
-    private static final String LOG_TAG = "Promet.GCM.Receive";
+public class PushIntentService extends FirebaseMessagingService {
 
     @Inject NotificationStorageModule storage;
     @Inject PrometSettings settings;
-
-    public PushIntentService() {
-        super("Push receiver");
-    }
 
     @Override
     public void onCreate() {
@@ -42,6 +36,34 @@ public class PushIntentService extends IntentService {
         super.onCreate();
         PrometApplication app = (PrometApplication) getApplication();
         app.component().inject(this);
+    }
+
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        Realm realm = null;
+        try {
+            RealmConfiguration configuration = new RealmConfiguration.Builder()
+                    .name("default.realm")
+                    .deleteRealmIfMigrationNeeded()
+                    .build();
+            realm = Realm.getInstance(configuration);
+
+            Map<String, String> data = remoteMessage.getData();
+            if (data == null || !data.containsKey("events")) {
+                return;
+            }
+
+            if (!settings.getShouldReceiveNotifications()) return;
+
+            storage.storeIncomingEvents(realm, data.get("events"));
+            storage.filterNotifications(realm);
+            showWaitingNotifications(realm);
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+            throw e;
+        } finally {
+            if (realm != null) realm.close();
+        }
     }
 
     /**
@@ -53,38 +75,6 @@ public class PushIntentService extends IntentService {
      *  {"id":176977,"cause":"Sneg","created":1422597997813,"validUntil":1423263000000,"y_wgs":46.4181384275814,"road":"R1-210, Zg. Jezersko - Sp. Jezersko","x_wgs":14.526675081035254,"causeEn":"Snow","roadEn":""}]
      */
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        Realm realm = null;
-        try {
-            RealmConfiguration configuration = new RealmConfiguration.Builder()
-                                                                     .name("default.realm")
-                                                                     .deleteRealmIfMigrationNeeded()
-                                                                     .build();
-            realm = Realm.getInstance(configuration);
-
-            GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-            String messageType = gcm.getMessageType(intent);
-            Bundle extras = intent.getExtras();
-            if (!GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType) ||
-                    extras == null ||
-                    !extras.containsKey("events")) {
-                return;
-            }
-
-            if (!settings.getShouldReceiveNotifications()) return;
-
-            storage.storeIncomingEvents(realm, extras.getString("events"));
-            storage.filterNotifications(realm);
-            showWaitingNotifications(realm);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-            throw e;
-        } finally {
-            if (realm != null)realm.close();
-            PushBroadcastReceiver.completeWakefulIntent(intent);
-        }
-    }
 
     private void showWaitingNotifications(@NonNull final Realm realm) {
         realm.beginTransaction();

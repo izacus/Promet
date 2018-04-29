@@ -2,9 +2,9 @@ package si.virag.promet.gcm;
 
 import android.content.Intent;
 
-import com.google.android.gms.iid.InstanceIDListenerService;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 
-public class PrometInstanceIDListenerService extends InstanceIDListenerService {
+public class PrometInstanceIDListenerService extends FirebaseInstanceIdService {
 
     @Override
     public void onTokenRefresh() {
