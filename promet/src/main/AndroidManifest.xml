@@ -57,21 +57,13 @@
             </intent-filter>
         </service>
 
-        <service android:name=".gcm.RegistrationService"
-                 android:exported="false"
-                 android:permission="android.permission.BIND_JOB_SERVICE">
-        </service>
-
         <service android:name=".gcm.PrometInstanceIDListenerService" android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID"/>
             </intent-filter>
         </service>
 
-        <service android:name=".gcm.ClearNotificationsService" android:exported="false" />
-        <receiver android:name=".gcm.PushRegistrationReceiver">
-
-        </receiver>
+        <receiver android:name=".gcm.ClearNotificationsReceiver" android:exported="false" />
 
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBDdco2aL3HgDv2Aktltmi-ipp40NYej98"/>

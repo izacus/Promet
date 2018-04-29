@@ -109,8 +109,8 @@ public class PushIntentService extends FirebaseMessagingService {
             notification.setStyle(style);
         }
 
-        Intent clearIntent = new Intent(this, ClearNotificationsService.class);
-        PendingIntent pi = PendingIntent.getService(this, 0, clearIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent clearIntent = new Intent(this, ClearNotificationsReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, clearIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setDeleteIntent(pi);
 
         Intent tapIntent = new Intent(this, MainActivity.class);
@@ -164,8 +164,8 @@ public class PushIntentService extends FirebaseMessagingService {
         notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         notification.setAutoCancel(true);
 
-        Intent clearIntent = new Intent(this, ClearNotificationsService.class);
-        PendingIntent pi = PendingIntent.getService(this, 0, clearIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent clearIntent = new Intent(this, ClearNotificationsReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, clearIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setDeleteIntent(pi);
 
         Intent tapIntent = new Intent(this, MainActivity.class);

@@ -4,15 +4,20 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.ConditionVariable;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -23,13 +28,12 @@ import dagger.Module;
 
 @Module
 @Singleton
-public class LocationModule implements GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class LocationModule {
 
     private static final String LOG_TAG = "Promet.Location";
     private static final int CURRENT_LOCATION_MAX_AGE_MS = 10 * 60 * 1000;
 
-    @NonNull
-    private final GoogleApiClient googleApiClient;
+    private final Context context;
 
     @Nullable
     private Location currentLocation;
@@ -37,19 +41,22 @@ public class LocationModule implements GoogleApiClient.ConnectionCallbacks, Loca
     private ConditionVariable waitForTimeout = new ConditionVariable(false);
 
     public LocationModule(Context context) {
-        googleApiClient = new GoogleApiClient.Builder(context)
-                              .addConnectionCallbacks(this)
-                              .addApi(LocationServices.API)
-                              .build();
+        this.context = context;
+
+        try {
+            LocationServices.getFusedLocationProviderClient(context).getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    LocationModule.this.currentLocation = location;
+                }
+            });
+        } catch (SecurityException e) {
+            // User didn't allow location access.
+        }
     }
 
     @Nullable
     public synchronized Location getLocationWithTimeout(int timeoutMs) {
-        if (!googleApiClient.isConnected()) {
-            ConnectionResult result = googleApiClient.blockingConnect(timeoutMs, TimeUnit.MILLISECONDS);
-            if (!result.isSuccess()) return null;
-        }
-
         long currentTime = Calendar.getInstance().getTimeInMillis();
         if (currentLocation != null && timeDifference(currentLocation.getTime(), currentTime) < CURRENT_LOCATION_MAX_AGE_MS) {
             return currentLocation;
@@ -58,11 +65,19 @@ public class LocationModule implements GoogleApiClient.ConnectionCallbacks, Loca
         waitForTimeout.close();
         LocationRequest lr = LocationRequest.create();
         lr.setNumUpdates(1);
-        lr.setExpirationDuration(1000);
+        lr.setExpirationDuration(timeoutMs);
         lr.setPriority(LocationRequest.PRIORITY_NO_POWER);
 
         try {
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, lr, this);
+            FusedLocationProviderClient locationClient = LocationServices.getFusedLocationProviderClient(context);
+            locationClient.requestLocationUpdates(lr, new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    Log.d(LOG_TAG, "Location update received: " + locationResult.getLastLocation());
+                    currentLocation = locationResult.getLastLocation();
+                    waitForTimeout.open();
+                }
+            }, Looper.getMainLooper());
             waitForTimeout.block(timeoutMs);
 
             if (currentLocation == null || timeDifference(currentLocation.getTime(), currentTime) > CURRENT_LOCATION_MAX_AGE_MS) {
@@ -75,29 +90,8 @@ public class LocationModule implements GoogleApiClient.ConnectionCallbacks, Loca
         }
     }
 
-    @Override
-    public void onConnected(Bundle bundle) {
-        try {
-            currentLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            Log.d(LOG_TAG, "Current location: " + currentLocation);
-        } catch (SecurityException e) {
-            // Nothing TBD
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
     private static long timeDifference(long previous, long now) {
         return now - previous;
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(LOG_TAG, "Location update received: " + location);
-        currentLocation = location;
-        waitForTimeout.open();
-    }
 }

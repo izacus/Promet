@@ -2,15 +2,28 @@ package si.virag.promet.api.data;
 
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.ConnectionSpec;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.TlsVersion;
 
 import org.threeten.bp.ZonedDateTime;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+
+import javax.net.ssl.SSLContext;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -41,6 +54,10 @@ public class PrometApi {
             }
         };
 
+        // Server supports only TLS 1.2 which is enabled on newer devices.
+        String protocol = Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP ? "https" : "http";
+        String endpointUrl = protocol + "://prometapi.virag.si";
+
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .registerTypeAdapter(EventGroup.class, new EventGroupAdapter())
@@ -49,7 +66,7 @@ public class PrometApi {
                 .create();
 
         RestAdapter adapter = new RestAdapter.Builder()
-                                .setEndpoint("http://prometapi.virag.si")
+                                .setEndpoint(endpointUrl)
                                 .setRequestInterceptor(ri)
                                 .setConverter(new GsonConverter(gson))
                                 .build();

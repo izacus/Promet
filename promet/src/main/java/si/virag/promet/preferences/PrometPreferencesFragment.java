@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
-import si.virag.promet.gcm.RegistrationService;
+import si.virag.promet.gcm.RegisterFcmTokenJob;
 import si.virag.promet.utils.PrometSettings;
 
 public class PrometPreferencesFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -28,7 +28,7 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PrometApplication application = (PrometApplication) getActivity().getApplication();
+        PrometApplication application = (PrometApplication) getContext().getApplicationContext();
         application.component().inject(this);
     }
 
@@ -59,7 +59,7 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
             startActivity(i);
         } else if (key.equalsIgnoreCase("gcm_enabled")) {
             checkSetEnabledNotificationPreferences();
-            sharedPreferences.edit().putBoolean(RegistrationService.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
+            sharedPreferences.edit().putBoolean(RegisterFcmTokenJob.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
         }
 
         settings.reload();
@@ -68,22 +68,23 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
 
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         checkSetEnabledNotificationPreferences();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         Activity activity = getActivity();
         if (activity == null) return;
 
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-        Intent i = new Intent(activity, RegistrationService.class);
-        activity.startService(i);
+        RegisterFcmTokenJob.scheduleGcmUpdate();
     }
+
+
 
     private void checkSetEnabledNotificationPreferences() {
         SharedPreferences preferences = getPreferenceScreen().getSharedPreferences();

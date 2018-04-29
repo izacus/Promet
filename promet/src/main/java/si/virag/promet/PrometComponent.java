@@ -10,7 +10,7 @@ import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.gcm.NotificationStorageModule;
 import si.virag.promet.gcm.PushIntentService;
-import si.virag.promet.gcm.RegistrationService;
+import si.virag.promet.gcm.RegisterFcmTokenJob;
 import si.virag.promet.map.LocationModule;
 import si.virag.promet.map.MapModule;
 import si.virag.promet.preferences.PrometPreferencesFragment;
@@ -23,7 +23,7 @@ public interface PrometComponent {
     public void inject(CameraDetailActivity cameraDetailActivity);
     public void inject(EventListFragment eventListFragment);
     public void inject(MapFragment mapFragment);
-    public void inject(RegistrationService registrationService);
+    public void inject(RegisterFcmTokenJob registrationService);
     public void inject(PushIntentService pushIntentService);
     public void inject(PrometPreferencesFragment prometPreferencesFragment);
     public void inject(CamerasFragment camerasFragment);

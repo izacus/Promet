@@ -7,7 +7,8 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 
-import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
+import com.evernote.android.job.JobManager;
 import com.franmontiel.localechanger.LocaleChanger;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
@@ -19,7 +20,8 @@ import io.realm.Realm;
 import si.virag.promet.api.data.PrometApiModule;
 import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.gcm.PushIntentService;
-import si.virag.promet.gcm.RegistrationService;
+import si.virag.promet.gcm.RegisterFcmTokenJob;
+import si.virag.promet.gcm.ScheduledJobCreator;
 import si.virag.promet.map.LocationModule;
 
 public class PrometApplication extends Application {
@@ -30,10 +32,10 @@ public class PrometApplication extends Application {
     public void onCreate() {
         super.onCreate();
         LocaleChanger.initialize(this, Arrays.asList(new Locale("en"), new Locale("sl")));
-
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(this, new Crashlytics());
-        }
+        CrashlyticsCore crashlyticsCore = new CrashlyticsCore.Builder()
+                .disabled(BuildConfig.DEBUG)
+                .build();
+        Fabric.with(this, crashlyticsCore);
 
         AndroidThreeTen.init(this);
         Realm.init(this);
@@ -44,7 +46,9 @@ public class PrometApplication extends Application {
                 .prometApiModule(new PrometApiModule(this))
                 .pushDataPrometApi(new PushDataPrometApi(this))
                 .build();
-        RegistrationService.scheduleGcmUpdate(this);
+
+        JobManager.create(this).addJobCreator(new ScheduledJobCreator());
+        RegisterFcmTokenJob.scheduleGcmUpdate();
     }
 
     private void createNotificationChannel() {
