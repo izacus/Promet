@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import retrofit.RetrofitError;
+
 import si.virag.promet.PrometApplication;
 import si.virag.promet.api.push.PrometPushApi;
 import si.virag.promet.utils.PrometSettings;
@@ -84,14 +84,14 @@ public class RegisterFcmTokenJob extends Job {
         try
         {
             if (settings.getShouldReceiveNotifications()) {
-                pushApi.register(gcmId);
+                pushApi.register(gcmId).execute();
             } else {
-                pushApi.unregister(gcmId);
+                pushApi.unregister(gcmId).execute();
             }
         }
-        catch (RetrofitError e) {
+        catch (IOException e) {
             Log.d(LOG_TAG, "Failed to push API key to server: " + e);
-            throw new IOException("Failed to push API key to server.", e);
+            throw e;
         }
 
         prefs.edit()

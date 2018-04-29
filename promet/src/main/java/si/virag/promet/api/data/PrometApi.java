@@ -13,21 +13,23 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.ConnectionSpec;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.TlsVersion;
 
 import org.threeten.bp.ZonedDateTime;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
 
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Single;
 import rx.functions.Action1;
 import si.virag.promet.api.model.EventGroup;
@@ -47,12 +49,18 @@ public class PrometApi {
 
     public PrometApi(@NonNull Context context) {
         final String userAgent = DataUtils.getUserAgent(context);
-        RequestInterceptor ri = new RequestInterceptor() {
+        OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
+        okHttpClient.addInterceptor(new Interceptor() {
             @Override
-            public void intercept(RequestFacade request) {
-                request.addHeader("User-Agent", userAgent);
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request().newBuilder()
+                        .header("User-Agent", userAgent)
+                        .method(chain.request().method(), chain.request().body())
+                        .build();
+
+                return chain.proceed(request);
             }
-        };
+        });
 
         // Server supports only TLS 1.2 which is enabled on newer devices.
         String protocol = Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP ? "https" : "http";
@@ -65,10 +73,12 @@ public class PrometApi {
                 .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeConverter())
                 .create();
 
-        RestAdapter adapter = new RestAdapter.Builder()
-                                .setEndpoint(endpointUrl)
-                                .setRequestInterceptor(ri)
-                                .setConverter(new GsonConverter(gson))
+
+        Retrofit adapter = new Retrofit.Builder()
+                                .baseUrl(endpointUrl)
+                                .client(okHttpClient.build())
+                                .addConverterFactory(GsonConverterFactory.create(gson))
+                                .addCallAdapterFactory(RxJavaCallAdapterFactory.createAsync())
                                 .build();
 
         prometApi = adapter.create(PrometDataApi.class);
