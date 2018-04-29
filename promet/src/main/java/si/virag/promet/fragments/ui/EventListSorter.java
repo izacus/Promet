@@ -2,7 +2,6 @@ package si.virag.promet.fragments.ui;
 
 import java.util.Comparator;
 
-import rx.functions.Func2;
 import si.virag.promet.api.model.PrometEvent;
 
 public class EventListSorter implements Comparator<PrometEvent> {

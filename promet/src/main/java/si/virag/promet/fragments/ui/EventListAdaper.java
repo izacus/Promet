@@ -39,7 +39,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.ctx = ctx;
 
-        isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
+        isSlovenianLocale = LocaleUtil.isSlovenianLocale();
         data = new ArrayList<>();
     }
 

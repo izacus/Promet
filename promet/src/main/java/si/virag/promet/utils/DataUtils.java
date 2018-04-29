@@ -19,8 +19,6 @@ import com.crashlytics.android.Crashlytics;
 
 import org.threeten.bp.ZonedDateTime;
 
-import java.util.Calendar;
-
 import si.virag.promet.api.model.EventGroup;
 
 public class DataUtils {

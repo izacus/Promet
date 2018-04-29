@@ -1,7 +1,6 @@
 package si.virag.promet.fragments.ui;
 
 
-import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZonedDateTime;
 
 import rx.functions.Func1;

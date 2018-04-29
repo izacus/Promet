@@ -179,15 +179,15 @@ public class PushIntentService extends FirebaseMessagingService {
 
 
     private String getNotificationCause(PushNotification notification) {
-        return LocaleUtil.isSlovenianLocale(this) ? notification.getCause() : notification.getCauseEn();
+        return LocaleUtil.isSlovenianLocale() ? notification.getCause() : notification.getCauseEn();
     }
 
 
     private String getNotificationRoad(PushNotification notification) {
-        return LocaleUtil.isSlovenianLocale(this) || notification.getRoadEn() == null || notification.getRoadEn().length() == 0 ? notification.getRoad() : notification.getRoadEn();
+        return LocaleUtil.isSlovenianLocale() || notification.getRoadEn() == null || notification.getRoadEn().length() == 0 ? notification.getRoad() : notification.getRoadEn();
     }
 
     private String getNotificationDescription(PushNotification notification) {
-        return LocaleUtil.isSlovenianLocale(this) ? notification.getDescription() : notification.getDescrptionEn();
+        return LocaleUtil.isSlovenianLocale() ? notification.getDescription() : notification.getDescrptionEn();
     }
 }

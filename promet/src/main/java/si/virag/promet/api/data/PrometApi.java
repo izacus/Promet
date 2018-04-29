@@ -12,13 +12,11 @@ import org.threeten.bp.ZonedDateTime;
 
 import java.util.Collections;
 
-import dagger.Module;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 import rx.Single;
 import rx.functions.Action1;
-import si.virag.promet.api.data.PrometDataApi;
 import si.virag.promet.api.model.EventGroup;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.api.model.TrafficInfo;

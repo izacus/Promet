@@ -3,15 +3,9 @@ package si.virag.promet.preferences;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-
 
 import com.franmontiel.localechanger.LocaleChanger;
 

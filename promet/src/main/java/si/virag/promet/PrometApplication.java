@@ -1,18 +1,12 @@
 package si.virag.promet;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.franmontiel.localechanger.LocaleChanger;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 

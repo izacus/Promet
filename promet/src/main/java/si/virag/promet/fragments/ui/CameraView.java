@@ -8,9 +8,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
 import si.virag.promet.api.model.PrometCamera;
 import si.virag.promet.utils.DataUtils;
 

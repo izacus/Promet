@@ -7,9 +7,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -54,8 +52,7 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
 
     @Override
     public void bindViewHolder(FlexibleAdapter adapter, EventItemHolder holder, int position, List payloads) {
-        Context ctx = holder.itemView.getContext();
-        boolean isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
+        boolean isSlovenianLocale = LocaleUtil.isSlovenianLocale();
 
         SpannableString titleText = new SpannableString(isSlovenianLocale ? event.causeSl : event.causeEn);
         SpannableString locationText = new SpannableString(isSlovenianLocale ? event.roadNameSl.trim() : event.roadNameEn);

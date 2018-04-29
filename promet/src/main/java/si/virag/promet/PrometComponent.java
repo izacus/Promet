@@ -3,7 +3,6 @@ package si.virag.promet;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import si.virag.promet.api.data.PrometApi;
 import si.virag.promet.api.data.PrometApiModule;
 import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.fragments.CamerasFragment;

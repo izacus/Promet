@@ -2,7 +2,6 @@ package si.virag.promet.api.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 
