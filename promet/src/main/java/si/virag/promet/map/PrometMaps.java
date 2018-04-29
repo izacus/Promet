@@ -97,7 +97,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
 
         this.context = ctx;
         this.map = gMap;
-        this.isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
+        this.isSlovenianLocale = LocaleUtil.isSlovenianLocale();
 
         // Center on Slovenia initially
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(MAP_CENTER, 10.0f));
@@ -141,7 +141,7 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
             initializeMarkers(ctx);
 
         this.map = gMap;
-        this.isSlovenianLocale = LocaleUtil.isSlovenianLocale(ctx);
+        this.isSlovenianLocale = LocaleUtil.isSlovenianLocale();
 
         // Center on Slovenia initially
         map.setTrafficEnabled(true);
@@ -207,8 +207,8 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
               public Pair<String, MarkerOptions> call(PrometEvent event) {
                   MarkerOptions opts = new MarkerOptions();
                   opts.position(new LatLng(event.lat, event.lng))
-                      .title(LocaleUtil.isSlovenianLocale(context) ? event.causeSl : event.causeEn)
-                      .snippet(LocaleUtil.isSlovenianLocale(context) ? event.roadNameSl.trim() : event.roadNameEn.trim());
+                      .title(LocaleUtil.isSlovenianLocale() ? event.causeSl : event.causeEn)
+                      .snippet(LocaleUtil.isSlovenianLocale() ? event.roadNameSl.trim() : event.roadNameEn.trim());
 
                   BitmapDescriptor icon = null;
                   if (event.isHighPriority()) {
