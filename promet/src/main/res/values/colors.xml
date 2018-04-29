@@ -9,4 +9,6 @@
     <color name="refresh_color_2">#000080</color>
     <color name="refresh_color_3">#00009F</color>
     <color name="refresh_color_4">#0101CB</color>
+
+    <color name="ic_launcher_background">#001A91</color>
 </resources>

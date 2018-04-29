@@ -18,7 +18,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/PrometTheme"
         android:name=".PrometApplication"
@@ -30,6 +30,7 @@
             android:logo="@drawable/logo"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
+            android:resizeableActivity="true"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,11 +42,14 @@
                   android:logo="@drawable/logo"
                   android:label="@string/app_name"
                   android:theme="@style/PrometTheme"
+                  android:resizeableActivity="true"
             />
 
         <activity android:name=".CameraDetailActivity"
                   android:logo="@drawable/logo"
-                  android:theme="@style/PrometTheme" />
+                  android:theme="@style/PrometTheme"
+                  android:resizeableActivity="true"
+            />
 
         <service android:name=".gcm.PushIntentService">
             <intent-filter>
