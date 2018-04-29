@@ -7,8 +7,10 @@
         <item name="colorPrimaryDark">@color/theme_color_dark</item>
         <item name="colorAccent">@color/theme_color_highlight</item>
         <item name="android:windowContentTransitions">true</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="preferenceTheme">@style/PrometTheme.Preferences</item>
     </style>
+
+    <style name="PrometTheme.Preferences" parent="PreferenceThemeOverlay.v14" />
 
     <style name="PrometTheme.ActionBar" parent="PrometTheme">
         <item name="colorControlNormal">@android:color/white</item>

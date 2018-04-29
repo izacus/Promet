@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.evernote.android.job.JobManager;
@@ -31,6 +32,7 @@ public class PrometApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         LocaleChanger.initialize(this, Arrays.asList(new Locale("en"), new Locale("sl")));
         CrashlyticsCore crashlyticsCore = new CrashlyticsCore.Builder()
                 .disabled(BuildConfig.DEBUG)
@@ -61,6 +63,14 @@ public class PrometApplication extends Application {
         channel.setDescription(getString(R.string.notification_channel_description));
         assert notificationManager != null;
         notificationManager.createNotificationChannel(channel);
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        if (BuildConfig.DEBUG) {
+            MultiDex.install(this);
+        }
     }
 
     @Override

@@ -46,11 +46,13 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
+            multiDexEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
         }
         debug {
             minifyEnabled false
             shrinkResources false
+            multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
         }
     }
@@ -78,6 +80,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.android.support:multidex:1.0.1'
     implementation 'io.reactivex:rxandroid:1.2.1'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.4.0'
