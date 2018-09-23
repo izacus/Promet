@@ -3,8 +3,10 @@ package si.virag.promet.preferences;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.franmontiel.localechanger.LocaleChanger;
@@ -21,8 +23,11 @@ import si.virag.promet.utils.PrometSettings;
 
 public class PrometPreferencesFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final String PRIVACY_POLICY_URL = "https://mavrik.bitbucket.io/promet-privacy-en.html";
+
     private ListPreference langPreference;
-    @Inject PrometSettings settings;
+    @Inject
+    PrometSettings settings;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,16 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
 
         langPreference = (ListPreference) findPreference("app_language");
         langPreference.setSummary(langPreference.getEntry());
+
+        Preference privacyPreference = findPreference("privacy_policy");
+        privacyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL));
+                startActivity(intent);
+                return true;
+            }
+        });
     }
 
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -66,7 +81,6 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -83,7 +97,6 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         RegisterFcmTokenJob.scheduleGcmUpdate();
     }
-
 
 
     private void checkSetEnabledNotificationPreferences() {

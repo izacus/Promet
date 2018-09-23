@@ -8,15 +8,13 @@ import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.fragments.CamerasFragment;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
-import si.virag.promet.gcm.NotificationStorageModule;
 import si.virag.promet.gcm.PushIntentService;
 import si.virag.promet.gcm.RegisterFcmTokenJob;
-import si.virag.promet.map.LocationModule;
 import si.virag.promet.map.MapModule;
 import si.virag.promet.preferences.PrometPreferencesFragment;
 
 @Singleton
-@Component(modules = {PrometApiModule.class, MapModule.class, PrometApplicationModule.class, PushDataPrometApi.class, NotificationStorageModule.class, LocationModule.class })
+@Component(modules = {PrometApiModule.class, MapModule.class, PrometApplicationModule.class, PushDataPrometApi.class })
 public interface PrometComponent {
 
     public void inject(MainActivity mainActivity);

@@ -23,7 +23,6 @@ import si.virag.promet.map.LocationModule;
 import si.virag.promet.utils.DataUtils;
 import si.virag.promet.utils.PrometSettings;
 
-@Module
 @Singleton
 public class NotificationStorageModule {
     private static final String LOG_TAG = "Promet.GCM.Storage";
@@ -39,8 +38,7 @@ public class NotificationStorageModule {
     public NotificationStorageModule() {
     }
 
-    public void storeIncomingEvents(@NonNull final Realm realm, @NonNull final String events) {
-
+    void storeIncomingEvents(@NonNull final Realm realm, @NonNull final String events) {
         try {
             JSONArray eventArray = new JSONArray(events);
 

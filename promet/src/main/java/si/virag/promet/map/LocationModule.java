@@ -22,11 +22,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;
 
-@Module
 @Singleton
 public class LocationModule {
 
@@ -40,6 +40,7 @@ public class LocationModule {
 
     private ConditionVariable waitForTimeout = new ConditionVariable(false);
 
+    @Inject
     public LocationModule(Context context) {
         this.context = context;
 

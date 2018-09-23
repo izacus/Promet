@@ -59,4 +59,11 @@
             />
 
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/preferences_about">
+        <Preference
+            android:id="@+id/preferences_privacy_policy"
+            android:key="privacy_policy"
+            android:title="@string/preferences_privacy_policy" />
+    </PreferenceCategory>
 </PreferenceScreen>

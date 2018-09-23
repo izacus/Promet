@@ -36,6 +36,8 @@
     <string name="load_error">Podatkov ni bilo mogoče naložiti.</string>
     <string name="map_traffic_detail">Povpr. hitrost %1$d km/h, razmak %2$.1f s</string>
     <string name="loading">Nalagam…</string>
+    <string name="preferences_about">O Prometu</string>
+    <string name="preferences_privacy_policy">Izjava o zasebnosti</string>
 
     <string-array name="road_type_strings">
         <item>@string/freeways</item>

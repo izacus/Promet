@@ -79,7 +79,7 @@ public class PushIntentService extends FirebaseMessagingService {
 
     private void showWaitingNotifications(@NonNull final Realm realm) {
         realm.beginTransaction();
-        RealmResults<PushNotification> notifications = realm.where(PushNotification.class).findAllSorted("created");
+        RealmResults<PushNotification> notifications = realm.where(PushNotification.class).findAll().sort("created");
         if (notifications.size() == 0) return;
         if (notifications.size() == 1) {
             showSingleNotification(notifications.get(0));

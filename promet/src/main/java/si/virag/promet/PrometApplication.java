@@ -44,7 +44,6 @@ public class PrometApplication extends Application {
         createNotificationChannel();
         component = DaggerPrometComponent.builder()
                 .prometApplicationModule(new PrometApplicationModule(this))
-                .locationModule(new LocationModule(this))
                 .prometApiModule(new PrometApiModule(this))
                 .pushDataPrometApi(new PushDataPrometApi(this))
                 .build();

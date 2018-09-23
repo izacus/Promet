@@ -35,6 +35,8 @@
     <string name="load_error">Data could not be loaded.</string>
     <string name="map_traffic_detail">Avg. speed %1$d km/h, gap %2$.1f s</string>
     <string name="loading">Loading…</string>
+    <string name="preferences_about">About</string>
+    <string name="preferences_privacy_policy">Privacy policy</string>
 
     <string-array name="road_type_strings">
         <item>@string/freeways</item>

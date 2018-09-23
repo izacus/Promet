@@ -1,6 +1,7 @@
 package si.virag.promet;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -31,7 +32,7 @@ import com.franmontiel.localechanger.LocaleChanger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
-import com.tbruyelle.rxpermissions.RxPermissions;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
@@ -40,6 +41,9 @@ import org.threeten.bp.format.DateTimeFormatter;
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import rx.Subscriber;
 import si.virag.promet.fragments.CamerasFragment;
 import si.virag.promet.fragments.EventListFragment;
@@ -227,25 +231,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    @SuppressLint("CheckResult")
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
         RxPermissions rxPermissions = new RxPermissions(this);
         rxPermissions.request(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
-                .subscribe(new Subscriber<Boolean>() {
+                .subscribe(new Observer<Boolean>() {
                     @Override
-                    public void onCompleted() {
+                    public void onSubscribe(Disposable d) {}
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {}
+
+                    @Override
+                    public void onError(Throwable e) {}
+
+                    @Override
+                    public void onComplete() {
                         checkShowNotificationsDialog();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Boolean aBoolean) {
-
                     }
                 });
 
