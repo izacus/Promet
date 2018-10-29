@@ -12,7 +12,12 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobRequest;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.threeten.bp.Duration;
 
@@ -21,6 +26,10 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 
+import rx.Single;
+import rx.SingleEmitter;
+import rx.SingleSubscriber;
+import rx.functions.Action1;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.api.push.PrometPushApi;
 import si.virag.promet.utils.PrometSettings;
@@ -47,6 +56,33 @@ public class RegisterFcmTokenJob extends Job {
     @Inject PrometPushApi pushApi;
     @Inject PrometSettings settings;
 
+    private static Single<String> getInstanceId() {
+        return Single.create(new Single.OnSubscribe<String>() {
+            @Override
+            public void call(final SingleSubscriber<? super String> subscriber) {
+                Task<InstanceIdResult> instanceIdResult = FirebaseInstanceId.getInstance().getInstanceId();
+                instanceIdResult.addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                    @Override
+                    public void onSuccess(InstanceIdResult instanceIdResult) {
+                        subscriber.onSuccess(instanceIdResult.getToken());
+                    }
+                });
+                instanceIdResult.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        subscriber.onError(e);
+                    }
+                });
+                instanceIdResult.addOnCanceledListener(new OnCanceledListener() {
+                    @Override
+                    public void onCanceled() {
+                        subscriber.onError(new IOException("Task cancelled."));
+                    }
+                });
+            }
+        });
+    }
+
     @NonNull
     @Override
     protected Result onRunJob(@NonNull Params params) {
@@ -59,7 +95,7 @@ public class RegisterFcmTokenJob extends Job {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         try {
-            String gcmToken = FirebaseInstanceId.getInstance().getToken();
+            String gcmToken = getInstanceId().toBlocking().value();
             String currentGcmId = getCurrentRegistrationId(prefs);
             if (!currentGcmId.equals(gcmToken)) {
                 prefs.edit().putBoolean(PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
@@ -71,10 +107,12 @@ public class RegisterFcmTokenJob extends Job {
 
         } catch (IOException e) {
             Crashlytics.logException(e);
-            Log.d(LOG_TAG, "Failed to retrieve GCM ID.");
+            Log.e(LOG_TAG, "Failed to retrieve GCM ID.", e);
+            Crashlytics.logException(e);
             return Result.RESCHEDULE;
         } catch (SecurityException e) {
-            Log.e(LOG_TAG, "GCM services not available!");
+            Log.e(LOG_TAG, "GCM services not available!", e);
+            Crashlytics.logException(e);
             return Result.FAILURE;
         }
 
@@ -86,6 +124,8 @@ public class RegisterFcmTokenJob extends Job {
             throw new IOException("GCM ID not yet retrieved.");
         }
 
+        Log.i(TAG, "GCM ID registering: " + gcmId);
+
         try
         {
             if (settings.getShouldReceiveNotifications()) {
@@ -95,7 +135,8 @@ public class RegisterFcmTokenJob extends Job {
             }
         }
         catch (IOException e) {
-            Log.d(LOG_TAG, "Failed to push API key to server: " + e);
+            Log.e(LOG_TAG, "Failed to push API key to server", e);
+            Crashlytics.logException(e);
             throw e;
         }
 

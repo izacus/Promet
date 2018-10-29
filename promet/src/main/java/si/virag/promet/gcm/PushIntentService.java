@@ -40,6 +40,12 @@ public class PushIntentService extends FirebaseMessagingService {
     }
 
     @Override
+    public void onNewToken(String s) {
+        super.onNewToken(s);
+        RegisterFcmTokenJob.scheduleGcmUpdate();
+    }
+
+    @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Realm realm = null;
         try {

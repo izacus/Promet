@@ -6,10 +6,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath 'com.google.gms:google-services:4.1.0'
         classpath 'io.fabric.tools:gradle:1.+'
-        classpath "io.realm:realm-gradle-plugin:5.5.0"
+        classpath "io.realm:realm-gradle-plugin:5.7.1"
         classpath 'com.google.firebase:firebase-plugins:1.1.5'
     }
 }
@@ -28,12 +28,12 @@ repositories {
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "si.virag.promet"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 24
+        versionCode 2400
         versionName "1.8.2"
         resConfigs "en", "sl"
     }
@@ -59,23 +59,6 @@ android {
         disable 'MissingTranslation'
     }
     productFlavors {}
-
-    splits {
-        abi {
-            enable true
-            reset()
-
-            include "x86", "armeabi-v7a", "arm64-v8a"
-            universalApk false
-        }
-    }
-
-    packagingOptions {
-        exclude 'META-INF/services/javax.annotation.processing.Processor'
-        exclude 'lib/mips/librealm-jni.so'
-        exclude 'lib/armeabi/librealm-jni.so'
-        exclude 'lib/x86_64/librealm-jni.so'
-    }
 }
 
 dependencies {
@@ -88,13 +71,12 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    implementation 'com.google.android.gms:play-services-base:15.0.1'
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
-    implementation 'com.google.android.gms:play-services-location:15.0.1'
-    implementation 'com.google.android.gms:play-services-gcm:15.0.1'
-    implementation 'com.google.firebase:firebase-core:16.0.3'
-    implementation 'com.google.firebase:firebase-messaging:17.3.2'
-    implementation 'com.google.firebase:firebase-perf:16.1.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-gcm:16.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.4'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation 'com.google.firebase:firebase-perf:16.2.0'
     implementation 'com.squareup.okhttp:okhttp-urlconnection:2.7.5'
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
     implementation 'com.android.support:support-v4:28.0.0'
@@ -118,45 +100,12 @@ dependencies {
     implementation 'de.greenrobot:eventbus:2.4.0'
     implementation 'com.google.dagger:dagger:2.17'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.17'
-    provided 'javax.annotation:jsr250-api:1.0'
+    compileOnly 'javax.annotation:jsr250-api:1.0'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
     // Android 6 permissions
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
     implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
         transitive = true
-    }
-}
-
-// Map for the version code that gives each ABI a value.
-ext.abiCodes = ['armeabi-v7a':1, 'arm64-v8a':2, x86:3]
-
-import com.android.build.OutputFile
-
-// For each APK output variant, override versionCode with a combination of
-// ext.abiCodes * 1000 + variant.versionCode. In this example, variant.versionCode
-// is equal to defaultConfig.versionCode. If you configure product flavors that
-// define their own versionCode, variant.versionCode uses that value instead.
-android.applicationVariants.all { variant ->
-
-    // Assigns a different version code for each output APK
-    // other than the universal APK.
-    variant.outputs.each { output ->
-
-        // Stores the value of ext.abiCodes that is associated with the ABI for this variant.
-        def baseAbiVersionCode =
-                // Determines the ABI for this variant and returns the mapped value.
-                project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
-
-        // Because abiCodes.get() returns null for ABIs that are not mapped by ext.abiCodes,
-        // the following code does not override the version code for universal APKs.
-        // However, because we want universal APKs to have the lowest version code,
-        // this outcome is desirable.
-        if (baseAbiVersionCode != null) {
-            // Assigns the new version code to versionCodeOverride, which changes the version code
-            // for only the output APK, not for the variant itself. Skipping this step simply
-            // causes Gradle to use the value of variant.versionCode for the APK.
-            output.versionCodeOverride = variant.versionCode * 100 + baseAbiVersionCode
-        }
     }
 }
 
