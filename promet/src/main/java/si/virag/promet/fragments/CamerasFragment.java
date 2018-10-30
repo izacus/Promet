@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.DaggerFragment;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.FlexibleItemDecoration;
 import rx.Subscriber;
@@ -41,7 +42,7 @@ import si.virag.promet.api.model.TrafficInfo;
 import si.virag.promet.fragments.cameras.CameraHeaderItem;
 import si.virag.promet.fragments.cameras.CameraItem;
 
-public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class CamerasFragment extends DaggerFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = "Promet.CameraList";
 
@@ -54,13 +55,6 @@ public class CamerasFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Nullable
     private Subscription loadSubscription;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        PrometApplication application = (PrometApplication)getActivity().getApplication();
-        application.component().inject(this);
-    }
 
     @Nullable
     @Override

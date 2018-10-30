@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.DaggerFragment;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.Subscriber;
@@ -43,7 +44,7 @@ import si.virag.promet.fragments.ui.EventListFilter;
 import si.virag.promet.map.PrometMaps;
 import si.virag.promet.utils.PrometSettings;
 
-public class MapFragment extends Fragment {
+public class MapFragment extends DaggerFragment {
 
     private static final String LOG_TAG = "Promet.MapFragment";
 
@@ -62,10 +63,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Dagger injection
-        PrometApplication application = (PrometApplication) getActivity().getApplication();
-        application.component().inject(this);
-        MapsInitializer.initialize(getActivity());
+        MapsInitializer.initialize(requireContext());
     }
 
     @Override

@@ -15,6 +15,8 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
+import dagger.android.support.AndroidSupportInjection;
 import si.virag.promet.MainActivity;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
@@ -31,10 +33,8 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        AndroidSupportInjection.inject(this);
         super.onCreate(savedInstanceState);
-
-        PrometApplication application = (PrometApplication) getContext().getApplicationContext();
-        application.component().inject(this);
     }
 
     @Override

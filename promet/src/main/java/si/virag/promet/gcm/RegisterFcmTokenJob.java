@@ -57,29 +57,11 @@ public class RegisterFcmTokenJob extends Job {
     @Inject PrometSettings settings;
 
     private static Single<String> getInstanceId() {
-        return Single.create(new Single.OnSubscribe<String>() {
-            @Override
-            public void call(final SingleSubscriber<? super String> subscriber) {
-                Task<InstanceIdResult> instanceIdResult = FirebaseInstanceId.getInstance().getInstanceId();
-                instanceIdResult.addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                    @Override
-                    public void onSuccess(InstanceIdResult instanceIdResult) {
-                        subscriber.onSuccess(instanceIdResult.getToken());
-                    }
-                });
-                instanceIdResult.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        subscriber.onError(e);
-                    }
-                });
-                instanceIdResult.addOnCanceledListener(new OnCanceledListener() {
-                    @Override
-                    public void onCanceled() {
-                        subscriber.onError(new IOException("Task cancelled."));
-                    }
-                });
-            }
+        return Single.create(subscriber -> {
+            Task<InstanceIdResult> instanceIdResult = FirebaseInstanceId.getInstance().getInstanceId();
+            instanceIdResult.addOnSuccessListener(result -> subscriber.onSuccess(result.getToken()));
+            instanceIdResult.addOnFailureListener(subscriber::onError);
+            instanceIdResult.addOnCanceledListener(() -> subscriber.onError(new IOException("Task cancelled.")));
         });
     }
 

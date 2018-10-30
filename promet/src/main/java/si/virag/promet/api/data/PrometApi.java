@@ -1,15 +1,9 @@
 package si.virag.promet.api.data;
 
-
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.security.ProviderInstaller;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,11 +11,10 @@ import com.google.gson.GsonBuilder;
 import org.threeten.bp.ZonedDateTime;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-import javax.net.ssl.SSLContext;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -41,12 +34,14 @@ import si.virag.promet.api.opendata.TrafficStatusAdapter;
 import si.virag.promet.fragments.ui.EventListSorter;
 import si.virag.promet.utils.DataUtils;
 
+@Singleton
 public class PrometApi {
 
     private final PrometDataApi prometApi;
 
     private Single<TrafficInfo> trafficInfoObserver;
 
+    @Inject
     public PrometApi(@NonNull Context context) {
         final String userAgent = DataUtils.getUserAgent(context);
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();

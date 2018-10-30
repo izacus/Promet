@@ -33,9 +33,8 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
 
     @Override
     public CameraHeaderItemHolder createViewHolder(View view, FlexibleAdapter adapter) {
-        return new CameraHeaderItemHolder(view, adapter, true);
+        return new CameraHeaderItemHolder(view, adapter);
     }
-
 
     @Override
     public void bindViewHolder(FlexibleAdapter adapter, CameraHeaderItemHolder holder, int position, List payloads) {
@@ -46,9 +45,9 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
 
         final TextView title;
 
-        CameraHeaderItemHolder(View view, FlexibleAdapter adapter, boolean stickyHeader) {
+        CameraHeaderItemHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter, true);
-            title = (TextView) view.findViewById(R.id.item_header_title);
+            title = view.findViewById(R.id.item_header_title);
         }
 
         @Override

@@ -32,16 +32,13 @@ public class PushDataPrometApi {
     public PushDataPrometApi(final Context context) {
         final String userAgent = DataUtils.getUserAgent(context);
         OkHttpClient.Builder client = new OkHttpClient.Builder();
-        client.addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request().newBuilder()
-                        .header("User-Agent", userAgent)
-                        .method(chain.request().method(), chain.request().body())
-                        .build();
+        client.addInterceptor(chain -> {
+            Request request = chain.request().newBuilder()
+                    .header("User-Agent", userAgent)
+                    .method(chain.request().method(), chain.request().body())
+                    .build();
 
-                return chain.proceed(request);
-            }
+            return chain.proceed(request);
         });
 
         if (BuildConfig.DEBUG) {
@@ -67,22 +64,12 @@ public class PushDataPrometApi {
 
         @Override
         public Converter<ResponseBody, String> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-            return new Converter<ResponseBody, String>() {
-                @Override
-                public String convert(ResponseBody value) throws IOException {
-                    return new String(value.bytes());
-                }
-            };
+            return value -> new String(value.bytes());
         }
 
         @Override
         public Converter<String, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-            return new Converter<String, RequestBody>() {
-                @Override
-                public RequestBody convert(String value) throws IOException {
-                    return RequestBody.create(MediaType.parse("text/plain"), value);
-                }
-            };
+            return value -> RequestBody.create(MediaType.parse("text/plain"), value);
         }
     }
 }

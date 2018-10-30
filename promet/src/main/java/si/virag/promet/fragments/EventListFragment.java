@@ -30,6 +30,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.support.DaggerFragment;
 import de.greenrobot.event.EventBus;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.FlexibleItemDecoration;
@@ -54,7 +55,7 @@ import si.virag.promet.fragments.events.EventItem;
 import si.virag.promet.fragments.ui.EventListFilter;
 import si.virag.promet.utils.PrometSettings;
 
-public class EventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class EventListFragment extends DaggerFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String LOG_TAG = "Promet.EventList";
 
@@ -75,14 +76,6 @@ public class EventListFragment extends Fragment implements SwipeRefreshLayout.On
 
     @Nullable
     private List<EventItem> adapterItems;
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        PrometApplication application = (PrometApplication) getActivity().getApplication();
-        application.component().inject(this);
-    }
 
     @Nullable
     @Override

@@ -1,6 +1,5 @@
 package si.virag.promet;
 
-import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -16,16 +15,16 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import java.util.Arrays;
 import java.util.Locale;
 
+import dagger.android.AndroidInjector;
+import dagger.android.DaggerApplication;
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
-import si.virag.promet.api.data.PrometApiModule;
 import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.gcm.PushIntentService;
 import si.virag.promet.gcm.RegisterFcmTokenJob;
 import si.virag.promet.gcm.ScheduledJobCreator;
-import si.virag.promet.map.LocationModule;
 
-public class PrometApplication extends Application {
+public class PrometApplication extends DaggerApplication {
 
     private PrometComponent component;
 
@@ -38,18 +37,21 @@ public class PrometApplication extends Application {
                 .disabled(BuildConfig.DEBUG)
                 .build();
         Fabric.with(this, crashlyticsCore);
-
         AndroidThreeTen.init(this);
         Realm.init(this);
         createNotificationChannel();
-        component = DaggerPrometComponent.builder()
-                .prometApplicationModule(new PrometApplicationModule(this))
-                .prometApiModule(new PrometApiModule(this))
-                .pushDataPrometApi(new PushDataPrometApi(this))
-                .build();
 
         JobManager.create(this).addJobCreator(new ScheduledJobCreator());
         RegisterFcmTokenJob.scheduleGcmUpdate();
+    }
+
+    @Override
+    protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
+        component = (PrometComponent) DaggerPrometComponent.builder()
+                .applicationContext(this)
+                .pushDataPrometApi(new PushDataPrometApi(this))
+                .create(this);
+        return component;
     }
 
     private void createNotificationChannel() {

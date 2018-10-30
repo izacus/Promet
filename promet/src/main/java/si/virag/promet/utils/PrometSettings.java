@@ -1,12 +1,15 @@
 package si.virag.promet.utils;
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import si.virag.promet.api.model.EventGroup;
 
+@Singleton
 public class PrometSettings {
 
     private static final String PREF_AVTOCESTE = "show.avtoceste";
@@ -33,6 +36,7 @@ public class PrometSettings {
 
     private boolean showCameras;
 
+    @Inject
     public PrometSettings(Context context) {
         this.context = context.getApplicationContext();
         reload();

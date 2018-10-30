@@ -1,28 +1,30 @@
 package si.virag.promet;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
+import dagger.BindsInstance;
 import dagger.Component;
-import si.virag.promet.api.data.PrometApiModule;
+import dagger.android.AndroidInjector;
+import dagger.android.support.AndroidSupportInjectionModule;
 import si.virag.promet.api.push.PushDataPrometApi;
-import si.virag.promet.fragments.CamerasFragment;
-import si.virag.promet.fragments.EventListFragment;
-import si.virag.promet.fragments.MapFragment;
-import si.virag.promet.gcm.PushIntentService;
 import si.virag.promet.gcm.RegisterFcmTokenJob;
 import si.virag.promet.map.MapModule;
-import si.virag.promet.preferences.PrometPreferencesFragment;
 
 @Singleton
-@Component(modules = {PrometApiModule.class, MapModule.class, PrometApplicationModule.class, PushDataPrometApi.class })
-public interface PrometComponent {
+@Component(modules = {AndroidSupportInjectionModule.class, MapModule.class,PushDataPrometApi.class, PrometUiModule.class})
+public interface PrometComponent extends AndroidInjector<PrometApplication> {
 
-    public void inject(MainActivity mainActivity);
-    public void inject(CameraDetailActivity cameraDetailActivity);
-    public void inject(EventListFragment eventListFragment);
-    public void inject(MapFragment mapFragment);
-    public void inject(RegisterFcmTokenJob registrationService);
-    public void inject(PushIntentService pushIntentService);
-    public void inject(PrometPreferencesFragment prometPreferencesFragment);
-    public void inject(CamerasFragment camerasFragment);
+    @Component.Builder
+    abstract class Builder extends AndroidInjector.Builder<PrometApplication> {
+        @BindsInstance
+        abstract Builder applicationContext(Context applicationContext);
+
+        abstract Builder pushDataPrometApi(PushDataPrometApi api);
+
+        public abstract PrometComponent build();
+    }
+
+    void inject(RegisterFcmTokenJob job);
 }

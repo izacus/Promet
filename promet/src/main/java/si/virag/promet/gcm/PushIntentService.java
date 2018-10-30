@@ -16,11 +16,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjection;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import si.virag.promet.MainActivity;
-import si.virag.promet.PrometApplication;
+
 import si.virag.promet.R;
 import si.virag.promet.utils.LocaleUtil;
 import si.virag.promet.utils.PrometSettings;
@@ -34,9 +35,8 @@ public class PushIntentService extends FirebaseMessagingService {
 
     @Override
     public void onCreate() {
+        AndroidInjection.inject(this);
         super.onCreate();
-        PrometApplication app = (PrometApplication) getApplication();
-        app.component().inject(this);
     }
 
     @Override

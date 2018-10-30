@@ -40,6 +40,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 import javax.inject.Inject;
 
+import dagger.android.support.DaggerAppCompatActivity;
 import de.greenrobot.event.EventBus;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -54,41 +55,33 @@ import si.virag.promet.preferences.PrometPreferences;
 import si.virag.promet.utils.ActivityUtilities;
 import si.virag.promet.utils.PrometSettings;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends DaggerAppCompatActivity
 {
     public static final String PARAM_SHOW_LIST = "ShowList";
     public static final String PARAM_SHOW_ITEM_ID = "ShowListItemId";
 
-    @NonNull
-    private Toolbar toolbar;
-    @NonNull
-    private ViewPager pager;
-    @NonNull
-    private TabLayout tabs;
-    @NonNull
-    private SystemBarTintManager tintManager;
+    @NonNull private Toolbar toolbar;
+    @NonNull private ViewPager pager;
+    @NonNull private TabLayout tabs;
+    @NonNull private SystemBarTintManager tintManager;
 
     @Inject PrometSettings prometSettings;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ActivityUtilities.setupTransluscentNavigation(this);
-        PrometApplication application = (PrometApplication) getApplication();
-
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-        application.component().inject(this);
 
         setContentView(R.layout.activity_main);
         // Fix actionbar name for other locales
-        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar = findViewById(R.id.main_toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
 
         tintManager = ActivityUtilities.setupSystembarTint(this, toolbar);
-        pager = (ViewPager)findViewById(R.id.main_pager);
-        tabs = (TabLayout) findViewById(R.id.main_tabs);
+        pager = findViewById(R.id.main_pager);
+        tabs = findViewById(R.id.main_tabs);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_car);

@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.android.support.DaggerAppCompatActivity;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import si.virag.promet.api.data.PrometApi;
@@ -33,7 +34,7 @@ import si.virag.promet.utils.DataUtils;
 /**
  * This activity shows a larger view of the camera.
  */
-public class CameraDetailActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class CameraDetailActivity extends DaggerAppCompatActivity implements OnMapReadyCallback {
 
 
     @NonNull
@@ -64,8 +65,6 @@ public class CameraDetailActivity extends AppCompatActivity implements OnMapRead
         ActivityUtilities.setupTransluscentNavigation(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_detail);
-        PrometApplication application = (PrometApplication) getApplication();
-        application.component().inject(this);
 
         // Camera is required!
         camera = getIntent().getParcelableExtra("camera");

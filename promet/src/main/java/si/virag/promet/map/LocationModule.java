@@ -45,12 +45,7 @@ public class LocationModule {
         this.context = context;
 
         try {
-            LocationServices.getFusedLocationProviderClient(context).getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    LocationModule.this.currentLocation = location;
-                }
-            });
+            LocationServices.getFusedLocationProviderClient(context).getLastLocation().addOnSuccessListener(location -> LocationModule.this.currentLocation = location);
         } catch (SecurityException e) {
             // User didn't allow location access.
         }
