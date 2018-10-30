@@ -16,10 +16,9 @@ import com.crashlytics.android.Crashlytics;
 
 import org.threeten.bp.ZonedDateTime;
 
-import androidx.appcompat.widget.AppCompatDrawableManager;
+import java.util.Locale;
+
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-import si.virag.promet.R;
 import si.virag.promet.api.model.EventGroup;
 
 public class DataUtils {
@@ -48,15 +47,13 @@ public class DataUtils {
             Crashlytics.logException(e);
         }
 
-        final String header = String.format("Promet/%d %s/%s/%s Android %s/%d (%s)", appVersion,
+        return String.format(Locale.US, "Promet/%d %s/%s/%s Android %s/%d (%s)", appVersion,
                 Build.MANUFACTURER,
                 Build.MODEL,
                 Build.DEVICE,
                 Build.VERSION.RELEASE,
                 Build.VERSION.SDK_INT,
                 Build.FINGERPRINT);
-
-        return header;
     }
 
     public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {

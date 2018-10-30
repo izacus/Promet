@@ -45,7 +45,7 @@ public class EventHeaderItem extends AbstractHeaderItem<EventHeaderItem.EventHea
 
         EventHeaderItemHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
-            title = (TextView) view.findViewById(R.id.item_header_title);
+            title = view.findViewById(R.id.item_header_title);
         }
     }
 }

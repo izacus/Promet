@@ -43,7 +43,7 @@ public class MapFragment extends DaggerFragment {
     private static final String LOG_TAG = "Promet.MapFragment";
 
     // Views
-    protected MapView mapView;
+    private MapView mapView;
 
     // Module dependencies
     @Inject
@@ -106,7 +106,7 @@ public class MapFragment extends DaggerFragment {
                                          .toList()
                                          .toBlocking().single();
 
-        List<PrometCamera> cameras = prometSettings.getShowCameras() ? info.cameras : Collections.<PrometCamera>emptyList();
+        List<PrometCamera> cameras = prometSettings.getShowCameras() ? info.cameras : Collections.emptyList();
         prometMaps.showData(getActivity(), prometEvents, cameras);
     }
 
@@ -179,24 +179,5 @@ public class MapFragment extends DaggerFragment {
     }
     public void onEventMainThread(Events.UpdateMap e) {
         loadTrafficData();
-    }
-
-
-    private static class DataTriple {
-        public final List<PrometEvent> events;
-        public final List<PrometCamera> cameras;
-
-        public DataTriple(List<PrometEvent> events, List<PrometCamera> cameras) {
-            this.cameras = cameras;
-            this.events = events;
-        }
-
-        @Override
-        public String toString() {
-            return "DataTriple{" +
-                    "events=" + events +
-                    ", cameras=" + cameras +
-                    '}';
-        }
     }
 }

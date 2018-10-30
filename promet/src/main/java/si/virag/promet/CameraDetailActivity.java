@@ -37,16 +37,10 @@ public class CameraDetailActivity extends DaggerAppCompatActivity implements OnM
 
 
     @NonNull
-    private Toolbar toolbar;
-
-    @NonNull
     private PrometCamera camera;
 
     @NonNull
     private ImageView cameraImage;
-
-    @NonNull
-    private TextView summaryText;
 
     @NonNull
     private MapView mapView;
@@ -72,12 +66,12 @@ public class CameraDetailActivity extends DaggerAppCompatActivity implements OnM
             return;
         }
 
-        toolbar = (Toolbar) findViewById(R.id.camera_detail_toolbar);
+        Toolbar toolbar = findViewById(R.id.camera_detail_toolbar);
         setSupportActionBar(toolbar);
         ActivityUtilities.setupSystembarTint(this, toolbar);
 
-        cameraImage = (ImageView)findViewById(R.id.camera_detail_image);
-        summaryText = (TextView)findViewById(R.id.camera_detail_summary);
+        cameraImage = findViewById(R.id.camera_detail_image);
+        TextView summaryText = findViewById(R.id.camera_detail_summary);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             getSupportActionBar().hide();
@@ -87,7 +81,7 @@ public class CameraDetailActivity extends DaggerAppCompatActivity implements OnM
             summaryText.setText(camera.getText());
         }
 
-        mapView = (MapView)findViewById(R.id.camera_detail_map);
+        mapView = findViewById(R.id.camera_detail_map);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
     }

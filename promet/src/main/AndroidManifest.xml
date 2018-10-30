@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="si.virag.promet" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="si.virag.promet" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -22,8 +23,7 @@
         android:label="@string/app_name"
         android:theme="@style/PrometTheme"
         android:name=".PrometApplication"
-        >
-
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
             android:name="si.virag.promet.MainActivity"
@@ -53,7 +53,7 @@
 
         <service android:name=".gcm.PushIntentService">
             <intent-filter>
-\                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 

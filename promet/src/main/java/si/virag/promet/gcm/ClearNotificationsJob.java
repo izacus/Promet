@@ -9,11 +9,11 @@ import androidx.annotation.NonNull;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class ClearNotificationsJob extends Job {
+public final class ClearNotificationsJob extends Job {
 
     public static final String TAG = "clear_notifications_job";
 
-    public static final void schedule() {
+    public static void schedule() {
         new JobRequest.Builder(TAG)
                 .setUpdateCurrent(true)
                 .setExecutionWindow(1, Duration.ofHours(1).toMillis())

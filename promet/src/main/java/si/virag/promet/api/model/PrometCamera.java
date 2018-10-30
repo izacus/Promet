@@ -53,8 +53,6 @@ public class PrometCamera implements Parcelable {
         dest.writeString(this.imageUrl);
     }
 
-    public PrometCamera() { }
-
     protected PrometCamera(Parcel in) {
         this.id = in.readString();
         this.lng = in.readDouble();

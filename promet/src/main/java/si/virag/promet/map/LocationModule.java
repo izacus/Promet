@@ -30,10 +30,10 @@ public class LocationModule {
     @Nullable
     private Location currentLocation;
 
-    private ConditionVariable waitForTimeout = new ConditionVariable(false);
+    private final ConditionVariable waitForTimeout = new ConditionVariable(false);
 
     @Inject
-    public LocationModule(Context context) {
+    LocationModule(Context context) {
         this.context = context;
 
         try {

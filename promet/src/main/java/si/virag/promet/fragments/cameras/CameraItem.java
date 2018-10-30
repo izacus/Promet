@@ -25,10 +25,9 @@ import si.virag.promet.R;
 import si.virag.promet.api.model.PrometCamera;
 import si.virag.promet.fragments.ui.CameraView;
 
-public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHolder, CameraHeaderItem> {
+public final class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHolder, CameraHeaderItem> {
 
-    @NonNull
-    public final PrometCamera camera;
+    @NonNull private final PrometCamera camera;
 
     public CameraItem(@NonNull CameraHeaderItem header, @NonNull PrometCamera camera) {
         super(header);
@@ -92,7 +91,7 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
             mapView.getMapAsync(this);
         }
 
-        public void setMapLocation(LatLng location) {
+        void setMapLocation(LatLng location) {
             this.location = location;
             if (map != null) {
                 showPointOnMap();

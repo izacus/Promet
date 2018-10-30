@@ -1,6 +1,5 @@
 package si.virag.promet.fragments.events;
 
-
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.format.DateUtils;
@@ -23,8 +22,7 @@ import si.virag.promet.R;
 import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.utils.LocaleUtil;
 
-
-public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder, EventHeaderItem> {
+public final class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder, EventHeaderItem> {
 
     @NonNull
     private final PrometEvent event;
@@ -78,13 +76,13 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
         return event;
     }
 
-    public static class EventItemHolder extends FlexibleViewHolder {
+    static final class EventItemHolder extends FlexibleViewHolder {
 
-        public View view;
-        TextView titleView;
-        TextView descriptionView;
-        TextView timeView;
-        TextView locationView;
+        final View view;
+        final TextView titleView;
+        final TextView descriptionView;
+        final TextView timeView;
+        final TextView locationView;
 
         private EventItemHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);

@@ -37,7 +37,6 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
@@ -64,8 +63,6 @@ public class EventListFragment extends DaggerFragment implements SwipeRefreshLay
     private SwipeRefreshLayout refreshLayout;
     private TextView emptyView;
 
-    private TextView headerView;
-
     @Nullable
     private Subscription loadSubscription;
 
@@ -85,7 +82,7 @@ public class EventListFragment extends DaggerFragment implements SwipeRefreshLay
         emptyView = v.findViewById(R.id.events_empty);
 
         LinearLayout headerViewContainer = new LinearLayout(getActivity());
-        headerView = new TextView(getActivity());
+        TextView headerView = new TextView(getActivity());
         headerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         headerView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         headerView.setGravity(Gravity.CENTER);
@@ -128,28 +125,20 @@ public class EventListFragment extends DaggerFragment implements SwipeRefreshLay
 
         loadSubscription = trafficInfo.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMapObservable(new Func1<TrafficInfo, Observable<PrometEvent>>() {
-                    @Override
-                    public Observable<PrometEvent> call(TrafficInfo trafficInfo) {
-                        return Observable.from(trafficInfo.events);
-                    }
-                })
+                .flatMapObservable((Func1<TrafficInfo, Observable<PrometEvent>>) trafficInfo1 -> Observable.from(trafficInfo1.events))
                 .filter(new EventListFilter(prometSettings))
-                .toSortedList(new Func2<PrometEvent, PrometEvent, Integer>() {
-                    @Override
-                    public Integer call(PrometEvent lhs, PrometEvent rhs) {
-                        if (!rhs.isRoadworks() && lhs.isRoadworks())
-                            return 1;
+                .toSortedList((lhs, rhs) -> {
+                    if (!rhs.isRoadworks() && lhs.isRoadworks())
+                        return 1;
 
-                        if (!lhs.isRoadworks() && rhs.isRoadworks())
-                            return -1;
+                    if (!lhs.isRoadworks() && rhs.isRoadworks())
+                        return -1;
 
-                        if (lhs.eventGroup != rhs.eventGroup) {
-                            return lhs.eventGroup.ordinal() - rhs.eventGroup.ordinal();
-                        }
-
-                        return rhs.updated.compareTo(lhs.updated);
+                    if (lhs.eventGroup != rhs.eventGroup) {
+                        return lhs.eventGroup.ordinal() - rhs.eventGroup.ordinal();
                     }
+
+                    return rhs.updated.compareTo(lhs.updated);
                 })
                 .subscribe(new Subscriber<List<PrometEvent>>() {
                     @Override

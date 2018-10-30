@@ -10,10 +10,9 @@ import dagger.android.AndroidInjector;
 import dagger.android.support.AndroidSupportInjectionModule;
 import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.gcm.RegisterFcmTokenJob;
-import si.virag.promet.map.MapModule;
 
 @Singleton
-@Component(modules = {AndroidSupportInjectionModule.class, MapModule.class,PushDataPrometApi.class, PrometUiModule.class})
+@Component(modules = {AndroidSupportInjectionModule.class, PushDataPrometApi.class, PrometUiModule.class})
 public interface PrometComponent extends AndroidInjector<PrometApplication> {
 
     @Component.Builder

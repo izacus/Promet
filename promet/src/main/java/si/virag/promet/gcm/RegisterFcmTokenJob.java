@@ -27,14 +27,14 @@ import si.virag.promet.PrometApplication;
 import si.virag.promet.api.push.PrometPushApi;
 import si.virag.promet.utils.PrometSettings;
 
-public class RegisterFcmTokenJob extends Job {
+public final class RegisterFcmTokenJob extends Job {
 
     private static final String LOG_TAG = "Promet.GCM";
-    public static final String TAG = "register_fcm_job";
+    private static final String PREF_GCM_APP_VERSION = "GCM.Registered.Version";
+    private static final String PREF_GCM_KEY = "GCM.Key";
 
+    public static final String TAG = "register_fcm_job";
     public static final String PREF_SHOULD_UPDATE_GCM_REGISTRATION = "GCM.ShouldRegister";
-    public static final String PREF_GCM_APP_VERSION = "GCM.Registered.Version";
-    public static final String PREF_GCM_KEY = "GCM.Key";
 
     public static void scheduleGcmUpdate() {
         new JobRequest.Builder(TAG)

@@ -46,13 +46,11 @@ public class PushIntentService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Realm realm = null;
-        try {
-            RealmConfiguration configuration = new RealmConfiguration.Builder()
-                    .name("default.realm")
-                    .deleteRealmIfMigrationNeeded()
-                    .build();
-            realm = Realm.getInstance(configuration);
+        RealmConfiguration configuration = new RealmConfiguration.Builder()
+                .name("default.realm")
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        try (Realm realm = Realm.getInstance(configuration)) {
 
             Map<String, String> data = remoteMessage.getData();
             if (data == null || !data.containsKey("events")) {
@@ -67,8 +65,6 @@ public class PushIntentService extends FirebaseMessagingService {
         } catch (Exception e) {
             Crashlytics.logException(e);
             throw e;
-        } finally {
-            if (realm != null) realm.close();
         }
     }
 

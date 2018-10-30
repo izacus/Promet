@@ -2,14 +2,10 @@ package si.virag.promet.map;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.util.Pair;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,6 +29,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
 import de.greenrobot.event.EventBus;
@@ -47,10 +46,10 @@ import si.virag.promet.api.model.PrometEvent;
 import si.virag.promet.utils.DataUtils;
 import si.virag.promet.utils.LocaleUtil;
 
-public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMap.InfoWindowAdapter {
+@Singleton
+public final class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMap.InfoWindowAdapter {
 
-    public static final LatLng MAP_CENTER = new LatLng(46.055556, 14.508333);
-    private static final String LOG_TAG = "Promet.Maps";
+    private static final LatLng MAP_CENTER = new LatLng(46.055556, 14.508333);
 
     private static boolean markersInitialized = false;
     private static BitmapDescriptor RED_MARKER;
@@ -62,28 +61,20 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
 
     private static BitmapDescriptor CAMERA_MARKER;
 
-    private static final int[][] TRAFFIC_DENSITY_COLORS = {
-            { Color.TRANSPARENT, Color.TRANSPARENT },  // NO DATA
-            { Color.argb(140, 102, 255, 0), Color.argb(64, 102, 255, 0) }, // NORMAL TRAFFIC
-            { Color.argb(100, 242, 255, 0), Color.argb(160, 242, 255, 0) }, // INCREASED TRAFFIC
-            { Color.argb(180, 255, 208, 0), Color.argb(255, 255, 184, 0) }, // DENSER TRAFFIC
-            { Color.argb(180, 255, 18, 0), Color.argb(255, 255, 18, 0) }, // DENSE TRAFFIC
-            { Color.argb(200, 255, 0, 0), Color.argb(255, 255, 0, 0)}
-    };
-
-    private static BitmapDescriptor[] TRAFFIC_DENSITY_MARKER_BITMAPS;
-
     private Context context;
     private GoogleMap map;
     private Map<Marker, String> markerIdMap;
 
     private Map<String, PrometCamera> cameraMap;
-    private LinkedHashMap<String, Drawable> cameraBitmapMap = new LinkedHashMap<String, Drawable>() {
+    private final LinkedHashMap<String, Drawable> cameraBitmapMap = new LinkedHashMap<String, Drawable>() {
         @Override
         protected boolean removeEldestEntry(Entry eldest) {
             return this.size() > 10;
         }
     };
+
+    @Inject
+    public PrometMaps() {}
 
     public void setMapInstance(Context ctx, GoogleMap gMap) {
         if (gMap == null)
@@ -171,17 +162,6 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setStrokeWidth(3.0f);
         borderPaint.setAntiAlias(true);
-        TRAFFIC_DENSITY_MARKER_BITMAPS = new BitmapDescriptor[TRAFFIC_DENSITY_COLORS.length];
-        for (int i = 0; i < TRAFFIC_DENSITY_COLORS.length; i++) {
-            int circleRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7.0f, ctx.getResources().getDisplayMetrics());
-            final Bitmap bmp = Bitmap.createBitmap(circleRadius * 2, circleRadius * 2, Bitmap.Config.ARGB_8888);
-            p.setColor(TRAFFIC_DENSITY_COLORS[i][0]);
-            borderPaint.setColor(TRAFFIC_DENSITY_COLORS[i][1]);
-            final Canvas c = new Canvas(bmp);
-            c.drawCircle(circleRadius, circleRadius, circleRadius, p);
-            c.drawCircle(circleRadius, circleRadius, circleRadius, borderPaint);
-            TRAFFIC_DENSITY_MARKER_BITMAPS[i] = BitmapDescriptorFactory.fromBitmap(bmp);
-        }
 
         CAMERA_MARKER = BitmapDescriptorFactory.fromBitmap(DataUtils.getBitmapFromVectorDrawable(ctx, R.drawable.ic_camera));
         markersInitialized = true;

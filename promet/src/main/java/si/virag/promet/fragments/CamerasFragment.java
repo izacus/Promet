@@ -37,21 +37,18 @@ import si.virag.promet.api.model.TrafficInfo;
 import si.virag.promet.fragments.cameras.CameraHeaderItem;
 import si.virag.promet.fragments.cameras.CameraItem;
 
-public class CamerasFragment extends DaggerFragment implements SwipeRefreshLayout.OnRefreshListener {
-
-    private static final String LOG_TAG = "Promet.CameraList";
+public final class CamerasFragment extends DaggerFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     PrometApi prometApi;
 
-    public TextView emptyView;
-    public SwipeRefreshLayout refreshLayout;
-    public RecyclerView list;
+    private TextView emptyView;
+    private SwipeRefreshLayout refreshLayout;
+    private RecyclerView list;
 
     @Nullable
     private Subscription loadSubscription;
 
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cameras, container, false);
@@ -70,11 +67,6 @@ public class CamerasFragment extends DaggerFragment implements SwipeRefreshLayou
     public void onStart() {
         super.onStart();
         loadCameras();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @Override

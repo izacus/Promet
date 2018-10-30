@@ -169,11 +169,11 @@ public class MainActivity extends AppCompatActivity
         overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
     }
 
-    private static class MainPagesAdapter extends FragmentPagerAdapter {
+    private static final class MainPagesAdapter extends FragmentPagerAdapter {
 
         private final Resources res;
 
-        public MainPagesAdapter(Resources res, FragmentManager fm) {
+        MainPagesAdapter(Resources res, FragmentManager fm) {
             super(fm);
             this.res = res;
         }

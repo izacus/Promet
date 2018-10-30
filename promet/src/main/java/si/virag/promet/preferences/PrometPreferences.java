@@ -14,15 +14,13 @@ import si.virag.promet.R;
 
 public class PrometPreferences extends AppCompatActivity {
 
-    private Toolbar toolbar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
         // Fix actionbar name for other locales
-        toolbar = findViewById(R.id.preferences_toolbar);
+        Toolbar toolbar = findViewById(R.id.preferences_toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
