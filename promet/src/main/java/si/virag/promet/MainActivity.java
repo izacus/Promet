@@ -19,6 +19,7 @@ import android.view.Window;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.franmontiel.localechanger.LocaleChanger;
+import com.franmontiel.localechanger.utils.ActivityRecreationHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.tabs.TabLayout;
@@ -95,8 +96,6 @@ public class MainActivity extends AppCompatActivity
 
         clearPendingNotifications();
     }
-
-
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -249,9 +248,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityRecreationHelper.onResume(this);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityRecreationHelper.onDestroy(this);
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.franmontiel.localechanger.LocaleChanger;
+import com.franmontiel.localechanger.utils.ActivityRecreationHelper;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -36,6 +37,18 @@ public class PrometPreferences extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         getSupportFragmentManager().beginTransaction().replace(R.id.preferences_content, new PrometPreferencesFragment()).commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityRecreationHelper.onResume(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityRecreationHelper.onDestroy(this);
     }
 
     @Override

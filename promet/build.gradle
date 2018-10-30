@@ -39,8 +39,8 @@ android {
         applicationId "si.virag.promet"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 2400
-        versionName "1.8.2"
+        versionCode 2500
+        versionName "1.8.3"
         resConfigs "en", "sl"
     }
     compileOptions {
@@ -55,7 +55,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
         }
         debug {
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources false
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
