@@ -17,7 +17,9 @@ import com.crashlytics.android.Crashlytics;
 import org.threeten.bp.ZonedDateTime;
 
 import androidx.appcompat.widget.AppCompatDrawableManager;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
+import si.virag.promet.R;
 import si.virag.promet.api.model.EventGroup;
 
 public class DataUtils {
@@ -58,11 +60,7 @@ public class DataUtils {
     }
 
     public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
-        Drawable drawable = AppCompatDrawableManager.get().getDrawable(context, drawableId);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
-
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId).mutate();
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
                 drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

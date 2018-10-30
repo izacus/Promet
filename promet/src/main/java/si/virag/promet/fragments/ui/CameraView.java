@@ -4,14 +4,14 @@ import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.AppCompatImageView;
 import si.virag.promet.api.model.PrometCamera;
 import si.virag.promet.utils.DataUtils;
 
-public class CameraView extends ImageView {
+public class CameraView extends AppCompatImageView {
 
     private static final String LOG_TAG = "Promet.CameraView";
     /** Actual camera **/
@@ -28,11 +28,6 @@ public class CameraView extends ImageView {
 
     public CameraView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public CameraView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override
