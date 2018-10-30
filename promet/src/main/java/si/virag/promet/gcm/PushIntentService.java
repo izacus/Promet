@@ -3,8 +3,6 @@ package si.virag.promet.gcm;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -16,12 +14,13 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import dagger.android.AndroidInjection;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import si.virag.promet.MainActivity;
-
 import si.virag.promet.R;
 import si.virag.promet.utils.LocaleUtil;
 import si.virag.promet.utils.PrometSettings;

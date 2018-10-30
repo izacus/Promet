@@ -1,8 +1,6 @@
 package si.virag.promet.fragments.events;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.format.DateUtils;
@@ -14,6 +12,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import de.greenrobot.event.EventBus;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractSectionableItem;
@@ -70,12 +70,7 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
                                                                     System.currentTimeMillis(),
                                                                     DateUtils.MINUTE_IN_MILLIS,
                                                                     DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_ABBREV_WEEKDAY).toString().toLowerCase());
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EventBus.getDefault().post(new Events.ShowPointOnMap(new LatLng(event.lat, event.lng)));
-            }
-        });
+        holder.view.setOnClickListener(v -> EventBus.getDefault().post(new Events.ShowPointOnMap(new LatLng(event.lat, event.lng))));
     }
 
     @NonNull
@@ -86,18 +81,18 @@ public class EventItem extends AbstractSectionableItem<EventItem.EventItemHolder
     public static class EventItemHolder extends FlexibleViewHolder {
 
         public View view;
-        public TextView titleView;
-        public TextView descriptionView;
-        public TextView timeView;
-        public TextView locationView;
+        TextView titleView;
+        TextView descriptionView;
+        TextView timeView;
+        TextView locationView;
 
-        public EventItemHolder(View view, FlexibleAdapter adapter) {
+        private EventItemHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
             this.view = view.findViewById(R.id.item_event);
-            this.titleView = (TextView) view.findViewById(R.id.item_event_title);
-            this.descriptionView = (TextView) view.findViewById(R.id.item_event_description);
-            this.timeView = (TextView)view.findViewById(R.id.item_event_time);
-            this.locationView = (TextView)view.findViewById(R.id.item_event_location);
+            this.titleView = view.findViewById(R.id.item_event_title);
+            this.descriptionView = view.findViewById(R.id.item_event_description);
+            this.timeView = view.findViewById(R.id.item_event_time);
+            this.locationView = view.findViewById(R.id.item_event_location);
         }
     }
 }

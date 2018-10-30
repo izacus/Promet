@@ -27,6 +27,11 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
     }
 
     @Override
+    public int getExpansionLevel() {
+        return 1;
+    }
+
+    @Override
     public int getLayoutRes() {
         return R.layout.item_header;
     }
@@ -47,6 +52,7 @@ public class CameraHeaderItem extends AbstractExpandableHeaderItem<CameraHeaderI
 
         CameraHeaderItemHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter, true);
+            view.setOnClickListener(l -> toggleExpansion());
             title = view.findViewById(R.id.item_header_title);
         }
 

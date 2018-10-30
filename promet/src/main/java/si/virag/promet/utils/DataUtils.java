@@ -7,8 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.AppCompatDrawableManager;
 
 import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
@@ -18,6 +16,8 @@ import com.crashlytics.android.Crashlytics;
 
 import org.threeten.bp.ZonedDateTime;
 
+import androidx.appcompat.widget.AppCompatDrawableManager;
+import androidx.core.graphics.drawable.DrawableCompat;
 import si.virag.promet.api.model.EventGroup;
 
 public class DataUtils {

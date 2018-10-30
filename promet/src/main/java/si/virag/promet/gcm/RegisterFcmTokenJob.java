@@ -5,16 +5,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobRequest;
-import com.google.android.gms.tasks.OnCanceledListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -25,11 +21,8 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-
+import androidx.annotation.NonNull;
 import rx.Single;
-import rx.SingleEmitter;
-import rx.SingleSubscriber;
-import rx.functions.Action1;
 import si.virag.promet.PrometApplication;
 import si.virag.promet.api.push.PrometPushApi;
 import si.virag.promet.utils.PrometSettings;

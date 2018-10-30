@@ -2,8 +2,6 @@ package si.virag.promet.fragments.ui;
 
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -20,6 +18,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import de.greenrobot.event.EventBus;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import si.virag.promet.Events;
@@ -160,7 +160,7 @@ public class EventListAdaper extends BaseAdapter implements StickyListHeadersAda
         return 0;
     }
 
-    private static class EventItemHolder {
+    private static final class EventItemHolder {
         public CardView card;
         public TextView titleView;
         public TextView descriptionView;

@@ -8,8 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.PermissionChecker;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -35,11 +33,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import si.virag.promet.CameraDetailActivity;
 import si.virag.promet.Events;
@@ -78,7 +76,6 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
     private Context context;
     private GoogleMap map;
     private Map<Marker, String> markerIdMap;
-    private boolean isSlovenianLocale;
 
     private Map<String, PrometCamera> cameraMap;
     private LinkedHashMap<String, Drawable> cameraBitmapMap = new LinkedHashMap<String, Drawable>() {
@@ -97,7 +94,6 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
 
         this.context = ctx;
         this.map = gMap;
-        this.isSlovenianLocale = LocaleUtil.isSlovenianLocale();
 
         // Center on Slovenia initially
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(MAP_CENTER, 10.0f));
@@ -141,7 +137,6 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
             initializeMarkers(ctx);
 
         this.map = gMap;
-        this.isSlovenianLocale = LocaleUtil.isSlovenianLocale();
 
         // Center on Slovenia initially
         map.setTrafficEnabled(true);
@@ -202,62 +197,56 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
         cameraBitmapMap.clear();
 
         Observable<Pair<String, MarkerOptions>> eventsObservable =  Observable.from(prometEvents)
-            .map(new Func1<PrometEvent, Pair<String, MarkerOptions>>() {
-              @Override
-              public Pair<String, MarkerOptions> call(PrometEvent event) {
-                  MarkerOptions opts = new MarkerOptions();
-                  opts.position(new LatLng(event.lat, event.lng))
-                      .title(LocaleUtil.isSlovenianLocale() ? event.causeSl : event.causeEn)
-                      .snippet(LocaleUtil.isSlovenianLocale() ? event.roadNameSl.trim() : event.roadNameEn.trim());
+            .map(event -> {
+                MarkerOptions opts = new MarkerOptions();
+                opts.position(new LatLng(event.lat, event.lng))
+                    .title(LocaleUtil.isSlovenianLocale() ? event.causeSl : event.causeEn)
+                    .snippet(LocaleUtil.isSlovenianLocale() ? event.roadNameSl.trim() : event.roadNameEn.trim());
 
-                  BitmapDescriptor icon = null;
-                  if (event.isHighPriority()) {
-                      icon = RED_MARKER;
-                  } else if (event.isRoadworks()) {
-                      icon = CONE_MARKER;
-                      opts.anchor(0.5f, 0.9f);
-                  } else if (event.eventGroup == null) {
-                      icon = ORANGE_MARKER;
-                  } else {
-                      switch (event.eventGroup) {
-                          case AVTOCESTA:
-                              icon = GREEN_MARKER;
-                              break;
-                          case HITRA_CESTA:
-                              icon = AZURE_MARKER;
-                              break;
-                          case MEJNI_PREHOD:
-                              icon = ORANGE_MARKER;
-                              break;
-                          case REGIONALNA_CESTA:
-                          case LOKALNA_CESTA:
-                              icon = YELLOW_MARKER;
-                              break;
-                      }
-                  }
+                BitmapDescriptor icon = null;
+                if (event.isHighPriority()) {
+                    icon = RED_MARKER;
+                } else if (event.isRoadworks()) {
+                    icon = CONE_MARKER;
+                    opts.anchor(0.5f, 0.9f);
+                } else if (event.eventGroup == null) {
+                    icon = ORANGE_MARKER;
+                } else {
+                    switch (event.eventGroup) {
+                        case AVTOCESTA:
+                            icon = GREEN_MARKER;
+                            break;
+                        case HITRA_CESTA:
+                            icon = AZURE_MARKER;
+                            break;
+                        case MEJNI_PREHOD:
+                            icon = ORANGE_MARKER;
+                            break;
+                        case REGIONALNA_CESTA:
+                        case LOKALNA_CESTA:
+                            icon = YELLOW_MARKER;
+                            break;
+                    }
+                }
 
-                  opts.icon(icon);
-                  opts.draggable(false);
-                  opts.zIndex(15.0f);
-                  return new Pair<>("e" + event.id, opts);
-              }
+                opts.icon(icon);
+                opts.draggable(false);
+                opts.zIndex(15.0f);
+                return new Pair<>("e" + event.id, opts);
             });
 
         Observable<Pair<String, MarkerOptions>> camerasObservable = Observable.from(prometCameras)
-            .map(new Func1<PrometCamera, Pair<String, MarkerOptions>>() {
-              @Override
-              public Pair<String, MarkerOptions> call(PrometCamera prometCamera) {
-                  cameraMap.put("c" + prometCamera.id, prometCamera);
-                  MarkerOptions options = new MarkerOptions()
-                             .position(new LatLng(prometCamera.lat, prometCamera.lng))
-                             .draggable(false)
-                             .anchor(0.5f, 0.5f)
-                             .zIndex(5.0f)
-                             .title(prometCamera.id)
-                             .snippet(prometCamera.getText())
-                             .icon(CAMERA_MARKER);
-                  return new Pair<>("c" + prometCamera.id, options);
-              }
+            .map(prometCamera -> {
+                cameraMap.put("c" + prometCamera.id, prometCamera);
+                MarkerOptions options = new MarkerOptions()
+                           .position(new LatLng(prometCamera.lat, prometCamera.lng))
+                           .draggable(false)
+                           .anchor(0.5f, 0.5f)
+                           .zIndex(5.0f)
+                           .title(prometCamera.id)
+                           .snippet(prometCamera.getText())
+                           .icon(CAMERA_MARKER);
+                return new Pair<>("c" + prometCamera.id, options);
             });
 
 
@@ -265,12 +254,9 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
         Observable.concat(eventsObservable, camerasObservable)
                   .subscribeOn(Schedulers.computation())
                   .observeOn(AndroidSchedulers.mainThread())
-                  .subscribe(new Action1<Pair<String, MarkerOptions>>() {
-                      @Override
-                      public void call(Pair<String, MarkerOptions> stringMarkerOptionsPair) {
-                          Marker marker = map.addMarker(stringMarkerOptionsPair.second);
-                          markerIdMap.put(marker, stringMarkerOptionsPair.first);
-                      }
+                  .subscribe(stringMarkerOptionsPair -> {
+                      Marker marker = map.addMarker(stringMarkerOptionsPair.second);
+                      markerIdMap.put(marker, stringMarkerOptionsPair.first);
                   });
     }
 
@@ -310,10 +296,10 @@ public class PrometMaps implements GoogleMap.OnInfoWindowClickListener, GoogleMa
         if (id == null || !id.startsWith("c")) return null;
 
         View infoView = LayoutInflater.from(context).inflate(R.layout.info_camera_view, null);
-        TextView title = (TextView)infoView.findViewById(R.id.info_title);
+        TextView title = infoView.findViewById(R.id.info_title);
         title.setText(marker.getTitle());
 
-        ImageView imageView = (ImageView) infoView.findViewById(R.id.info_image);
+        ImageView imageView = infoView.findViewById(R.id.info_image);
         View loadingView = infoView.findViewById(R.id.info_loading);
 
         if (cameraBitmapMap.get(id) == null) {

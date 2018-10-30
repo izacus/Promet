@@ -1,7 +1,6 @@
 package si.virag.promet.gcm;
 
 import android.location.Location;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -15,7 +14,7 @@ import java.util.Calendar;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import dagger.Module;
+import androidx.annotation.NonNull;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import si.virag.promet.api.model.EventGroup;

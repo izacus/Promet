@@ -4,11 +4,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -28,8 +23,10 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import dagger.android.support.DaggerFragment;
 import de.greenrobot.event.EventBus;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
@@ -44,7 +41,6 @@ import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
-import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.data.PrometApi;
 import si.virag.promet.api.model.EventGroup;
@@ -59,12 +55,14 @@ public class EventListFragment extends DaggerFragment implements SwipeRefreshLay
 
     private static final String LOG_TAG = "Promet.EventList";
 
-    @Inject protected PrometApi prometApi;
-    @Inject protected PrometSettings prometSettings;
+    @Inject
+    protected PrometApi prometApi;
+    @Inject
+    protected PrometSettings prometSettings;
 
-    @BindView(R.id.events_list) protected RecyclerView list;
-    @BindView(R.id.events_refresh) protected SwipeRefreshLayout refreshLayout;
-    @BindView(R.id.events_empty) protected TextView emptyView;
+    private RecyclerView list;
+    private SwipeRefreshLayout refreshLayout;
+    private TextView emptyView;
 
     private TextView headerView;
 
@@ -82,19 +80,21 @@ public class EventListFragment extends DaggerFragment implements SwipeRefreshLay
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_list, container, false);
-        ButterKnife.bind(this, v);
+        list = v.findViewById(R.id.events_list);
+        refreshLayout = v.findViewById(R.id.events_refresh);
+        emptyView = v.findViewById(R.id.events_empty);
 
         LinearLayout headerViewContainer = new LinearLayout(getActivity());
         headerView = new TextView(getActivity());
         headerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         headerView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         headerView.setGravity(Gravity.CENTER);
-        headerView.setPadding(0, (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4.0f, getResources().getDisplayMetrics()), 0, 0);
+        headerView.setPadding(0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4.0f, getResources().getDisplayMetrics()), 0, 0);
         headerViewContainer.addView(headerView);
 
-        SystemBarTintManager manager = ((MainActivity)getActivity()).getTintManager();
+        SystemBarTintManager manager = ((MainActivity) getActivity()).getTintManager();
         list.setPadding(list.getPaddingTop(), list.getPaddingLeft(), list.getPaddingRight(), list.getPaddingBottom() + manager.getConfig().getPixelInsetBottom());
-        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        list.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         list.addItemDecoration(new FlexibleItemDecoration(getContext()).withDefaultDivider());
 
         refreshLayout.setOnRefreshListener(this);
@@ -117,8 +117,7 @@ public class EventListFragment extends DaggerFragment implements SwipeRefreshLay
         }
     }
 
-    private void loadEvents(final boolean force)
-    {
+    private void loadEvents(final boolean force) {
         refreshLayout.setRefreshing(true);
         Single<TrafficInfo> trafficInfo;
 
@@ -128,73 +127,73 @@ public class EventListFragment extends DaggerFragment implements SwipeRefreshLay
             trafficInfo = prometApi.getTrafficInfo();
 
         loadSubscription = trafficInfo.subscribeOn(Schedulers.io())
-                                  .observeOn(AndroidSchedulers.mainThread())
-                                  .flatMapObservable(new Func1<TrafficInfo, Observable<PrometEvent>>() {
-                                      @Override
-                                      public Observable<PrometEvent> call(TrafficInfo trafficInfo) {
-                                          return Observable.from(trafficInfo.events);
-                                      }
-                                  })
-                                  .filter(new EventListFilter(prometSettings))
-                                  .toSortedList(new Func2<PrometEvent, PrometEvent, Integer>() {
-                                      @Override
-                                      public Integer call(PrometEvent lhs, PrometEvent rhs) {
-                                          if (!rhs.isRoadworks() && lhs.isRoadworks())
-                                              return 1;
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMapObservable(new Func1<TrafficInfo, Observable<PrometEvent>>() {
+                    @Override
+                    public Observable<PrometEvent> call(TrafficInfo trafficInfo) {
+                        return Observable.from(trafficInfo.events);
+                    }
+                })
+                .filter(new EventListFilter(prometSettings))
+                .toSortedList(new Func2<PrometEvent, PrometEvent, Integer>() {
+                    @Override
+                    public Integer call(PrometEvent lhs, PrometEvent rhs) {
+                        if (!rhs.isRoadworks() && lhs.isRoadworks())
+                            return 1;
 
-                                          if (!lhs.isRoadworks() && rhs.isRoadworks())
-                                              return -1;
+                        if (!lhs.isRoadworks() && rhs.isRoadworks())
+                            return -1;
 
-                                          if (lhs.eventGroup != rhs.eventGroup) {
-                                              return lhs.eventGroup.ordinal() - rhs.eventGroup.ordinal();
-                                          }
+                        if (lhs.eventGroup != rhs.eventGroup) {
+                            return lhs.eventGroup.ordinal() - rhs.eventGroup.ordinal();
+                        }
 
-                                          return rhs.updated.compareTo(lhs.updated);
-                                      }
-                                  })
-                                  .subscribe(new Subscriber<List<PrometEvent>>() {
-                                      @Override
-                                      public void onNext(List<PrometEvent> prometEvents) {
-                                          prepareAndApplyData(prometEvents);
-                                          EventBus.getDefault().post(new Events.UpdateActivityHeader());
+                        return rhs.updated.compareTo(lhs.updated);
+                    }
+                })
+                .subscribe(new Subscriber<List<PrometEvent>>() {
+                    @Override
+                    public void onNext(List<PrometEvent> prometEvents) {
+                        prepareAndApplyData(prometEvents);
+                        EventBus.getDefault().post(new Events.UpdateActivityHeader());
 
-                                          // We might have a scroll event pending, execute it now.
-                                          Events.ShowEventInList eventInList = EventBus.getDefault().getStickyEvent(Events.ShowEventInList.class);
-                                          if (eventInList != null) {
-                                              scrollToEvent(eventInList.id);
-                                              EventBus.getDefault().removeStickyEvent(eventInList);
-                                          }
+                        // We might have a scroll event pending, execute it now.
+                        Events.ShowEventInList eventInList = EventBus.getDefault().getStickyEvent(Events.ShowEventInList.class);
+                        if (eventInList != null) {
+                            scrollToEvent(eventInList.id);
+                            EventBus.getDefault().removeStickyEvent(eventInList);
+                        }
 
-                                          if (force)
-                                              EventBus.getDefault().post(new Events.UpdateMap());
+                        if (force)
+                            EventBus.getDefault().post(new Events.UpdateMap());
 
-                                          list.setVisibility(View.VISIBLE);
-                                          emptyView.setVisibility(View.INVISIBLE);
-                                      }
+                        list.setVisibility(View.VISIBLE);
+                        emptyView.setVisibility(View.INVISIBLE);
+                    }
 
-                                      @Override
-                                      public void onCompleted() {
-                                          refreshLayout.setRefreshing(false);
-                                          loadSubscription = null;
-                                      }
+                    @Override
+                    public void onCompleted() {
+                        refreshLayout.setRefreshing(false);
+                        loadSubscription = null;
+                    }
 
-                                      @Override
-                                      public void onError(Throwable throwable) {
-                                          Log.e(LOG_TAG, "Error!", throwable);
-                                          refreshLayout.setRefreshing(false);
-                                          list.setVisibility(View.INVISIBLE);
-                                          emptyView.setVisibility(View.VISIBLE);
-                                          emptyView.setText(R.string.load_error);
-                                          Activity activity = getActivity();
-                                          if (activity != null) {
-                                            Snackbar.with(getActivity().getApplicationContext())
-                                                    .text(R.string.load_error)
-                                                    .textTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD))
-                                                    .color(Color.RED)
-                                                    .show(activity);
-                                          }
-                                      }
-                                  });
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e(LOG_TAG, "Error!", throwable);
+                        refreshLayout.setRefreshing(false);
+                        list.setVisibility(View.INVISIBLE);
+                        emptyView.setVisibility(View.VISIBLE);
+                        emptyView.setText(R.string.load_error);
+                        Activity activity = getActivity();
+                        if (activity != null) {
+                            Snackbar.with(getActivity().getApplicationContext())
+                                    .text(R.string.load_error)
+                                    .textTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD))
+                                    .color(Color.RED)
+                                    .show(activity);
+                        }
+                    }
+                });
     }
 
     private void prepareAndApplyData(List<PrometEvent> prometEvents) {

@@ -12,16 +12,6 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.franmontiel.localechanger.LocaleChanger;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.material.tabs.TabLayout;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -40,12 +31,19 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerAppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import dagger.android.AndroidInjection;
 import de.greenrobot.event.EventBus;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import rx.Subscriber;
 import si.virag.promet.fragments.CamerasFragment;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
@@ -55,7 +53,7 @@ import si.virag.promet.preferences.PrometPreferences;
 import si.virag.promet.utils.ActivityUtilities;
 import si.virag.promet.utils.PrometSettings;
 
-public class MainActivity extends DaggerAppCompatActivity
+public class MainActivity extends AppCompatActivity
 {
     public static final String PARAM_SHOW_LIST = "ShowList";
     public static final String PARAM_SHOW_ITEM_ID = "ShowListItemId";
@@ -69,6 +67,7 @@ public class MainActivity extends DaggerAppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         ActivityUtilities.setupTransluscentNavigation(this);
         supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);

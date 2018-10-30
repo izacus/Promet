@@ -5,11 +5,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,22 +14,22 @@ import com.nispok.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import dagger.android.support.DaggerFragment;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.common.FlexibleItemDecoration;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.data.PrometApi;
 import si.virag.promet.api.model.PrometCamera;
@@ -49,9 +44,9 @@ public class CamerasFragment extends DaggerFragment implements SwipeRefreshLayou
     @Inject
     PrometApi prometApi;
 
-    @BindView(R.id.cameras_empty) public TextView emptyView;
-    @BindView(R.id.cameras_refresh) public SwipeRefreshLayout refreshLayout;
-    @BindView(R.id.cameras_list) public RecyclerView list;
+    public TextView emptyView;
+    public SwipeRefreshLayout refreshLayout;
+    public RecyclerView list;
 
     @Nullable
     private Subscription loadSubscription;
@@ -60,10 +55,12 @@ public class CamerasFragment extends DaggerFragment implements SwipeRefreshLayou
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_cameras, container, false);
-        ButterKnife.bind(this, v);
+        emptyView = v.findViewById(R.id.cameras_empty);
+        refreshLayout = v.findViewById(R.id.cameras_refresh);
+        list = v.findViewById(R.id.cameras_list);
 
-        list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        list.addItemDecoration(new FlexibleItemDecoration(getActivity()).withDefaultDivider());
+        list.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+        list.addItemDecoration(new FlexibleItemDecoration(requireActivity()).withDefaultDivider());
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(R.color.refresh_color_1, R.color.refresh_color_2, R.color.refresh_color_3, R.color.refresh_color_4);
         return v;
@@ -139,12 +136,7 @@ public class CamerasFragment extends DaggerFragment implements SwipeRefreshLayou
             header.addSubItem(new CameraItem(header, camera));
         }
 
-        Collections.sort(items, new Comparator<CameraHeaderItem>() {
-            @Override
-            public int compare(CameraHeaderItem item1, CameraHeaderItem item2) {
-                return item1.title.compareTo(item2.title);
-            }
-        });
+        Collections.sort(items, (item1, item2) -> item1.title.compareTo(item2.title));
 
         if (list.getAdapter() == null) {
             final FlexibleAdapter<CameraHeaderItem> adapter = new FlexibleAdapter<>(items);

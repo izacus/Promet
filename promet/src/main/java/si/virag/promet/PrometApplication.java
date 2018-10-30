@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.support.multidex.MultiDex;
 
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.evernote.android.job.JobManager;
@@ -15,8 +14,9 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
 import java.util.Arrays;
 import java.util.Locale;
 
+import androidx.multidex.MultiDex;
 import dagger.android.AndroidInjector;
-import dagger.android.DaggerApplication;
+import dagger.android.support.DaggerApplication;
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import si.virag.promet.api.push.PushDataPrometApi;

@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.franmontiel.localechanger.LocaleChanger;
 
@@ -15,10 +12,11 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjection;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 import dagger.android.support.AndroidSupportInjection;
 import si.virag.promet.MainActivity;
-import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.gcm.RegisterFcmTokenJob;
 import si.virag.promet.utils.PrometSettings;
@@ -45,13 +43,10 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
         langPreference.setSummary(langPreference.getEntry());
 
         Preference privacyPreference = findPreference("privacy_policy");
-        privacyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL));
-                startActivity(intent);
-                return true;
-            }
+        privacyPreference.setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(PRIVACY_POLICY_URL));
+            startActivity(intent);
+            return true;
         });
     }
 

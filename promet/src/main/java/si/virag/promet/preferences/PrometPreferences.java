@@ -3,12 +3,12 @@ package si.virag.promet.preferences;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.franmontiel.localechanger.LocaleChanger;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import si.virag.promet.MainActivity;
 import si.virag.promet.R;
 
@@ -22,7 +22,7 @@ public class PrometPreferences extends AppCompatActivity {
         setContentView(R.layout.activity_preferences);
 
         // Fix actionbar name for other locales
-        toolbar = (Toolbar) findViewById(R.id.preferences_toolbar);
+        toolbar = findViewById(R.id.preferences_toolbar);
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

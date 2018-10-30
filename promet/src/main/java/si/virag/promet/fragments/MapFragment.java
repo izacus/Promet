@@ -5,18 +5,13 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.nispok.snackbar.Snackbar;
 
 import java.util.Collections;
@@ -24,8 +19,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import dagger.android.support.DaggerFragment;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
@@ -34,7 +29,6 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import si.virag.promet.Events;
 import si.virag.promet.MainActivity;
-import si.virag.promet.PrometApplication;
 import si.virag.promet.R;
 import si.virag.promet.api.data.PrometApi;
 import si.virag.promet.api.model.PrometCamera;
@@ -49,7 +43,7 @@ public class MapFragment extends DaggerFragment {
     private static final String LOG_TAG = "Promet.MapFragment";
 
     // Views
-    @BindView(R.id.map_map) protected MapView mapView;
+    protected MapView mapView;
 
     // Module dependencies
     @Inject
@@ -69,7 +63,7 @@ public class MapFragment extends DaggerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        ButterKnife.bind(this, view);
+        mapView = view.findViewById(R.id.map_map);
         mapView.onCreate(savedInstanceState);
         return view;
     }
@@ -120,21 +114,18 @@ public class MapFragment extends DaggerFragment {
     public void onResume() {
         super.onResume();
         mapView.onResume();
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap map) {
-                if (!isAdded()) return;
+        mapView.getMapAsync(map -> {
+            if (!isAdded()) return;
 
-                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    map.setPadding(0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetRight(), 0);
-                }
-                else {
-                    map.setPadding(0, 0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetBottom());
-                }
-
-                prometMaps.setMapInstance(getActivity(), map);
-                loadTrafficData();
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                map.setPadding(0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetRight(), 0);
             }
+            else {
+                map.setPadding(0, 0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetBottom());
+            }
+
+            prometMaps.setMapInstance(getActivity(), map);
+            loadTrafficData();
         });
 
     }

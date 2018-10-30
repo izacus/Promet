@@ -1,10 +1,10 @@
 package si.virag.promet;
 
-import android.support.annotation.Nullable;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import org.threeten.bp.LocalDateTime;
+
+import androidx.annotation.Nullable;
 
 public class Events {
 

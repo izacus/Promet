@@ -2,12 +2,12 @@ package si.virag.promet.fragments.ui;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import si.virag.promet.api.model.PrometCamera;
 import si.virag.promet.utils.DataUtils;
 

@@ -3,8 +3,6 @@ package si.virag.promet.fragments.cameras;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,6 +15,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.items.AbstractSectionableItem;
 import eu.davidea.viewholders.FlexibleViewHolder;
@@ -61,15 +61,12 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
             holder.setMapLocation(new LatLng(camera.lat, camera.lng));
         }
 
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(holder.container.getContext(), CameraDetailActivity.class);
-                i.putExtra("camera", camera);
-                ViewCompat.setTransitionName(holder.cameraView, "cameraView");
-                ViewCompat.setTransitionName(holder.mapView, "mapView");
-                holder.container.getContext().startActivity(i);
-            }
+        holder.container.setOnClickListener(view -> {
+            Intent i = new Intent(holder.container.getContext(), CameraDetailActivity.class);
+            i.putExtra("camera", camera);
+            ViewCompat.setTransitionName(holder.cameraView, "cameraView");
+            ViewCompat.setTransitionName(holder.mapView, "mapView");
+            holder.container.getContext().startActivity(i);
         });
     }
 
@@ -87,10 +84,10 @@ public class CameraItem extends AbstractSectionableItem<CameraItem.CameraItemHol
         CameraItemHolder(View view, FlexibleAdapter adapter) {
             super(view, adapter);
             container = view;
-            titleText = (TextView) view.findViewById(R.id.item_camera_title);
-            locationText = (TextView) view.findViewById(R.id.item_camera_location);
-            cameraView = (CameraView) view.findViewById(R.id.item_camera_view);
-            mapView = (MapView) view.findViewById(R.id.item_camera_map);
+            titleText = view.findViewById(R.id.item_camera_title);
+            locationText = view.findViewById(R.id.item_camera_location);
+            cameraView = view.findViewById(R.id.item_camera_view);
+            mapView = view.findViewById(R.id.item_camera_map);
             mapView.onCreate(null);
             mapView.getMapAsync(this);
         }

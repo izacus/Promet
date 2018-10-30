@@ -1,15 +1,11 @@
 package si.virag.promet.gcm;
 
-import android.app.IntentService;
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.NonNull;
-
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobRequest;
 
 import org.threeten.bp.Duration;
 
+import androidx.annotation.NonNull;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
