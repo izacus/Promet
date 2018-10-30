@@ -3,6 +3,7 @@ package si.virag.promet.gcm;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -16,12 +17,14 @@ import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import dagger.android.AndroidInjection;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import si.virag.promet.MainActivity;
 import si.virag.promet.R;
+import si.virag.promet.utils.DataUtils;
 import si.virag.promet.utils.LocaleUtil;
 import si.virag.promet.utils.PrometSettings;
 
@@ -100,7 +103,10 @@ public class PushIntentService extends FirebaseMessagingService {
         notification.setDefaults(NotificationCompat.DEFAULT_ALL);
         notification.setSmallIcon(R.drawable.ic_car);
         notification.setAutoCancel(true);
+        notification.setOnlyAlertOnce(true);
         notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        notification.setPriority(DataUtils.isHighPriorityCause(pushNotification.getCause()) ? NotificationCompat.PRIORITY_HIGH : NotificationCompat.PRIORITY_LOW);
+        notification.setColor(DataUtils.isHighPriorityCause(pushNotification.getCause()) ? ContextCompat.getColor(this, R.color.theme_color_highlight) : ContextCompat.getColor(this, R.color.theme_color));
 
         if (getNotificationDescription(pushNotification) != null && getNotificationDescription(pushNotification).length() > 0) {
             NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle(notification);
@@ -134,6 +140,8 @@ public class PushIntentService extends FirebaseMessagingService {
         notification.setDefaults(NotificationCompat.DEFAULT_ALL);
         notification.setSmallIcon(R.drawable.ic_car);
 
+        int priority = NotificationCompat.PRIORITY_LOW;
+
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle(notification);
 
         for (int i = 0; i < Math.min(pushNotifications.size(), 5); i++) {
@@ -149,6 +157,9 @@ public class PushIntentService extends FirebaseMessagingService {
         Set<String> causes = new HashSet<>();
         for (int i = 0; i < pushNotifications.size(); i++) {
             causes.add(getNotificationCause(pushNotifications.get(i)));
+            if (DataUtils.isHighPriorityCause(pushNotifications.get(i).getCause())) {
+                priority = NotificationCompat.PRIORITY_HIGH;
+            }
         }
 
         StringBuilder contentText = new StringBuilder();
@@ -156,14 +167,18 @@ public class PushIntentService extends FirebaseMessagingService {
             contentText.append(cause);
             contentText.append(", ");
         }
+
         contentText.delete(contentText.length() - 2, contentText.length());
         notification.setContentText(contentText.toString());
 
         notification.setStyle(style);
         notification.setShowWhen(true);
+        notification.setOnlyAlertOnce(true);
         notification.setWhen(pushNotifications.get(0).getCreated());
         notification.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         notification.setAutoCancel(true);
+        notification.setColor(priority == NotificationCompat.PRIORITY_HIGH ? ContextCompat.getColor(this, R.color.theme_color_highlight) : ContextCompat.getColor(this, R.color.theme_color));
+        notification.setPriority(priority);
 
         Intent clearIntent = new Intent(this, ClearNotificationsReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(this, 0, clearIntent, PendingIntent.FLAG_UPDATE_CURRENT);

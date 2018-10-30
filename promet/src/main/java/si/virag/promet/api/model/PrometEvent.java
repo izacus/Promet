@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
 
+import si.virag.promet.utils.DataUtils;
+
 
 public class PrometEvent implements Comparable {
 
@@ -57,7 +59,7 @@ public class PrometEvent implements Comparable {
     public boolean isBorderCrossing;
 
     public boolean isHighPriority() {
-        return "nesreča".equalsIgnoreCase(causeSl) || "zastoj".equalsIgnoreCase(causeSl);
+        return DataUtils.isHighPriorityCause(causeSl);
     }
 
     public boolean isRoadworks() {

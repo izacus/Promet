@@ -76,4 +76,8 @@ public class DataUtils {
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .signature(new StringSignature(String.valueOf(key)));
     }
+
+    public static boolean isHighPriorityCause(String causeSl) {
+        return "nesreča".equalsIgnoreCase(causeSl) || "zastoj".equalsIgnoreCase(causeSl);
+    }
 }
