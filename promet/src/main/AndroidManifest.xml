@@ -25,6 +25,9 @@
         android:name=".PrometApplication"
         tools:ignore="GoogleAppIndexingWarning">
 
+        <!-- Required to not make maps crash on P. -->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
         <activity
             android:name="si.virag.promet.MainActivity"
             android:logo="@drawable/logo"

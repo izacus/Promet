@@ -1,15 +1,16 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
+        jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.google.gms:google-services:4.1.0'
+        classpath 'com.android.tools.build:gradle:3.3.0-rc03'
+        classpath 'com.google.gms:google-services:4.2.0'
         classpath 'io.fabric.tools:gradle:1.+'
-        classpath "io.realm:realm-gradle-plugin:5.7.1"
+        classpath "io.realm:realm-gradle-plugin:5.8.0"
         classpath 'com.google.firebase:firebase-plugins:1.1.5'
     }
 }
@@ -39,7 +40,7 @@ android {
         applicationId "si.virag.promet"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 2500
+        versionCode 2700
         versionName "1.8.3"
         resConfigs "en", "sl"
     }
@@ -51,14 +52,22 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            multiDexEnabled false
+            multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
+
+            ndk {
+                abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
+            }
         }
         debug {
             minifyEnabled true
-            shrinkResources false
+            shrinkResources true
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
+
+            ndk {
+                abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
+            }
         }
     }
     lintOptions {
@@ -69,10 +78,10 @@ android {
 
 dependencies {
     // Support
-    implementation "androidx.multidex:multidex:2.0.0"
-    implementation "androidx.core:core:$androidxLibraryVersion"
+    implementation "androidx.multidex:multidex:2.0.1"
+    implementation "androidx.core:core:1.0.1"
     implementation "androidx.annotation:annotation:$androidxLibraryVersion"
-    implementation "androidx.appcompat:appcompat:$androidxLibraryVersion"
+    implementation "androidx.appcompat:appcompat:1.0.2"
     implementation "androidx.cardview:cardview:$androidxLibraryVersion"
     implementation "androidx.recyclerview:recyclerview:$androidxLibraryVersion"
     implementation "androidx.preference:preference:$androidxLibraryVersion"
@@ -103,9 +112,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-gcm:16.0.0'
-    implementation 'com.google.firebase:firebase-core:16.0.4'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
-    implementation 'com.google.firebase:firebase-perf:16.2.0'
+    implementation 'com.google.firebase:firebase-perf:16.2.3'
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:3.8.0'
@@ -125,7 +134,7 @@ dependencies {
     implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
     // Android 6 permissions
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.8@aar') {
         transitive = true
     }
 }

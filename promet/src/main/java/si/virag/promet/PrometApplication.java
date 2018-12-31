@@ -30,13 +30,13 @@ public class PrometApplication extends DaggerApplication {
 
     @Override
     public void onCreate() {
-        super.onCreate();
-
-        LocaleChanger.initialize(this, Arrays.asList(new Locale("en"), new Locale("sl")));
         CrashlyticsCore crashlyticsCore = new CrashlyticsCore.Builder()
                 .disabled(BuildConfig.DEBUG)
                 .build();
         Fabric.with(this, crashlyticsCore);
+        super.onCreate();
+
+        LocaleChanger.initialize(this, Arrays.asList(new Locale("en"), new Locale("sl")));
         AndroidThreeTen.init(this);
         Realm.init(this);
         createNotificationChannel();
@@ -69,9 +69,7 @@ public class PrometApplication extends DaggerApplication {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        if (BuildConfig.DEBUG) {
-            MultiDex.install(this);
-        }
+        MultiDex.install(this);
     }
 
     @Override
