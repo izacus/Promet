@@ -4,16 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
+
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
@@ -32,8 +35,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import androidx.core.content.ContextCompat;
-import androidx.core.content.PermissionChecker;
 import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -74,7 +75,7 @@ public final class PrometMaps implements GoogleMap.OnInfoWindowClickListener, Go
     };
 
     @Inject
-    public PrometMaps() {}
+    PrometMaps() {}
 
     public void setMapInstance(Context ctx, GoogleMap gMap) {
         if (gMap == null)
@@ -100,12 +101,9 @@ public final class PrometMaps implements GoogleMap.OnInfoWindowClickListener, Go
         uiSettings.setMyLocationButtonEnabled(true);
         uiSettings.setMapToolbarEnabled(false);
 
-        map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10.0f));
-                map.setOnMyLocationChangeListener(null);
-            }
+        map.setOnMyLocationChangeListener(location -> {
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10.0f));
+            map.setOnMyLocationChangeListener(null);
         });
 
         map.setOnInfoWindowClickListener(this);
@@ -284,13 +282,18 @@ public final class PrometMaps implements GoogleMap.OnInfoWindowClickListener, Go
 
         if (cameraBitmapMap.get(id) == null) {
             DataUtils.getCameraImageLoader(context, cameraMap.get(id).getImageLink())
-                     .into(new SimpleTarget<GlideDrawable>() {
-                         @Override
-                         public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                             cameraBitmapMap.put(id, resource);
-                             marker.showInfoWindow();
-                         }
-                     });
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            cameraBitmapMap.put(id, resource);
+                            marker.showInfoWindow();
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            // Nothing TBD
+                        }
+                    });
 
             imageView.setVisibility(View.INVISIBLE);
         } else {

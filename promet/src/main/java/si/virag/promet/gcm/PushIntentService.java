@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -19,9 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import dagger.android.AndroidInjection;
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
+import si.virag.promet.BuildConfig;
 import si.virag.promet.MainActivity;
 import si.virag.promet.R;
 import si.virag.promet.utils.DataUtils;
@@ -38,6 +41,12 @@ public class PushIntentService extends FirebaseMessagingService {
     @Override
     public void onCreate() {
         AndroidInjection.inject(this);
+        if (!Fabric.isInitialized()) {
+            CrashlyticsCore crashlyticsCore = new CrashlyticsCore.Builder()
+                    .disabled(BuildConfig.DEBUG)
+                    .build();
+            Fabric.with(this, crashlyticsCore);
+        }
         super.onCreate();
     }
 

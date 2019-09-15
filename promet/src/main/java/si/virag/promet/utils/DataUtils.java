@@ -8,17 +8,18 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
-import com.bumptech.glide.DrawableRequestBuilder;
+import androidx.core.content.ContextCompat;
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.signature.StringSignature;
+import com.bumptech.glide.signature.ObjectKey;
 import com.crashlytics.android.Crashlytics;
 
 import org.threeten.bp.ZonedDateTime;
 
 import java.util.Locale;
 
-import androidx.core.content.ContextCompat;
 import si.virag.promet.api.model.EventGroup;
 
 public class DataUtils {
@@ -66,15 +67,15 @@ public class DataUtils {
         return bitmap;
     }
 
-    public static DrawableRequestBuilder<String> getCameraImageLoader(Context context, String url) {
+    public static RequestBuilder<Drawable> getCameraImageLoader(Context context, String url) {
         // We mix in time rounded down to 5 minute segments to timeout cache after 5 mins
         ZonedDateTime time = ZonedDateTime.now();
-        String key = String.valueOf(time.getHour()) + String.valueOf((time.getMinute() / 5) * 5);
+        String key = time.getHour() + String.valueOf((time.getMinute() / 5) * 5);
 
         return Glide.with(context)
                     .load(url)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .signature(new StringSignature(String.valueOf(key)));
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .signature(new ObjectKey(key));
     }
 
     public static boolean isHighPriorityCause(String causeSl) {

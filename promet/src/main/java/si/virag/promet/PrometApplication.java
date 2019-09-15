@@ -30,10 +30,12 @@ public class PrometApplication extends DaggerApplication {
 
     @Override
     public void onCreate() {
-        CrashlyticsCore crashlyticsCore = new CrashlyticsCore.Builder()
-                .disabled(BuildConfig.DEBUG)
-                .build();
-        Fabric.with(this, crashlyticsCore);
+        if (!Fabric.isInitialized()) {
+            CrashlyticsCore crashlyticsCore = new CrashlyticsCore.Builder()
+                    .disabled(BuildConfig.DEBUG)
+                    .build();
+            Fabric.with(this, crashlyticsCore);
+        }
         super.onCreate();
 
         LocaleChanger.initialize(this, Arrays.asList(new Locale("en"), new Locale("sl")));

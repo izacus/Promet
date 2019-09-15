@@ -7,18 +7,18 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-rc03'
-        classpath 'com.google.gms:google-services:4.2.0'
+        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.google.gms:google-services:4.3.2'
         classpath 'io.fabric.tools:gradle:1.+'
-        classpath "io.realm:realm-gradle-plugin:5.8.0"
-        classpath 'com.google.firebase:firebase-plugins:1.1.5'
+        classpath "io.realm:realm-gradle-plugin:5.15.1"
+        classpath 'com.google.firebase:perf-plugin:1.3.1'
     }
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'io.fabric'
 apply plugin: 'realm-android'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 repositories {
     google()
@@ -29,19 +29,19 @@ repositories {
 
 ext {
     androidxLibraryVersion = '1.0.0'
-    retrofitVersion = '2.4.0'
+    retrofitVersion = '2.6.1'
     daggerVersion = '2.19'
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "si.virag.promet"
         minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 2800
-        versionName "1.8.5"
+        targetSdkVersion 29
+        versionCode 2900
+        versionName "1.9.0"
         resConfigs "en", "sl"
     }
     compileOptions {
@@ -54,20 +54,12 @@ android {
             shrinkResources true
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
-
-            ndk {
-                abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
-            }
         }
         debug {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
-
-            ndk {
-                abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
-            }
         }
     }
     lintOptions {
@@ -79,12 +71,12 @@ android {
 dependencies {
     // Support
     implementation "androidx.multidex:multidex:2.0.1"
-    implementation "androidx.core:core:1.0.1"
+    implementation "androidx.core:core:1.1.0"
     implementation "androidx.annotation:annotation:$androidxLibraryVersion"
-    implementation "androidx.appcompat:appcompat:1.0.2"
+    implementation "androidx.appcompat:appcompat:1.1.0"
     implementation "androidx.cardview:cardview:$androidxLibraryVersion"
     implementation "androidx.recyclerview:recyclerview:$androidxLibraryVersion"
-    implementation "androidx.preference:preference:$androidxLibraryVersion"
+    implementation "androidx.preference:preference:1.1.0"
     implementation "androidx.viewpager:viewpager:$androidxLibraryVersion"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidxLibraryVersion"
     implementation "com.google.android.material:material:$androidxLibraryVersion"
@@ -97,8 +89,8 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.14.3'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.3'
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
@@ -106,21 +98,22 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 
     // RxJava
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
     implementation 'io.reactivex:rxandroid:1.2.1'
 
     // Play Services
-    implementation 'com.google.android.gms:play-services-maps:16.0.0'
-    implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.android.gms:play-services-gcm:16.0.0'
-    implementation 'com.google.firebase:firebase-core:16.0.6'
-    implementation 'com.google.firebase:firebase-messaging:17.3.4'
-    implementation 'com.google.firebase:firebase-perf:16.2.3'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.2.0'
+    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+    implementation 'com.google.firebase:firebase-perf:19.0.0'
 
     // Glide
-    implementation 'com.github.bumptech.glide:glide:3.8.0'
-    implementation 'com.github.bumptech.glide:okhttp3-integration:1.5.0@aar'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0@aar'
 
-    implementation 'com.evernote:android-job:1.2.5'
+    implementation 'com.evernote:android-job:1.2.6'
     implementation 'com.nispok:snackbar:2.11.0'
     implementation 'se.emilsjolander:stickylistheaders:2.7.0'
     implementation 'eu.davidea:flexible-adapter:5.1.0'
@@ -131,10 +124,12 @@ dependencies {
     }
     implementation 'com.readystatesoftware.systembartint:systembartint:1.0.4'
     implementation 'de.greenrobot:eventbus:2.4.0'
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
     // Android 6 permissions
-    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.8@aar') {
+    implementation('com.github.tbruyelle:rxpermissions:0.10.2') {
+        transitive = true
+    }
+    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true
     }
 }
