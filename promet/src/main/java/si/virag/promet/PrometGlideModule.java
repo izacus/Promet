@@ -1,5 +1,6 @@
 package si.virag.promet;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -35,10 +36,12 @@ public class PrometGlideModule extends AppGlideModule {
         // Instead of falling back to HTTP, we don't verify the chain for image loading.
         final TrustManager[] trustAllCerts = new TrustManager[] {
                 new X509TrustManager() {
+                    @SuppressLint("TrustAllX509TrustManager")
                     @Override
                     public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
                     }
 
+                    @SuppressLint("TrustAllX509TrustManager")
                     @Override
                     public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
                     }
