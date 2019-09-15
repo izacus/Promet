@@ -16,7 +16,7 @@
         android:textSize="14sp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:textColor="@color/theme_color_highlight"
+        android:textColor="@color/theme_text_high_priority_color"
         />
 
 </FrameLayout>

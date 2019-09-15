@@ -10,6 +10,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
 import java.util.Collections;
 import java.util.List;
@@ -138,6 +139,12 @@ public class CameraDetailActivity extends DaggerAppCompatActivity implements OnM
     @Override
     public void onMapReady(GoogleMap map) {
         this.map = map;
+        if ((getResources().getConfiguration().uiMode &
+                Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+            map.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            CameraDetailActivity.this, R.raw.night_map));
+        }
         prometMaps.setMapInstanceForDetailView(this, map);
         displayMapMarkers();
     }

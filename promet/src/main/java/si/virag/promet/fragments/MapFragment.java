@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.nispok.snackbar.Snackbar;
 
 import java.util.Collections;
@@ -116,6 +117,12 @@ public class MapFragment extends DaggerFragment {
         mapView.onResume();
         mapView.getMapAsync(map -> {
             if (!isAdded()) return;
+            if ((getResources().getConfiguration().uiMode &
+                    Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+                map.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                                getContext(), R.raw.night_map));
+            }
 
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 map.setPadding(0, 0, ((MainActivity) getActivity()).getTintManager().getConfig().getPixelInsetRight(), 0);

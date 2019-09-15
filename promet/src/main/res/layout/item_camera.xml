@@ -17,7 +17,7 @@
         android:textSize="18sp"
         android:singleLine="true"
         android:ellipsize="end"
-        android:textColor="@color/theme_color"
+        android:textColor="@color/theme_text_color"
         />
 
     <TextView
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="12sp"
-        android:textColor="@color/theme_color"
+        android:textColor="@color/theme_text_color"
 
         android:layout_below="@id/item_camera_title"
         android:layout_alignLeft="@id/item_camera_title"

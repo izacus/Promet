@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:gravity="center"
-        android:textColor="@android:color/black"
+        android:textColor="?android:textColor"
         android:layout_marginBottom="2dp"
         />
 
@@ -25,7 +25,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/loading"
-            android:textColor="@android:color/tertiary_text_light"
+            android:textColor="?android:textColorTertiary"
             />
 
         <ImageView

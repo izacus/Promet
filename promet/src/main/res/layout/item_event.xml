@@ -22,7 +22,7 @@
             android:textSize="18sp"
             android:singleLine="true"
             android:ellipsize="end"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/theme_text_color"
             />
 
 
@@ -40,7 +40,7 @@
             android:textStyle="normal"
             android:textSize="12sp"
             android:gravity="top|right"
-            android:textColor="@android:color/tertiary_text_light"
+            android:textColor="?android:textColorTertiary"
             android:fontFamily="sans-serif-light"
             tools:ignore="UnusedAttribute" />
 
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
-            android:textColor="@color/theme_color"
+            android:textColor="@color/theme_text_color"
 
             android:layout_below="@id/item_event_title"
             android:layout_alignLeft="@id/item_event_title"
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/item_event_location"
             android:layout_marginTop="8dp"
-            android:textColor="@android:color/secondary_text_light"
+            android:textColor="?android:textColorSecondary"
             android:fontFamily="sans-serif-light"
             android:textSize="14sp"
             style="?android:textAppearanceListItemSmall"

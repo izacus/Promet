@@ -2,6 +2,7 @@ package si.virag.promet.fragments.cameras;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 
 import java.util.List;
 
@@ -101,6 +103,13 @@ public final class CameraItem extends AbstractSectionableItem<CameraItem.CameraI
         @Override
         public void onMapReady(GoogleMap googleMap) {
             this.map = googleMap;
+            if ((cameraView.getResources().getConfiguration().uiMode &
+                    Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
+                map.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                                cameraView.getContext(), R.raw.night_map));
+            }
+
             map.setBuildingsEnabled(false);
             map.setIndoorEnabled(false);
 

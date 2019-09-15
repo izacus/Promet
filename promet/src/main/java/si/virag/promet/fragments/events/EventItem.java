@@ -55,7 +55,7 @@ public final class EventItem extends AbstractSectionableItem<EventItem.EventItem
         SpannableString titleText = new SpannableString(isSlovenianLocale ? event.causeSl : event.causeEn);
         SpannableString locationText = new SpannableString(isSlovenianLocale ? event.roadNameSl.trim() : event.roadNameEn);
         if (event.isHighPriority()) {
-            int color = ContextCompat.getColor(holder.view.getContext(), android.R.color.holo_red_dark);
+            int color = ContextCompat.getColor(holder.view.getContext(), R.color.theme_text_high_priority_color);
             titleText.setSpan(new ForegroundColorSpan(color), 0, titleText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             locationText.setSpan(new ForegroundColorSpan(color), 0, locationText.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
