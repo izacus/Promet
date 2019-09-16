@@ -6,19 +6,20 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+
 import com.franmontiel.localechanger.LocaleChanger;
 
 import java.util.Locale;
 
 import javax.inject.Inject;
 
-import androidx.preference.ListPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
 import dagger.android.support.AndroidSupportInjection;
 import si.virag.promet.MainActivity;
 import si.virag.promet.R;
-import si.virag.promet.gcm.RegisterFcmTokenJob;
+import si.virag.promet.gcm.SetupPushRegistrationWorker;
 import si.virag.promet.utils.PrometSettings;
 
 public class PrometPreferencesFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -69,7 +70,7 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
             startActivity(i);
         } else if (key.equalsIgnoreCase("gcm_enabled")) {
             checkSetEnabledNotificationPreferences();
-            sharedPreferences.edit().putBoolean(RegisterFcmTokenJob.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
+            sharedPreferences.edit().putBoolean(SetupPushRegistrationWorker.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
         }
 
         settings.reload();
@@ -90,7 +91,7 @@ public class PrometPreferencesFragment extends PreferenceFragmentCompat implemen
         if (activity == null) return;
 
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-        RegisterFcmTokenJob.scheduleGcmUpdate();
+        SetupPushRegistrationWorker.scheduleGcmUpdate(getContext().getApplicationContext());
     }
 
 

@@ -50,7 +50,7 @@ import si.virag.promet.fragments.CamerasFragment;
 import si.virag.promet.fragments.EventListFragment;
 import si.virag.promet.fragments.MapFragment;
 import si.virag.promet.gcm.ClearNotificationsJob;
-import si.virag.promet.gcm.RegisterFcmTokenJob;
+import si.virag.promet.gcm.SetupPushRegistrationWorker;
 import si.virag.promet.preferences.PrometPreferences;
 import si.virag.promet.utils.ActivityUtilities;
 import si.virag.promet.utils.PrometSettings;
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void clearPendingNotifications() {
-        ClearNotificationsJob.schedule();
+        ClearNotificationsJob.schedule(getApplicationContext());
     }
 
     @Override
@@ -137,10 +137,10 @@ public class MainActivity extends AppCompatActivity
                                   @Override
                                   public void onPositive(MaterialDialog dialog) {
                                       prefs.edit().putBoolean(PrometSettings.PREF_NOTIFICATIONS, true)
-                                                  .putBoolean(RegisterFcmTokenJob.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
+                                                  .putBoolean(SetupPushRegistrationWorker.PREF_SHOULD_UPDATE_GCM_REGISTRATION, true).apply();
                                       prometSettings.reload();
 
-                                      RegisterFcmTokenJob.scheduleGcmUpdate();
+                                      SetupPushRegistrationWorker.scheduleGcmUpdate(getApplicationContext());
                                       showPreferences();
                                   }
 

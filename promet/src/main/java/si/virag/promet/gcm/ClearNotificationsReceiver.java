@@ -8,6 +8,6 @@ public class ClearNotificationsReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        ClearNotificationsJob.schedule();
+        ClearNotificationsJob.schedule(context);
     }
 }

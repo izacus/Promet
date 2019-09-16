@@ -6,23 +6,22 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 
+import androidx.multidex.MultiDex;
+
 import com.crashlytics.android.core.CrashlyticsCore;
-import com.evernote.android.job.JobManager;
 import com.franmontiel.localechanger.LocaleChanger;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.util.Arrays;
 import java.util.Locale;
 
-import androidx.multidex.MultiDex;
 import dagger.android.AndroidInjector;
 import dagger.android.support.DaggerApplication;
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import si.virag.promet.api.push.PushDataPrometApi;
 import si.virag.promet.gcm.PushIntentService;
-import si.virag.promet.gcm.RegisterFcmTokenJob;
-import si.virag.promet.gcm.ScheduledJobCreator;
+import si.virag.promet.gcm.SetupPushRegistrationWorker;
 
 public class PrometApplication extends DaggerApplication {
 
@@ -42,9 +41,7 @@ public class PrometApplication extends DaggerApplication {
         AndroidThreeTen.init(this);
         Realm.init(this);
         createNotificationChannel();
-
-        JobManager.create(this).addJobCreator(new ScheduledJobCreator());
-        RegisterFcmTokenJob.scheduleGcmUpdate();
+        SetupPushRegistrationWorker.scheduleGcmUpdate(this);
     }
 
     @Override

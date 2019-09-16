@@ -3,7 +3,10 @@ package si.virag.promet.gcm;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.Color;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
@@ -16,9 +19,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 import dagger.android.AndroidInjection;
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
@@ -48,12 +48,6 @@ public class PushIntentService extends FirebaseMessagingService {
             Fabric.with(this, crashlyticsCore);
         }
         super.onCreate();
-    }
-
-    @Override
-    public void onNewToken(String s) {
-        super.onNewToken(s);
-        RegisterFcmTokenJob.scheduleGcmUpdate();
     }
 
     @Override

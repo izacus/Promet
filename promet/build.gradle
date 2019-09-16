@@ -40,7 +40,7 @@ android {
         applicationId "si.virag.promet"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 2900
+        versionCode 3000
         versionName "1.9.0"
         resConfigs "en", "sl"
     }
@@ -113,7 +113,11 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0@aar'
 
-    implementation 'com.evernote:android-job:1.2.6'
+    // WorkManager
+    implementation 'androidx.work:work-runtime:2.2.0'
+    implementation 'androidx.work:work-rxjava2:2.2.0'
+    implementation 'androidx.work:work-gcm:2.2.0'
+
     implementation 'com.nispok:snackbar:2.11.0'
     implementation 'se.emilsjolander:stickylistheaders:2.7.0'
     implementation 'eu.davidea:flexible-adapter:5.1.0'

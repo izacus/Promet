@@ -1,30 +1,31 @@
 package si.virag.promet.gcm;
 
-import com.evernote.android.job.Job;
-import com.evernote.android.job.JobRequest;
-
-import org.threeten.bp.Duration;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public final class ClearNotificationsJob extends Job {
+public final class ClearNotificationsJob extends Worker {
 
-    public static final String TAG = "clear_notifications_job";
-
-    public static void schedule() {
-        new JobRequest.Builder(TAG)
-                .setUpdateCurrent(true)
-                .setExecutionWindow(1, Duration.ofHours(1).toMillis())
-                .build()
-                .scheduleAsync();
+    public static void schedule(Context context) {
+        OneTimeWorkRequest request = new OneTimeWorkRequest.Builder(ClearNotificationsJob.class)
+                .build();
+        WorkManager.getInstance(context).enqueue(request);
     }
 
+    public ClearNotificationsJob(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        super(context, workerParams);
+    }
 
     @NonNull
     @Override
-    protected Result onRunJob(@NonNull Params params) {
+    public Result doWork() {
         RealmConfiguration configuration = new RealmConfiguration.Builder()
                 .name("default.realm")
                 .deleteRealmIfMigrationNeeded()
@@ -35,6 +36,6 @@ public final class ClearNotificationsJob extends Job {
         realm.where(PushNotification.class).findAll().deleteAllFromRealm();
         realm.commitTransaction();
         realm.close();
-        return Result.SUCCESS;
+        return Result.success();
     }
 }
