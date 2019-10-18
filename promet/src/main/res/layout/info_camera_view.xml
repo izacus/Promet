@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:gravity="center"
-        android:textColor="?android:textColor"
         android:layout_marginBottom="2dp"
+        android:textColor="@color/theme_text_color"
         />
 
     <FrameLayout
@@ -25,7 +25,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/loading"
-            android:textColor="?android:textColorTertiary"
             />
 
         <ImageView
