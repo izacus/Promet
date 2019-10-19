@@ -38,9 +38,9 @@ android {
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "si.virag.promet"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
-        versionCode 3200
+        versionCode 3300
         versionName "1.9.1"
         resConfigs "en", "sl"
     }
@@ -89,8 +89,8 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:3.14.3'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.3'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.2'
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
